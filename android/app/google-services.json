@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "332239777305",
+    "project_id": "sosmak-82380",
+    "storage_bucket": "sosmak-82380.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332239777305:android:a9aee6d9bdbbd9211c0488",
+        "android_client_info": {
+          "package_name": "com.example.SOSMAK"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332239777305-b5vmt5bmnqkjjq4c0devteiqa2erk5sa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332239777305-b5vmt5bmnqkjjq4c0devteiqa2erk5sa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
