@@ -6,6 +6,9 @@ class UserModel {
   String lastName = '';
   String email = '';
   String ref = '';
+  String address = '';
+  String role = '';
+
   UserModel.get(DocumentSnapshot doc) {
     this.firstName = doc.data()['firstName'] ?? '';
     this.lastName = doc.data()['lastName'] ?? '';
@@ -18,7 +21,9 @@ class UserModel {
       'firstName': this.firstName,
       'lastName': this.lastName,
       'ref': this.ref,
-      'email': this.email
+      'email': this.email,
+      'role': this.role,
+      'address': this.address
     };
   }
 }

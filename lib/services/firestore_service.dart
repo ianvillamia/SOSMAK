@@ -8,10 +8,7 @@ class UserService {
       FirebaseFirestore.instance.collection('courses');
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
-    this.users.doc(uid).set(user.toMap()).then((value) {
-      addCoursesToUser(uid);
-      addQuizzesToUser(uid);
-    });
+    this.users.doc(uid).set(user.toMap()).then((value) {});
   }
 
   void addCoursesToUser(uid) async {

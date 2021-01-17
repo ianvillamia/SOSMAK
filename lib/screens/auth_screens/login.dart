@@ -23,41 +23,65 @@ class _LoginState extends State<Login> {
       body: Container(
         width: size.width,
         height: size.height,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: email,
-                decoration: InputDecoration(labelText: 'Email'),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: size.height * .2,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: password,
-                decoration: InputDecoration(labelText: 'Password'),
+              _buildTextFormField(controller: email, label: 'Email'),
+              _buildTextFormField(
+                  controller: password, label: 'Password', isPassword: true),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MaterialButton(
+                    elevation: 5,
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      context
+                          .read<AuthenticationService>()
+                          //.signIn(email: email.text.trim(), password: password.text.trim());
+                          .signIn(
+                              email: 'testing@gmail.com', password: 'password');
+                    },
+                    child: Text('Login'),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  MaterialButton(
+                    elevation: 5,
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) {
+                        return Signup();
+                      }));
+                    },
+                    child: Text('Sign Up'),
+                  )
+                ],
               ),
-            ),
-            MaterialButton(
-              onPressed: () {
-                context
-                    .read<AuthenticationService>()
-                    //.signIn(email: email.text.trim(), password: password.text.trim());
-                    .signIn(email: 'testing@gmail.com', password: 'password');
-              },
-              child: Text('Login'),
-            ),
-            MaterialButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return Signup();
-                }));
-              },
-              child: Text('Sign Up'),
-            )
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  _buildTextFormField(
+      {TextEditingController controller, String label, bool isPassword}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword ?? false,
+        decoration: InputDecoration(
+            labelText: label,
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
       ),
     );
   }

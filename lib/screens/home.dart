@@ -1,3 +1,4 @@
+import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
 
 import './emergencyMap_screens/test2.dart';
@@ -32,6 +33,8 @@ class _HomeState extends State<Home> {
               Align(
                 alignment: Alignment.center,
                 child: MaterialButton(
+                    color: Colors.redAccent,
+                    textColor: Colors.white,
                     onPressed: () {
                       context.read<AuthenticationService>().signOut();
                     },
@@ -46,7 +49,7 @@ class _HomeState extends State<Home> {
 
   _buildTiles() {
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
       child: Wrap(
         children: [
           _buildTile(
@@ -80,6 +83,7 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Create Police Account',
+              widget: CreatePoliceAccount(),
               icon: Icons.verified_user),
           _buildTile(
               color: Colors.white,
