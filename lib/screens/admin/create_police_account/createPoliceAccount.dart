@@ -17,7 +17,9 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           title: Text('Police Accounts'),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            showAlertDialog(context);
+          },
           child: Icon(Icons.add),
         ),
         body: Container(

@@ -1,10 +1,19 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+const functions = require('firebase-functions');
+
+// // Create and Deploy Your First Cloud Functions
+// // https://firebase.google.com/docs/functions/write-firebase-functions
+//
+// exports.helloWorld = functions.https.onRequest((request, response) => {
+//   functions.logger.info("Hello logs!", {structuredData: true});
+//   response.send("Hello from Firebase!");
+// });
+const admin = require('firebase-admin');
+// import * as admin from 'firebase-admin';
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
 
-export const registry = functions
+exports.registerPolice = functions
   .region("asia-northeast1")
   .firestore.document("users/{users_requestsId}")
   .onCreate(async (snap, context) => {
