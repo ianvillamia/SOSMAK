@@ -160,6 +160,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_google_places:
+    dependency: "direct main"
+    description:
+      name: flutter_google_places
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4+1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -184,6 +191,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  geocoding:
+    dependency: "direct main"
+    description:
+      name: geocoding
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
+  geocoding_platform_interface:
+    dependency: transitive
+    description:
+      name: geocoding_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1+1"
   geolocator:
     dependency: "direct main"
     description:
@@ -211,7 +232,7 @@ packages:
       name: google_maps_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.33"
+    version: "1.1.1"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
@@ -219,6 +240,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  google_maps_webservice:
+    dependency: transitive
+    description:
+      name: google_maps_webservice
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.19"
   http:
     dependency: transitive
     description:
@@ -387,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.5"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.19.0"
   sky_engine:
     dependency: transitive
     description: flutter

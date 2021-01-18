@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
 
   _buildTiles() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 12),
       child: Wrap(
         children: [
           _buildTile(
