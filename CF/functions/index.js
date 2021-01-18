@@ -8,6 +8,7 @@ const functions = require('firebase-functions');
 //   response.send("Hello from Firebase!");
 // });
 const admin = require('firebase-admin');
+admin.initializeApp();
 // import * as admin from 'firebase-admin';
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -39,4 +40,21 @@ exports.registerPolice = functions
             console.log("Error creating new Police:", error);
         });
     }  
+  });
+
+  exports.deleteUser = functions
+  .region("asia-northeast1")
+  .firestore.document("users/{userId}")
+  .onDelete(async (snap, context) => {
+    const user = snap.data();
+    const docID = context.params.userId;
+    await admin
+      .auth()
+      .deleteUser(docID)
+      .then(() => {
+        console.log("Successfully deleted user");
+      })
+      .catch(error => {
+        console.log("Error deleting user:", error);
+      });
   });

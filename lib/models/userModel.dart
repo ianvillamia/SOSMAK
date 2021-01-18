@@ -8,7 +8,7 @@ class UserModel {
   String ref = '';
   String address = '';
   String role = '';
-
+  String tempPassword = '';
   UserModel.get(DocumentSnapshot doc) {
     this.firstName = doc.data()['firstName'] ?? '';
     this.lastName = doc.data()['lastName'] ?? '';
@@ -23,7 +23,8 @@ class UserModel {
       'ref': this.ref,
       'email': this.email,
       'role': this.role,
-      'address': this.address
+      'address': this.address,
+      'tempPassword': this.tempPassword
     };
   }
 }

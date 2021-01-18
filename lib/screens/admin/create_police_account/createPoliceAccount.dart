@@ -1,4 +1,6 @@
+import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 
 class CreatePoliceAccount extends StatefulWidget {
@@ -18,7 +20,10 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showAlertDialog(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateAccount()));
+            // router.navigateTo(context, Routes.createAccount,
+            //     transition: TransitionType.cupertino);
           },
           child: Icon(Icons.add),
         ),
