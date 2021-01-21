@@ -15,7 +15,7 @@ class UserService {
   Future addPoliceAccount({UserModel user}) async {
     try {
       var value;
-      this
+      await this
           .users
           .limit(1)
           .where('email', isEqualTo: user.email)

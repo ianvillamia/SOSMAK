@@ -17,14 +17,16 @@ admin.initializeApp();
 exports.registerPolice = functions
   .region("asia-northeast1")
   .firestore.document("users/{users_requestsId}")
-  .onCreate(async (snap, context) => {
-    const values = snap.data();
+  .onCreate(async (snapshot) => {
+    const values = snapshot.data();
 
     if (values.role === "police") {
         console.log("Creating new Police");
         const  displayName = values.firstName + " "+ values.lastName;
+       
         admin.auth().createUser(
          {
+           uid:snapshot.id,
         email: values.email,
          emailVerified: false,
          password: values.tempPassword,

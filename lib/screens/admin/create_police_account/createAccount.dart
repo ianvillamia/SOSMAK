@@ -52,9 +52,34 @@ class _CreateAccountState extends State<CreateAccount> {
                         user.role = 'police';
                         UserService()
                             .addPoliceAccount(
-                              user: user,
-                            )
-                            .then((value) {});
+                          user: user,
+                        )
+                            .then((value) {
+                          if (value == false) {
+                            showAlertDialog(context,
+                                message: 'Account Already Exists');
+                          } else {
+                            showAlertDialog(context,
+                                message: 'hey',
+                                widget: Container(
+                                  height: size.height * .2,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text('Account Created'),
+                                        Text('Email:' + emailController.text),
+                                        Text('Temporary Password:' +
+                                            temporaryPassword),
+                                      ],
+                                    ),
+                                  ),
+                                ));
+                          }
+                        });
                       }
                     },
                     child: Text('Generate Account'))
@@ -94,13 +119,14 @@ Random _rnd = Random();
 String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-showAlertDialog(BuildContext context, {@required String message}) {
+showAlertDialog(BuildContext context,
+    {@required String message, Widget widget}) {
   // show the dialog
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        content: Text(message),
+        content: widget == null ? Text(message) : widget,
       );
     },
   );

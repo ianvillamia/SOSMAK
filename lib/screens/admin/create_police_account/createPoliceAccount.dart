@@ -44,7 +44,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: SingleChildScrollView(
-                            child: Wrap(
+                            child: Column(
                                 children: snapshot.data.docs
                                     .map<Widget>((doc) => _userCards(doc))
                                     .toList()),
