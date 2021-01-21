@@ -44,7 +44,7 @@ class _LoginState extends State<Login> {
                           .read<AuthenticationService>()
                           //.signIn(email: email.text.trim(), password: password.text.trim());
                           .signIn(
-                              email: 'testing@gmail.com', password: 'password');
+                              email: 'rhowelp@gmail.com', password: '123456');
                     },
                     child: Text('Login'),
                   ),

@@ -1,0 +1,32 @@
+[
+    {
+      "featureType": "transit.line",
+      "elementType": "labels.text",
+      "stylers": [
+        {
+          "color": "#f1f6f8"
+        },
+        {
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "featureType": "water",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#1076f8"
+        }
+      ]
+    },
+    {
+      "featureType": "water",
+      "elementType": "labels.text",
+      "stylers": [
+        {
+          "color": "#eff4f8"
+        }
+      ]
+    }
+  ]

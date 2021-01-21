@@ -1,5 +1,6 @@
 import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
+import 'package:SOSMAK/screens/emergencyMap_screens/testgoogleplace.dart';
 
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';

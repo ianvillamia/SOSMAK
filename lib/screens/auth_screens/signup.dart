@@ -69,6 +69,7 @@ class _SignupState extends State<Signup> {
                       UserModel user = UserModel();
                       user.firstName = firstNameController.text;
                       user.lastName = lastNameController.text;
+                      user.email = emailContoller.text;
                       user.address = addressController.text;
                       user.role = 'citizen';
                       context
