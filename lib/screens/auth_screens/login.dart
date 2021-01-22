@@ -11,8 +11,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController email = TextEditingController(),
-      password = TextEditingController();
+  TextEditingController emailController = TextEditingController(),
+      passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -29,9 +29,11 @@ class _LoginState extends State<Login> {
               SizedBox(
                 height: size.height * .2,
               ),
-              _buildTextFormField(controller: email, label: 'Email'),
+              _buildTextFormField(controller: emailController, label: 'Email'),
               _buildTextFormField(
-                  controller: password, label: 'Password', isPassword: true),
+                  controller: passwordController,
+                  label: 'Password',
+                  isPassword: true),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -44,7 +46,8 @@ class _LoginState extends State<Login> {
                           .read<AuthenticationService>()
                           //.signIn(email: email.text.trim(), password: password.text.trim());
                           .signIn(
-                              email: 'rhowelp@gmail.com', password: '123456');
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
                     },
                     child: Text('Login'),
                   ),
