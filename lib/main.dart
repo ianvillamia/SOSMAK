@@ -1,3 +1,4 @@
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/auth_screens/login.dart';
 import 'package:SOSMAK/screens/home.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         StreamProvider(
             create: (context) =>
-                context.read<AuthenticationService>().authStateChanges)
+                context.read<AuthenticationService>().authStateChanges),
+        ChangeNotifierProvider<UserDetailsProvider>(
+            create: (_) => UserDetailsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -42,7 +45,10 @@ class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
+    //set current User here
+
     if (firebaseUser != null) {
+      AuthenticationService.getCurrentUser(firebaseUser.uid, context);
       return Home();
     }
 

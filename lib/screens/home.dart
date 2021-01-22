@@ -1,3 +1,4 @@
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
 import 'package:SOSMAK/screens/chat_screens/chatList.dart';
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
@@ -24,6 +25,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    final userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
+
     return Scaffold(
       body: Container(
         width: size.width,

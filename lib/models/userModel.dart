@@ -14,6 +14,8 @@ class UserModel {
     this.lastName = doc.data()['lastName'] ?? '';
     this.email = doc.data()['email'] ?? '';
     this.ref = doc.data()['ref'] ?? '';
+    this.ref = doc.data()['address'] ?? '';
+    this.role = doc.data()['role'] ?? 'citizen';
   }
   UserModel() {}
   toMap() {

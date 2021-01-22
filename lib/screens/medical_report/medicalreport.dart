@@ -1,4 +1,3 @@
-import 'package:SOSMAK/models/medicalmodel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -66,16 +65,13 @@ class _MedicalReportState extends State<MedicalReport> {
         ),
       ),
       appBar: AppBar(
-        title: Text('SOSMAK'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-          )
-        ],
+        title: Text('Medical Report'),
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Container(
         width: size.width,

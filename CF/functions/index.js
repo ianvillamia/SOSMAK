@@ -23,10 +23,9 @@ exports.registerPolice = functions
     if (values.role === "police") {
         console.log("Creating new Police");
         const  displayName = values.firstName + " "+ values.lastName;
-       
         admin.auth().createUser(
          {
-           uid:snapshot.id,
+           uid:snapshot.docID,
         email: values.email,
          emailVerified: false,
          password: values.tempPassword,

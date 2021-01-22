@@ -1,11 +1,15 @@
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './firestore_service.dart';
 import '../models/userModel.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
   AuthenticationService(this._firebaseAuth);
+
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   UserService _userService = UserService();
 
@@ -19,6 +23,19 @@ class AuthenticationService {
       return 'Signed in';
     } on FirebaseAuthException catch (e) {
       return Future.error(e.message);
+    }
+  }
+
+  static getCurrentUser(String uid, BuildContext context) async {
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      //set current user
+      final userDetailsProvider =
+          Provider.of<UserDetailsProvider>(context, listen: false);
+      userDetailsProvider.setCurrentUser(userDoc);
+    } catch (e) {
+      debugPrint(e);
     }
   }
 
