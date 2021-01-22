@@ -29,16 +29,19 @@ class _ChatHomeState extends State<ChatHome> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      bottomNavigationBar: ChatBottomNavigationBar(
-        pageController: pageController,
-      ),
+      // bottomNavigationBar: ChatBottomNavigationBar(
+      //   pageController: pageController,
+      // ),
       body: Container(
           width: size.width,
           height: size.height,
           child: PageView(
             physics: NeverScrollableScrollPhysics(),
             controller: pageController,
-            children: [ChatList(), RecentChat()],
+            children: [
+              ChatList()
+              //, RecentChat()
+            ],
           )),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:SOSMAK/models/police.dart';
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
+import 'package:SOSMAK/screens/chat_screens/chat.dart';
 import 'package:SOSMAK/services/chatService.dart';
 import 'package:SOSMAK/widgets/chatBottomNav.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,9 +17,10 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   Size size;
+  UserDetailsProvider _currentUser;
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
+    _currentUser = Provider.of<UserDetailsProvider>(context, listen: false);
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +84,22 @@ class _ChatListState extends State<ChatList> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Card(
           child: InkWell(
-        onTap: () {},
+        onTap: () async {
+          // debugPrint(police.ref + '* ' + _currentUser.currentUser.ref);
+          await ChatService()
+              .setChat(user1: police.ref, user2: _currentUser.currentUser.ref)
+              .then((doc) {
+            if (doc != null) {
+              //push conversation
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Chat(
+                            doc: doc,
+                          )));
+            }
+          });
+        },
         splashColor: Colors.blue,
         child: Row(
           children: [

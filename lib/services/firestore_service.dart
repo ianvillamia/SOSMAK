@@ -1,3 +1,4 @@
+import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../models/userModel.dart';
@@ -23,7 +24,10 @@ class UserService {
           .then((QuerySnapshot snapshot) async {
         if (snapshot.size == 0) {
           print('all good to create');
-          await this.users.doc().set(user.toMap()).then((value) {
+          //
+          String docID = Utils.getRandomString(29);
+          user.ref = docID;
+          await this.users.doc(user.ref).set(user.toMap()).then((value) {
             print('police added to collection');
           });
           value = true;

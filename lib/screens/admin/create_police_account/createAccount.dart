@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
+import 'package:SOSMAK/services/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -43,7 +44,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         //generate account
-                        String temporaryPassword = getRandomString(7);
+                        String temporaryPassword = Utils.getRandomString(7);
                         UserModel user = UserModel();
                         user.firstName = firstNameController.text;
                         user.lastName = lastNameController.text;
@@ -112,12 +113,6 @@ class _CreateAccountState extends State<CreateAccount> {
     );
   }
 }
-
-const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-Random _rnd = Random();
-
-String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
-    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
 showAlertDialog(BuildContext context,
     {@required String message, Widget widget}) {

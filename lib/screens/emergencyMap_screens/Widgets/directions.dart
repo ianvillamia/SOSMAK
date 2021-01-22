@@ -267,36 +267,35 @@ class _DirectionsBottomSheetState extends State<DirectionsBottomSheet> {
               ),
               SizedBox(height: 5),
               RaisedButton(
-                onPressed: (_startAddress != '' && _destinationAddress != '')
-                    ? () async {
-                        startAddressFocusNode.unfocus();
-                        desrinationAddressFocusNode.unfocus();
-                        setState(() {
-                          if (markers.isNotEmpty) markers.clear();
-                          if (polylines.isNotEmpty) polylines.clear();
-                          if (polylineCoordinates.isNotEmpty)
-                            polylineCoordinates.clear();
-                          _placeDistance = null;
-                        });
+                //on pressed ng hospital
 
-                        _calculateDistance().then((isCalculated) {
-                          if (isCalculated) {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Distance Calculated Sucessfully'),
-                              ),
-                            );
-                          } else {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content: Text('Error Calculating Distance'),
-                              ),
-                            );
-                          }
-                        });
-                      }
-                    : null,
+                onPressed: () async {
+                  startAddressFocusNode.unfocus();
+                  desrinationAddressFocusNode.unfocus();
+                  setState(() {
+                    if (markers.isNotEmpty) markers.clear();
+                    if (polylines.isNotEmpty) polylines.clear();
+                    if (polylineCoordinates.isNotEmpty)
+                      polylineCoordinates.clear();
+                    _placeDistance = null;
+                  });
+
+                  _calculateDistance().then((isCalculated) {
+                    if (isCalculated) {
+                      _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          content: Text('Distance Calculated Sucessfully'),
+                        ),
+                      );
+                    } else {
+                      _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          content: Text('Error Calculating Distance'),
+                        ),
+                      );
+                    }
+                  });
+                },
                 color: Colors.red,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),

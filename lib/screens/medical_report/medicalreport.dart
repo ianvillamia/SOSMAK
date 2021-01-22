@@ -19,6 +19,7 @@ class RadioGroups {
 class _MedicalReportState extends State<MedicalReport> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   Size size;
+
   bool choice1 = false,
       choice2 = false,
       choice3 = false,

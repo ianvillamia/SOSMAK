@@ -8,6 +8,7 @@ class Police {
   String imageUrl;
   String role;
   String tempPassword;
+  String ref;
 
   Police.getData({DocumentSnapshot doc}) {
     this.firstName = doc.data()['firstName'];
@@ -17,5 +18,6 @@ class Police {
     this.role = doc.data()['role'];
     this.tempPassword = doc.data()['tempPassword'];
     this.imageUrl = doc.data()['imageUrl'];
+    this.ref = doc.data()['ref'];
   }
 }
