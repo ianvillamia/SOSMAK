@@ -23,7 +23,7 @@ class UserService {
           .then((QuerySnapshot snapshot) async {
         if (snapshot.size == 0) {
           print('all good to create');
-          await this.users.add(user.toMap()).then((value) {
+          await this.users.doc().set(user.toMap()).then((value) {
             print('police added to collection');
           });
           value = true;

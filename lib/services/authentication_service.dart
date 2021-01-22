@@ -50,7 +50,6 @@ class AuthenticationService {
           .then((doc) async {
         await _userService.addUserToCollection(user: user, uid: doc.user.uid);
       });
-
       return 'Signed Up';
     } on FirebaseAuthException catch (e) {
       print(e);

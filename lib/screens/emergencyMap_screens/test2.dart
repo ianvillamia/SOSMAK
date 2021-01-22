@@ -1,6 +1,7 @@
 import 'package:SOSMAK/screens/emergencyMap_screens/data/place_response.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/result.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/error.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -162,6 +163,7 @@ class _MapViewState extends State<MapView> {
         .then((Position position) async {
       setState(() {
         _currentPosition = position;
+
         print('CURRENT POS: $_currentPosition');
         mapController.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -495,7 +497,15 @@ class _MapViewState extends State<MapView> {
               itemCount: items,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () async {},
+                  onTap: () async {
+                    //
+                    String hospital = places[index].name;
+                    //geocoding reverse
+                    var addresses =
+                        await Geocoder.local.findAddressesFromQuery(hospital);
+                    var first = addresses.first;
+                    print("${first.featureName} : ${first.coordinates}");
+                  },
                   child: Card(
                     child: ListTile(
                       title: Text('${places[index].name}'),

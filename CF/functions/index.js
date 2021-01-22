@@ -1,23 +1,13 @@
 const functions = require('firebase-functions');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
 const admin = require('firebase-admin');
 admin.initializeApp();
-// import * as admin from 'firebase-admin';
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
 
 exports.registerPolice = functions
   .region("asia-northeast1")
   .firestore.document("users/{users_requestsId}")
-  .onCreate(async (snapshot) => {
+  .onCreate(async (snapshot,context) => {
+    const policeId = context.params.users_requestsId;
     const values = snapshot.data();
 
     if (values.role === "police") {
@@ -25,7 +15,7 @@ exports.registerPolice = functions
         const  displayName = values.firstName + " "+ values.lastName;
         admin.auth().createUser(
          {
-           uid:snapshot.docID,
+           uid:policeId,
         email: values.email,
          emailVerified: false,
          password: values.tempPassword,
