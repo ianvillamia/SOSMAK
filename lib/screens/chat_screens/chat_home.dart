@@ -36,6 +36,7 @@ class _ChatHomeState extends State<ChatHome> {
           width: size.width,
           height: size.height,
           child: PageView(
+            physics: NeverScrollableScrollPhysics(),
             controller: pageController,
             children: [ChatList(), RecentChat()],
           )),

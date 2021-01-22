@@ -14,6 +14,15 @@ class _RecentChatState extends State<RecentChat> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Recent Chats'),
+      ),
       body: Container(
         width: size.width,
         height: size.height,

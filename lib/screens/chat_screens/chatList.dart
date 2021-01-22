@@ -21,13 +21,16 @@ class _ChatListState extends State<ChatList> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kristaps Elsins'),
+        leading: IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        title: Text('Start a Conversation'),
       ),
       body: Column(
         children: [
-          Container(
-            width: size.width,
-            height: size.height * .75,
+          Expanded(
             child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('users')
@@ -37,7 +40,7 @@ class _ChatListState extends State<ChatList> {
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 35),
+                      padding: EdgeInsets.symmetric(vertical: 5),
                       child: Align(
                         alignment: Alignment.topCenter,
                         child: SingleChildScrollView(
@@ -47,7 +50,7 @@ class _ChatListState extends State<ChatList> {
                             child: Scrollbar(
                               child: Column(
                                   children: snapshot.data.docs
-                                      .map<Widget>((doc) => _buildMessage(doc))
+                                      .map<Widget>((doc) => _buildCard(doc))
                                       .toList()),
                             ),
                           ),
@@ -71,19 +74,26 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  _buildMessage(DocumentSnapshot doc) {
+  _buildCard(DocumentSnapshot doc) {
     Police police = Police.getData(doc: doc);
 
-    return Card(
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Card(
+          child: InkWell(
+        onTap: () {},
+        splashColor: Colors.blue,
         child: Row(
-      children: [
-        ClipOval(
-          child: Container(
-              height: 80, width: 80, child: Image.network(police.imageUrl)),
+          children: [
+            ClipOval(
+              child: Container(
+                  height: 80, width: 80, child: Image.network(police.imageUrl)),
+            ),
+            Text(police.firstName + " " + police.lastName)
+          ],
         ),
-        Text(police.email)
-      ],
-    ));
+      )),
+    );
   }
 
   buildChatInput() {
