@@ -23,6 +23,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Size size;
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;

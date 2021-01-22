@@ -3,6 +3,7 @@ import 'dart:math' show cos, sqrt, asin;
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as gCoding;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DirectionsBottomSheet extends StatefulWidget {
@@ -37,7 +38,7 @@ class _DirectionsBottomSheetState extends State<DirectionsBottomSheet> {
       'AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8', // Google Maps API Key
       PointLatLng(start.latitude, start.longitude),
       PointLatLng(destination.latitude, destination.longitude),
-      travelMode: TravelMode.driving,
+      travelMode: TravelMode.transit,
     );
 
     if (result.points.isNotEmpty) {
@@ -59,10 +60,10 @@ class _DirectionsBottomSheetState extends State<DirectionsBottomSheet> {
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses
-      List<Placemark> startPlacemark =
-          await _geolocator.placemarkFromAddress(_startAddress);
-      List<Placemark> destinationPlacemark =
-          await _geolocator.placemarkFromAddress(_destinationAddress);
+      List<gCoding.Location> startPlacemark =
+          await gCoding.locationFromAddress('Pembo Barangay Hall');
+      List<gCoding.Location> destinationPlacemark =
+          await gCoding.locationFromAddress('Ospital ng Makati');
 
       if (startPlacemark != null && destinationPlacemark != null) {
         // Use the retrieved coordinates of the current position,
@@ -72,8 +73,12 @@ class _DirectionsBottomSheetState extends State<DirectionsBottomSheet> {
             ? Position(
                 latitude: _currentPosition.latitude,
                 longitude: _currentPosition.longitude)
-            : startPlacemark[0].position;
-        Position destinationCoordinates = destinationPlacemark[0].position;
+            : Position(
+                latitude: startPlacemark[0].latitude,
+                longitude: startPlacemark[0].longitude);
+        Position destinationCoordinates = Position(
+            latitude: destinationPlacemark[0].latitude,
+            longitude: destinationPlacemark[0].longitude);
 
         // Start Location Marker
         Marker startMarker = Marker(

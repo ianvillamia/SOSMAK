@@ -2,6 +2,7 @@ import 'package:SOSMAK/screens/emergencyMap_screens/data/place_response.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/result.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/test2.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -110,7 +111,14 @@ class _PlacesBottomSheetState extends State<PlacesBottomSheet> {
               itemCount: items,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () async {},
+                  onTap: () async {
+                    String hospital = places[index].name;
+                    //geocoding reverse
+                    var addresses =
+                        await Geocoder.local.findAddressesFromQuery(hospital);
+                    var first = addresses.first;
+                    print("${first.featureName} : ${first.coordinates}");
+                  },
                   child: Card(
                     child: ListTile(
                       title: Text('${places[index].name}'),
