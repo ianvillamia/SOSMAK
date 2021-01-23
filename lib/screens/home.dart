@@ -1,3 +1,4 @@
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
 
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
@@ -20,7 +21,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool isPolice = false;
   Size size;
+  UserDetailsProvider userDetailsProvider;
+  bool isAdmin = false;
+  bool isCitizen = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
+    if (userDetailsProvider.currentUser.role == 'police') {
+      setState(() {
+        isPolice = true;
+      });
+    } else if (userDetailsProvider.currentUser.role == 'admin') {
+      setState(() {
+        isAdmin = true;
+      });
+    } else if (userDetailsProvider.currentUser.role == 'citizen') {
+      setState(() {
+        isCitizen = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +80,7 @@ class _HomeState extends State<Home> {
 
   _buildTiles() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
       child: Wrap(
         children: [
           _buildTile(
@@ -78,26 +103,39 @@ class _HomeState extends State<Home> {
               text: 'Wanted List',
               icon: Icons.ten_mp,
               widget: WantedList()),
-          _buildTile(
+          Visibility(
+            visible: isPolice,
+            child: _buildTile(
               color: Colors.white,
               text: 'Officers Chat',
               icon: Icons.local_police,
               //widget: Chat()
-              widget: ChatHome()),
-          _buildTile(
-              color: Colors.white,
-              text: 'Incident Report',
-              icon: Icons.warning_outlined,
-              widget: IncidentReport()),
-          _buildTile(
-              color: Colors.white,
-              text: 'Create Police Account',
-              widget: CreatePoliceAccount(),
-              icon: Icons.verified_user),
-          _buildTile(
-              color: Colors.white,
-              text: 'Incident Report Admin',
-              icon: Icons.bar_chart_sharp),
+              widget: ChatHome(),
+            ),
+          ),
+          Visibility(
+            visible: isCitizen,
+            child: _buildTile(
+                color: Colors.white,
+                text: 'Incident Report',
+                icon: Icons.warning_outlined,
+                widget: IncidentReport()),
+          ),
+          Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+                color: Colors.white,
+                text: 'Create Police Account',
+                widget: CreatePoliceAccount(),
+                icon: Icons.verified_user),
+          ),
+          Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+                color: Colors.white,
+                text: 'Incident Report Admin',
+                icon: Icons.bar_chart_sharp),
+          )
         ],
       ),
     );
