@@ -154,7 +154,12 @@ class _ChatState extends State<Chat> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(chat.message),
               ),
-              // chat.images != null ? _buildImages : Container()
+              chat.images != null
+                  ? Column(
+                      children: chat.images
+                          .map<Widget>((img) => _buildImages(img))
+                          .toList())
+                  : Container()
             ],
           ),
         ),

@@ -17,9 +17,6 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('SOSMAK LOGIN'),
-      ),
       body: Container(
         width: size.width,
         height: size.height,
@@ -29,11 +26,40 @@ class _LoginState extends State<Login> {
               SizedBox(
                 height: size.height * .2,
               ),
+              Container(
+                  width: size.width * .4,
+                  height: size.height * .3,
+                  child: Image.asset(
+                    'assets/sos-mak.png',
+                    fit: BoxFit.cover,
+                  )),
+              SizedBox(
+                height: size.height * .05,
+              ),
               _buildTextFormField(controller: emailController, label: 'Email'),
               _buildTextFormField(
                   controller: passwordController,
                   label: 'Password',
                   isPassword: true),
+              SizedBox(
+                height: 5,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                    padding: EdgeInsets.only(right: 25),
+                    child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) {
+                            return Signup();
+                          }));
+                        },
+                        child: Text('No account? Click here to Register'))),
+              ),
+              SizedBox(
+                height: 15,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -54,17 +80,6 @@ class _LoginState extends State<Login> {
                   SizedBox(
                     width: 15,
                   ),
-                  MaterialButton(
-                    elevation: 5,
-                    color: Colors.blueAccent,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) {
-                        return Signup();
-                      }));
-                    },
-                    child: Text('Sign Up'),
-                  )
                 ],
               ),
             ],

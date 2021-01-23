@@ -1,4 +1,5 @@
 import 'package:SOSMAK/models/userModel.dart';
+import 'package:SOSMAK/screens/auth_screens/login.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,15 +22,30 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('SOSMAK SIGN UP'),
-      ),
       body: Container(
         width: size.width,
         height: size.height,
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                    width: size.width * .3,
+                    height: size.height * .2,
+                    child: Image.asset(
+                      'assets/sos-mak.png',
+                      fit: BoxFit.cover,
+                    )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Text(
+                  'Register',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
               _buildTextFormField(
                   controller: firstNameController, label: 'First Name'),
               _buildTextFormField(
@@ -41,22 +57,24 @@ class _SignupState extends State<Signup> {
                   controller: passwordController,
                   label: 'Password',
                   isPassword: true),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                    padding: EdgeInsets.only(left: 25),
+                    child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) {
+                            return Login();
+                          }));
+                        },
+                        child: Text(
+                            'Already Got an Account? Click here to login'))),
+              ),
+              SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // MaterialButton(
-                  //   elevation: 5,
-                  //   color: Colors.blueAccent,
-                  //   textColor: Colors.white,
-                  //   onPressed: () {
-                  //     context
-                  //         .read<AuthenticationService>()
-                  //         //.signIn(email: email.text.trim(), password: password.text.trim());
-                  //         .signIn(
-                  //             email: 'testing@gmail.com', password: 'password');
-                  //   },
-                  //   child: Text('Login'),
-                  // ),
                   SizedBox(
                     width: 15,
                   ),

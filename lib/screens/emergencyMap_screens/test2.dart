@@ -5,8 +5,6 @@ import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:SOSMAK/screens/emergencyMap_screens/Widgets/places.dart';
 import 'package:flutter/material.dart';
 // Stores the Google Maps API Key
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -19,8 +17,6 @@ import 'dart:math' show cos, sqrt, asin;
 
 import 'package:search_map_place/search_map_place.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import 'Widgets/directions.dart';
 
 class MapView extends StatefulWidget {
   @override
