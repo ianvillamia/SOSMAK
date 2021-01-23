@@ -4,12 +4,15 @@ class ChatModel {
   DateTime date;
   String message;
   String senderRef;
+  String imageUrl;
   List images;
   ChatModel.get(DocumentSnapshot doc) {
     //  this.date = doc.data()['date'] ?? '';
     this.message = doc.data()['message'] ?? '';
     this.senderRef = doc.data()['senderRef'] ?? '';
     this.images = doc.data()['images'] ?? [];
+
+    this.imageUrl = doc.data()['imageUrl'];
   }
   ChatModel();
   toMap() {
@@ -17,7 +20,8 @@ class ChatModel {
       'date': this.date,
       'message': this.message,
       'senderRef': this.senderRef,
-      'images': []
+      'images': this.images,
+      'imageUrl': this.imageUrl
     };
   }
 }

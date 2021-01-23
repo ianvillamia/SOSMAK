@@ -47,23 +47,14 @@ class UserService {
     }
   }
 
-  Future<void> uploadFile(File file) async {
+  Future uploadFile(File file) async {
     // File file = File(filePath);
     DateTime date = DateTime.now();
     String fileName = date.toString();
-    try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('uploads/$fileName.png')
-          .putFile(file)
-          .then((val) async {
-        String downUrl = await val.ref.getDownloadURL();
-        print('upload complete' + downUrl);
-        //update doc? or create?
-      });
-    } on FirebaseException catch (e) {
-      print(e);
-      // e.g, e.code == 'canceled'
-    }
+
+    return await firebase_storage.FirebaseStorage.instance
+        .ref('uploads/$fileName.png')
+        .putFile(file);
   }
 
   void addCoursesToUser(uid) async {

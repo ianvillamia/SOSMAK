@@ -1,6 +1,8 @@
 import 'package:SOSMAK/models/chatModel.dart';
+import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 class ChatService {
   CollectionReference conversationCollection =
@@ -33,10 +35,37 @@ class ChatService {
   }
 
   Future sendMessage(
-      {@required ChatModel chatModel, @required String chatID}) async {
-    await conversationCollection
-        .doc(chatID)
-        .collection('chats')
-        .add(chatModel.toMap());
+      {@required ChatModel chatModel,
+      @required String chatID,
+      @required File image}) async {
+    bool isSent;
+    try {
+      if (image != null) {
+        await UserService().uploadFile(image).then((value) async {
+          String downUrl = await value.ref.getDownloadURL();
+          chatModel.imageUrl = downUrl;
+          await conversationCollection
+              .doc(chatID)
+              .collection('chats')
+              .add(chatModel.toMap())
+              .then((value) {
+            isSent = true;
+          });
+        });
+      } else {
+        await conversationCollection
+            .doc(chatID)
+            .collection('chats')
+            .add(chatModel.toMap())
+            .then((value) {
+          isSent = true;
+        });
+      }
+
+      return isSent;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }

@@ -32,7 +32,7 @@ class _ChatState extends State<Chat> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        images.add(_image);
+
         debugPrint('hey');
         print(_image);
       } else {
@@ -84,10 +84,13 @@ class _ChatState extends State<Chat> {
                         child: Scrollbar(
                           child: SingleChildScrollView(
                             controller: _scrollController,
-                            child: Column(
-                                children: snapshot.data.docs
-                                    .map<Widget>((doc) => _buildMessage(doc))
-                                    .toList()),
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Column(
+                                  children: snapshot.data.docs
+                                      .map<Widget>((doc) => _buildMessage(doc))
+                                      .toList()),
+                            ),
                           ),
                         ),
                       );
@@ -110,10 +113,14 @@ class _ChatState extends State<Chat> {
                       color: Colors.amber,
                     ),
               Container(
-                width: size.width,
-                height: size.height * .07,
-                child: _buildTextFormField(controller: message),
-              )
+                  width: size.width,
+                  height: size.height * .2,
+                  child: Column(
+                    children: [
+                      _imagePreview(),
+                      _buildTextFormField(controller: message),
+                    ],
+                  ))
             ],
           ),
         ),
@@ -121,49 +128,111 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  _buildMessage(DocumentSnapshot doc) {
-    ChatModel chat = ChatModel.get(doc);
-    if (chat.senderRef == firebaseUser.uid) {
+  _buildImages(img) {
+    return GestureDetector(
+      onTap: () {
+        showImage(context, img);
+      },
+      child: Container(
+        width: size.width * .5,
+        height: size.height * .2,
+        child: Image.network(
+          img,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
+  _imagePreview() {
+    if (_image != null) {
       return Align(
-        alignment: Alignment.centerRight,
-        child: Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(chat.message),
-              ),
-              chat.images != null
-                  ? Column(
-                      children: chat.images
-                          .map<Widget>((img) => _buildImages(img))
-                          .toList())
-                  : Container()
-            ],
-          ),
+        alignment: Alignment.centerLeft,
+        child: Container(
+          color: Colors.red,
+          width: size.width * .15,
+          child: Image.file(_image),
         ),
       );
     } else {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Card(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(chat.message),
+      return Container();
+    }
+  }
+
+  _buildMessage(DocumentSnapshot doc) {
+    // print(doc.data()['imageUrl']);
+    ChatModel chat = ChatModel.get(doc);
+    if (chat.imageUrl != null) {
+      if (chat.senderRef == firebaseUser.uid) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Card(
+            elevation: 5,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(chat.message),
+                  ),
+                  chat.imageUrl != null
+                      ? _buildImages(chat.imageUrl.toString())
+                      : Container(),
+                ],
               ),
-              chat.images != null
-                  ? Column(
-                      children: chat.images
-                          .map<Widget>((img) => _buildImages(img))
-                          .toList())
-                  : Container()
-            ],
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Card(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(chat.message),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    } else {
+      if (chat.senderRef == firebaseUser.uid) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Card(
+            elevation: 5,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(chat.message),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Card(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(chat.message),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -185,22 +254,6 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  _buildImages(img) {
-    return GestureDetector(
-      onTap: () {
-        showImage(context, img);
-      },
-      child: Container(
-        width: size.width * .5,
-        height: size.height * .2,
-        child: Image.network(
-          img,
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
-  }
-
   _buildTextFormField(
       {TextEditingController controller, String label, bool isPassword}) {
     return TextFormField(
@@ -219,7 +272,7 @@ class _ChatState extends State<Chat> {
             icon: Icon(Icons.send),
             onPressed: () {
               //
-              print(images[0]);
+              //   print(images[0]);
               if (message.text != '') {
                 print(message.text);
                 ChatModel chat = ChatModel();
@@ -227,8 +280,10 @@ class _ChatState extends State<Chat> {
                 chat.message = message.text;
                 chat.senderRef = firebaseUser.uid;
                 ChatService()
-                    .sendMessage(chatModel: chat, chatID: widget.doc.id)
+                    .sendMessage(
+                        chatModel: chat, chatID: widget.doc.id, image: _image)
                     .then((value) {
+                  _image = null;
                   message.clear();
                   _scrollController.animateTo(
                       _scrollController.position.maxScrollExtent,
