@@ -1,4 +1,3 @@
-import 'package:SOSMAK/widgets/chatBottomNav.dart';
 import 'package:flutter/material.dart';
 
 class RecentChat extends StatefulWidget {

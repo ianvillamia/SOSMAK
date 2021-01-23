@@ -2,9 +2,7 @@ import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
 import 'package:SOSMAK/services/chatService.dart';
-import 'package:SOSMAK/widgets/chatBottomNav.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -67,11 +65,6 @@ class _ChatListState extends State<ChatList> {
                   );
                 }),
           ),
-          // Expanded(
-          //   child: Container(
-          //     color: Colors.red,
-          //   ),
-          // )
         ],
       ),
     );
@@ -79,39 +72,45 @@ class _ChatListState extends State<ChatList> {
 
   _buildCard(DocumentSnapshot doc) {
     Police police = Police.getData(doc: doc);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Card(
-          child: InkWell(
-        onTap: () async {
-          // debugPrint(police.ref + '* ' + _currentUser.currentUser.ref);
-          await ChatService()
-              .setChat(user1: police.ref, user2: _currentUser.currentUser.ref)
-              .then((doc) {
-            if (doc != null) {
-              //push conversation
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Chat(
-                            doc: doc,
-                          )));
-            }
-          });
-        },
-        splashColor: Colors.blue,
-        child: Row(
-          children: [
-            ClipOval(
-              child: Container(
-                  height: 80, width: 80, child: Image.network(police.imageUrl)),
-            ),
-            Text(police.firstName + " " + police.lastName)
-          ],
-        ),
-      )),
-    );
+    if (_currentUser.currentUser.ref != police.ref) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: Card(
+            child: InkWell(
+          onTap: () async {
+            // debugPrint(police.ref + '* ' + _currentUser.currentUser.ref);
+            await ChatService()
+                .setChat(user1: police.ref, user2: _currentUser.currentUser.ref)
+                .then((doc) {
+              if (doc != null) {
+                //push conversation
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Chat(
+                              doc: doc,
+                              police: police,
+                            )));
+              }
+            });
+          },
+          splashColor: Colors.blue,
+          child: Row(
+            children: [
+              ClipOval(
+                child: Container(
+                    height: 80,
+                    width: 80,
+                    child: Image.network(police.imageUrl)),
+              ),
+              Text(police.firstName + " " + police.lastName)
+            ],
+          ),
+        )),
+      );
+    } else {
+      return Container();
+    }
   }
 
   buildChatInput() {

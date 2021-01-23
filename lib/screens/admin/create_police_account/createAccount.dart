@@ -2,7 +2,6 @@ import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class CreateAccount extends StatefulWidget {
   CreateAccount({Key key}) : super(key: key);

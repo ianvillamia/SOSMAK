@@ -1,8 +1,10 @@
 import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import '../models/userModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class UserService {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -42,6 +44,25 @@ class UserService {
     } catch (e) {
       print('never reached');
       return Future.error(e);
+    }
+  }
+
+  Future<void> uploadFile(File file) async {
+    // File file = File(filePath);
+    DateTime date = DateTime.now();
+    String fileName = date.toString();
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('uploads/$fileName.png')
+          .putFile(file)
+          .then((val) async {
+        String downUrl = await val.ref.getDownloadURL();
+        print('upload complete' + downUrl);
+        //update doc? or create?
+      });
+    } on FirebaseException catch (e) {
+      print(e);
+      // e.g, e.code == 'canceled'
     }
   }
 

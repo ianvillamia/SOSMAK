@@ -1,12 +1,9 @@
-import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
-import 'package:SOSMAK/screens/chat_screens/chatList.dart';
+
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
-import 'package:SOSMAK/screens/emergencyMap_screens/testgoogleplace.dart';
-import 'package:SOSMAK/screens/medical_report/medicalReport2.dart';
+
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
@@ -28,8 +25,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    final userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
 
     return Scaffold(
       body: Container(

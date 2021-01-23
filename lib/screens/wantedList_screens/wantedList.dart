@@ -88,10 +88,6 @@ class _WantedListState extends State<WantedList> {
 
   showAlertDialog(BuildContext context, {@required Wanted wanted}) {
     // set up the button
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () {},
-    );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(

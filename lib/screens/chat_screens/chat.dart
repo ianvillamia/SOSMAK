@@ -1,9 +1,19 @@
+import 'package:SOSMAK/models/chatModel.dart';
+import 'package:SOSMAK/models/police.dart';
+import 'package:SOSMAK/services/chatService.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class Chat extends StatefulWidget {
   final DocumentSnapshot doc;
-  Chat({@required this.doc});
+  final Police police;
+  Chat({@required this.doc, @required this.police});
 
   @override
   _ChatState createState() => _ChatState();
@@ -11,17 +21,50 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   Size size;
+  File _image;
+  final picker = ImagePicker();
+  User firebaseUser;
+  List images;
+  ScrollController _scrollController = ScrollController();
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        images.add(_image);
+        debugPrint('hey');
+        print(_image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  //image?;
+  TextEditingController message = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 200), () {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500), curve: Curves.ease);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    firebaseUser = context.watch<User>();
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('hey'),
+        title: Text(widget.police.firstName + ' ' + widget.police.lastName),
       ),
       body: Container(
         width: size.width,
         height: size.height,
         child: SingleChildScrollView(
+          dragStartBehavior: DragStartBehavior.start,
           child: Column(
             children: [
               StreamBuilder<QuerySnapshot>(
@@ -29,18 +72,24 @@ class _ChatState extends State<Chat> {
                       .collection('conversation')
                       .doc('jSpFfl33LGIre8OQ7Drq')
                       .collection('chats')
+                      .orderBy('date')
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
                       return Container(
                         width: size.width,
-                        height: size.height * .75,
-                        color: Colors.red,
-                        child: ListView(
-                            children: snapshot.data.docs
-                                .map<Widget>((doc) => Text(doc.id))
-                                .toList()),
+                        height: size.height * .77,
+                        color: Colors.grey,
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: Column(
+                                children: snapshot.data.docs
+                                    .map<Widget>((doc) => _buildMessage(doc))
+                                    .toList()),
+                          ),
+                        ),
                       );
                     }
 
@@ -50,13 +99,20 @@ class _ChatState extends State<Chat> {
                   }),
 
               //textformfield
+              images != null
+                  ? Container(
+                      color: Colors.amber,
+                      width: size.width * .2,
+                      height: size.height * .2,
+                      child: Image.asset(images[0]),
+                    )
+                  : Container(
+                      color: Colors.amber,
+                    ),
               Container(
                 width: size.width,
-                height: size.height * .1,
-                child: Container(
-                  width: size.width,
-                  child: _buildTextFormField(),
-                ),
+                height: size.height * .07,
+                child: _buildTextFormField(controller: message),
               )
             ],
           ),
@@ -65,39 +121,123 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  _buildMessage(DocumentSnapshot doc) {
+    ChatModel chat = ChatModel.get(doc);
+    if (chat.senderRef == firebaseUser.uid) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(chat.message),
+              ),
+              chat.images != null
+                  ? Column(
+                      children: chat.images
+                          .map<Widget>((img) => _buildImages(img))
+                          .toList())
+                  : Container()
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Card(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(chat.message),
+              ),
+              // chat.images != null ? _buildImages : Container()
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  showImage(BuildContext context, src) {
+    // set up the button
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      contentPadding: EdgeInsets.all(0),
+      content: Image.network(src),
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  _buildImages(img) {
+    return GestureDetector(
+      onTap: () {
+        showImage(context, img);
+      },
+      child: Container(
+        width: size.width * .5,
+        height: size.height * .2,
+        child: Image.network(
+          img,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
   _buildTextFormField(
       {TextEditingController controller, String label, bool isPassword}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        controller: controller,
-        obscureText: isPassword ?? false,
-        decoration: InputDecoration(
-            suffix: IconButton(
-              icon: Icon(
-                Icons.photo,
-                color: Colors.blue,
-              ),
-              onPressed: () {},
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword ?? false,
+      decoration: InputDecoration(
+          suffix: IconButton(
+            icon: Icon(
+              Icons.photo,
+              color: Colors.blue,
             ),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.send),
-              onPressed: () {},
-            ),
-            // suffixIcon: Row(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   children: [
-            //     IconButton(icon: Icon(Icons.photo), onPressed: () {}),
-            //     IconButton(
-            //       icon: Icon(Icons.send),
-            //       onPressed: () {},
-            //     ),
-            //   ],
-            // ),
-            labelText: label,
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
-      ),
+            //onPressed: () {},
+            onPressed: () => getImage(),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.send),
+            onPressed: () {
+              //
+              print(images[0]);
+              if (message.text != '') {
+                print(message.text);
+                ChatModel chat = ChatModel();
+                chat.date = DateTime.now();
+                chat.message = message.text;
+                chat.senderRef = firebaseUser.uid;
+                ChatService()
+                    .sendMessage(chatModel: chat, chatID: widget.doc.id)
+                    .then((value) {
+                  message.clear();
+                  _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.ease);
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                });
+
+                //create
+              }
+            },
+          ),
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
     );
   }
 }

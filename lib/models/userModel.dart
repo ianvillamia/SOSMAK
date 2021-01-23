@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class UserModel {
   String firstName = '';
@@ -18,7 +17,7 @@ class UserModel {
 
     this.role = doc.data()['role'] ?? 'citizen';
   }
-  UserModel() {}
+  UserModel();
   toMap() {
     return {
       'firstName': this.firstName,

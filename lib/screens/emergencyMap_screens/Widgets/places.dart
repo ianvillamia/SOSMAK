@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class PlacesBottomSheet extends StatefulWidget {
-  String keyword;
+  final String keyword;
   PlacesBottomSheet({this.keyword});
   @override
   _PlacesBottomSheetState createState() => _PlacesBottomSheetState();

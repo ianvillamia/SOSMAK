@@ -1,6 +1,5 @@
 import 'package:SOSMAK/screens/chat_screens/chatList.dart';
-import 'package:SOSMAK/screens/chat_screens/recentChat.dart';
-import 'package:SOSMAK/widgets/chatBottomNav.dart';
+
 import 'package:flutter/material.dart';
 
 class ChatHome extends StatefulWidget {

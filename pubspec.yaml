@@ -43,10 +43,10 @@ dependencies:
   location: ^3.0.0
   sliding_up_panel: ^1.0.2
   geocoding: ^1.0.5
-
+  image_picker: ^0.6.7+21
   group_radio_button: ^1.0.1
   date_format: ^1.0.9
-
+  firebase_storage: ^7.0.0  
 
 dev_dependencies:
   flutter_test:

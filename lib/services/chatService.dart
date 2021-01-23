@@ -1,8 +1,9 @@
+import 'package:SOSMAK/models/chatModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class ChatService {
-  CollectionReference chats =
+  CollectionReference conversationCollection =
       FirebaseFirestore.instance.collection('conversation');
   Future setChat({String user1, String user2}) async {
     List users = [user2, user1];
@@ -10,7 +11,7 @@ class ChatService {
     users.sort();
     var conversation;
     await this
-        .chats
+        .conversationCollection
         .limit(1)
         .where('users', isEqualTo: users)
         .get()
@@ -29,5 +30,13 @@ class ChatService {
       }
     });
     return conversation;
+  }
+
+  Future sendMessage(
+      {@required ChatModel chatModel, @required String chatID}) async {
+    await conversationCollection
+        .doc(chatID)
+        .collection('chats')
+        .add(chatModel.toMap());
   }
 }

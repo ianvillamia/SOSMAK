@@ -11,7 +11,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    new Scaffold(
+    return new Scaffold(
       body: new NimaActor("assets/robo2",
           alignment: Alignment.center,
           fit: BoxFit.contain,

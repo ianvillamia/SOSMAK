@@ -31,8 +31,8 @@ class _IncidentReportState extends State<IncidentReport> {
       incidentController = TextEditingController(),
       descController = TextEditingController();
   Size size;
-  double _width, _height;
-  String _setTime, _setDate;
+  // double _width, _height;
+  // String _setTime, _setDate;
 
   String _hour, _minute, _time;
   String dateTime;
