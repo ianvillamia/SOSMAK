@@ -5,6 +5,7 @@ import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/testgoogleplace.dart';
 import 'package:SOSMAK/screens/medical_report/medicalReport2.dart';
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import './emergencyMap_screens/test2.dart';
@@ -75,7 +76,7 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Medical Report',
-              widget: MedicalReport2(),
+              widget: MedicalReport(),
               icon: Icons.medical_services),
           _buildTile(
               color: Colors.white,
@@ -91,7 +92,8 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Incident Report',
-              icon: Icons.warning_outlined),
+              icon: Icons.warning_outlined,
+              widget: IncidentReport()),
           _buildTile(
               color: Colors.white,
               text: 'Create Police Account',

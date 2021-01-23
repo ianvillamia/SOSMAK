@@ -45,6 +45,7 @@ dependencies:
   geocoding: ^1.0.5
 
   group_radio_button: ^1.0.1
+  date_format: ^1.0.9
 
 
 dev_dependencies:

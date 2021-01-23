@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/wanted.dart';
+import '../wantedList_screens/createWanted.dart';
 
 class WantedList extends StatefulWidget {
   WantedList({Key key}) : super(key: key);
@@ -16,6 +17,16 @@ class _WantedListState extends State<WantedList> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.red,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateWanted()),
+            );
+          },
+        ),
         appBar: AppBar(
           backgroundColor: Colors.redAccent,
           title: Text('Most Wanted List'),
