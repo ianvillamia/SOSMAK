@@ -1,4 +1,8 @@
+import 'package:SOSMAK/models/wanted.dart';
+import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class CreateWanted extends StatefulWidget {
   @override
@@ -12,7 +16,10 @@ class _CreateWantedState extends State<CreateWanted> {
       contactController = TextEditingController(),
       criminalNumberController = TextEditingController(),
       rewardController = TextEditingController();
+  File _image;
+  final picker = ImagePicker();
   Size size;
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -21,46 +28,65 @@ class _CreateWantedState extends State<CreateWanted> {
         backgroundColor: Colors.redAccent,
         title: Text('New Wanted Person'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(12),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              createAddImage(),
-              textFormFeld(
-                width: size.width,
-                controller: nameController,
-                label: 'Name',
-              ),
-              textFormFeld(
-                width: size.width,
-                controller: aliasController,
-                label: 'Alias',
-              ),
-              textFormFeld(
-                width: size.width,
-                controller: aliasController,
-                label: 'Last Known Address',
-              ),
-              textFormFeld(
-                width: size.width,
-                controller: aliasController,
-                label: 'Hotline Number',
-              ),
-              textFormFeld(
-                width: size.width,
-                controller: aliasController,
-                label: 'Reward',
-              ),
-              RaisedButton(
-                color: Colors.redAccent,
-                child: Text(
-                  'Add',
-                  style: TextStyle(color: Colors.white),
+      body: Form(
+        key: _formKey,
+        child: Container(
+          padding: EdgeInsets.all(12),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                createAddImage(),
+                textFormFeld(
+                  width: size.width,
+                  controller: nameController,
+                  label: 'Name',
                 ),
-                onPressed: () {},
-              )
-            ],
+                textFormFeld(
+                  width: size.width,
+                  controller: aliasController,
+                  label: 'Alias',
+                ),
+                textFormFeld(
+                  width: size.width,
+                  controller: lastKnownAddressController,
+                  label: 'Last Known Address',
+                ),
+                textFormFeld(
+                  width: size.width,
+                  controller: contactController,
+                  label: 'Hotline Number',
+                ),
+                textFormFeld(
+                  width: size.width,
+                  controller: rewardController,
+                  label: 'Reward',
+                ),
+                RaisedButton(
+                    color: Colors.redAccent,
+                    child: Text(
+                      'Add',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      //validate!
+                      if (_formKey.currentState.validate()) {
+                        Wanted wanted = Wanted();
+                        wanted.alias = aliasController.text;
+                        wanted.contactHotline = contactController.text;
+                        wanted.criminalCaseNumber =
+                            criminalNumberController.text;
+                        wanted.lastKnownAddress =
+                            lastKnownAddressController.text;
+                        wanted.name = nameController.text;
+                        wanted.reward = rewardController.text;
+
+                        //service
+                        UserService()
+                            .addCriminalPoster(wanted: wanted, file: _image);
+                      }
+                    })
+              ],
+            ),
           ),
         ),
       ),
@@ -97,11 +123,19 @@ class _CreateWantedState extends State<CreateWanted> {
 
   createAddImage() {
     return Stack(children: [
-      CircleAvatar(
-        radius: 70,
-        child: Image.network(
-            'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977'),
-      ),
+      _image == null
+          ? CircleAvatar(
+              radius: 70, child: Image.asset('assets/police-img.png'))
+          : ClipOval(
+              child: Container(
+                width: 150,
+                height: 150,
+                child: Image.file(
+                  _image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
       Positioned(
         left: 95,
         top: 95,
@@ -111,11 +145,26 @@ class _CreateWantedState extends State<CreateWanted> {
             child: InkWell(
               child: SizedBox(
                   width: 42, height: 42, child: Icon(Icons.photo_camera)),
-              onTap: () {},
+              onTap: () => getImage(),
             ),
           ),
         ),
       )
     ]);
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+
+        debugPrint('hey');
+        print(_image);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 }

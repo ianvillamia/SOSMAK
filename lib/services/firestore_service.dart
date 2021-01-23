@@ -1,5 +1,7 @@
+import 'package:SOSMAK/models/wanted.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
 import '../models/userModel.dart';
@@ -10,6 +12,8 @@ class UserService {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference courses =
       FirebaseFirestore.instance.collection('courses');
+  CollectionReference wantedList =
+      FirebaseFirestore.instance.collection('wantedList');
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
     this.users.doc(uid).set(user.toMap()).then((value) {});
@@ -55,6 +59,28 @@ class UserService {
     return await firebase_storage.FirebaseStorage.instance
         .ref('uploads/$fileName.png')
         .putFile(file);
+  }
+
+  Future addCriminalPoster(
+      {@required Wanted wanted, @required File file}) async {
+    //upload first
+    bool added;
+    try {
+      if (file != null) {
+        uploadFile(file).then((value) async {
+          String downUrl = await value.ref.getDownloadURL();
+          wanted.imageUrl = downUrl;
+          await wantedList.add(wanted.toMap()).then((value) => added = true);
+        });
+      } else {
+        await wantedList.add(wanted.toMap()).then((value) => added = true);
+      }
+
+      return added;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   void addCoursesToUser(uid) async {

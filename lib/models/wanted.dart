@@ -17,4 +17,16 @@ class Wanted {
     this.contactHotline = doc.data()['contactHotline'];
     this.imageUrl = doc.data()['imageUrl'];
   }
+  Wanted();
+  toMap() {
+    return {
+      'name': this.name,
+      'alias': this.alias,
+      'reward': this.reward,
+      'criminalCaseNumber': this.criminalCaseNumber,
+      'lastKnownAddress': this.lastKnownAddress,
+      'contactHotline': this.contactHotline,
+      'imageUrl': this.imageUrl
+    };
+  }
 }
