@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
 
@@ -31,8 +36,10 @@ class _IncidentReportState extends State<IncidentReport> {
       incidentController = TextEditingController(),
       descController = TextEditingController();
   Size size;
-  // double _width, _height;
-  // String _setTime, _setDate;
+  final picker = ImagePicker();
+  File image;
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _hour, _minute, _time;
   String dateTime;
@@ -41,7 +48,7 @@ class _IncidentReportState extends State<IncidentReport> {
 
   List<Company> _companies = Company.getCompanies();
   List<DropdownMenuItem<Company>> _dropdownMenuItems;
-  Company _selectedCompany;
+  Company _selectedIncident;
 
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -96,7 +103,7 @@ class _IncidentReportState extends State<IncidentReport> {
 
   onChangeDropdownItem(Company selectedCompany) {
     setState(() {
-      _selectedCompany = selectedCompany;
+      _selectedIncident = selectedCompany;
     });
   }
 
@@ -104,6 +111,7 @@ class _IncidentReportState extends State<IncidentReport> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('SOSMAK'),
         leading: IconButton(
@@ -113,108 +121,168 @@ class _IncidentReportState extends State<IncidentReport> {
           },
         ),
       ),
-      body: Container(
-        width: size.width,
-        height: size.height,
-        padding: EdgeInsets.all(12),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Incident Report',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              textFormFeld(
-                width: size.width,
-                controller: locationController,
-                label: 'Location',
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      body: Form(
+        key: _formKey,
+        child: Container(
+          width: size.width,
+          height: size.height,
+          padding: EdgeInsets.all(10),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Incident Report',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
                 textFormFeld(
-                  enable: false,
-                  width: size.width * 0.6,
-                  controller: dateController,
-                  label: 'Date',
+                  width: size.width,
+                  controller: locationController,
+                  label: 'Location',
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      textFormFeld(
+                        enable: false,
+                        width: size.width * 0.6,
+                        controller: dateController,
+                        label: 'Date',
+                      ),
+                      button(
+                          name: 'Set Date',
+                          btncolor: Colors.white70,
+                          onPressed: () => _selectDate(context)),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      textFormFeld(
+                        enable: false,
+                        width: size.width * 0.6,
+                        controller: timeController,
+                        label: 'Time',
+                      ),
+                      button(
+                          name: 'Set Time',
+                          btncolor: Colors.white70,
+                          onPressed: () => _selectTime(context)),
+                    ]),
+                Container(
+                  width: size.width,
+                  height: size.height * 0.085,
+                  child: DropdownButton(
+                    isExpanded: true,
+                    hint: Text('Please select an Incident'),
+                    value: _selectedIncident,
+                    items: _dropdownMenuItems,
+                    onChanged: onChangeDropdownItem,
+                  ),
+                ),
+                textFormFeld(
+                  maxLines: 5,
+                  width: size.width,
+                  controller: descController,
+                  label: 'Description',
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      child: button(
+                        name: 'Gallery',
+                        btncolor: Colors.blue,
+                        color: Colors.white,
+                        haveIcon: true,
+                        icon: Icons.image,
+                        onPressed: () {
+                          getImagefromGallery();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.02,
+                    ),
+                    Container(
+                      width: 40,
+                      child: button(
+                        name: 'Camera',
+                        btncolor: Colors.blue,
+                        color: Colors.white,
+                        haveIcon: true,
+                        icon: Icons.photo_camera,
+                        onPressed: () {
+                          getImagefromCamera();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: image == null
+                      ? SizedBox()
+                      : Container(
+                          width: 80,
+                          height: 80,
+                          child: Image.file(
+                            image,
+                            fit: BoxFit.fill,
+                          )),
                 ),
                 button(
-                    name: 'Set Date',
-                    btncolor: Colors.white70,
-                    onPressed: () => _selectDate(context)),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                textFormFeld(
-                  enable: false,
-                  width: size.width * 0.6,
-                  controller: timeController,
-                  label: 'Time',
-                ),
-                button(
-                    name: 'Set Time',
-                    btncolor: Colors.white70,
-                    onPressed: () => _selectTime(context)),
-              ]),
-              Container(
-                width: size.width,
-                height: size.height * 0.085,
-                child: DropdownButton(
-                  isExpanded: true,
-                  hint: Text('Please select an Incident'),
-                  value: _selectedCompany,
-                  items: _dropdownMenuItems,
-                  onChanged: onChangeDropdownItem,
-                ),
-              ),
-              textFormFeld(
-                maxLines: 5,
-                width: size.width,
-                controller: descController,
-                label: 'Description',
-              ),
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    child: button(
-                      name: 'Save',
-                      btncolor: Colors.blue,
-                      color: Colors.white,
-                      haveIcon: true,
-                      icon: Icons.image,
-                      onPressed: () {},
-                    ),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.02,
-                  ),
-                  Container(
-                    width: 40,
-                    child: button(
-                      name: 'Save',
-                      btncolor: Colors.blue,
-                      color: Colors.white,
-                      haveIcon: true,
-                      icon: Icons.photo_camera,
-                      onPressed: () {},
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.1,
-              ),
-              button(
-                name: 'Save',
-                btncolor: Colors.blue,
-                color: Colors.white,
-                onPressed: () {},
-              )
-            ],
+                  name: 'Save',
+                  btncolor: Colors.blue,
+                  color: Colors.white,
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      IncidentModel incident = IncidentModel();
+                      incident.location = locationController.text;
+                      incident.date =
+                          '${dateController.text}, ${timeController.text}';
+                      incident.incident = _selectedIncident.name;
+                      incident.desc = descController.text;
+
+                      UserService()
+                          .addIncidentReport(incident: incident, file: image)
+                          .then((value) {
+                        setState(() {
+                          reset();
+                        });
+
+                        _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text('Incident Reported Successfully'),
+                          ),
+                        );
+                        // if (value == true) {
+                        //   Alerts.showAlertDialog(context,
+                        //       title: 'Created Successfully');
+                        // } else {
+                        //   //problem error
+                        //   Alerts.showAlertDialog(context,
+                        //       title: 'Problem with Create');
+                        // }
+                      });
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  reset() {
+    locationController.text = '';
+    dateController.text = '';
+    timeController.text = '';
+    _selectedIncident.name = '';
+    descController.text = '';
+    image = null;
   }
 
   textFormFeld(
@@ -225,8 +293,9 @@ class _IncidentReportState extends State<IncidentReport> {
       bool enable}) {
     return Container(
       width: width,
-      padding: EdgeInsets.only(top: 8, bottom: 8),
+      padding: EdgeInsets.only(top: 6, bottom: 6),
       child: TextFormField(
+        textCapitalization: TextCapitalization.words,
         enabled: enable,
         maxLines: maxLines ?? 1,
         controller: controller,
@@ -260,5 +329,35 @@ class _IncidentReportState extends State<IncidentReport> {
           ? Icon(icon, color: Colors.white)
           : Text(name, style: TextStyle(color: color ?? Colors.black)),
     );
+  }
+
+  Future getImagefromGallery() async {
+    final fileGallery = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (fileGallery != null) {
+        image = File(fileGallery.path);
+
+        debugPrint('hey');
+        print(image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future getImagefromCamera() async {
+    var fileCamera = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (fileCamera != null) {
+        image = File(fileCamera.path);
+
+        debugPrint('hey');
+        print(image);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 }

@@ -36,11 +36,13 @@ class _HomeState extends State<Home> {
       setState(() {
         isPolice = true;
       });
-    } else if (userDetailsProvider.currentUser.role == 'admin') {
+    }
+    if (userDetailsProvider.currentUser.role == 'admin') {
       setState(() {
         isAdmin = true;
       });
-    } else if (userDetailsProvider.currentUser.role == 'citizen') {
+    }
+    if (userDetailsProvider.currentUser.role == 'citizen') {
       setState(() {
         isCitizen = true;
       });

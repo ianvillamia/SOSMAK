@@ -1,4 +1,5 @@
-import 'package:SOSMAK/models/wanted.dart';
+import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/models/wantedModel.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,8 @@ class UserService {
       FirebaseFirestore.instance.collection('courses');
   CollectionReference wantedList =
       FirebaseFirestore.instance.collection('wantedList');
+  CollectionReference incidentReport =
+      FirebaseFirestore.instance.collection('incidentReport');
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
     this.users.doc(uid).set(user.toMap()).then((value) {});
@@ -108,5 +111,41 @@ class UserService {
       }
       // return UserModel.get(doc);
     });
+  }
+
+  Future uploadIncidentImage(File file) async {
+    // File file = File(filePath);
+    DateTime date = DateTime.now();
+    String fileName = date.toString();
+
+    return await firebase_storage.FirebaseStorage.instance
+        .ref('uploads/incident/$fileName.png')
+        .putFile(file);
+  }
+
+  Future addIncidentReport(
+      {@required IncidentModel incident, File file}) async {
+    bool added;
+    try {
+      if (file != null) {
+        uploadIncidentImage(file).then((value) async {
+          String downUrl = await value.ref.getDownloadURL();
+          incident.imageUrl = downUrl;
+          await incidentReport
+              .add(incident.toMap())
+              .then((value) => added = true);
+        });
+      } else {
+        incident.imageUrl = '';
+        await incidentReport
+            .add(incident.toMap())
+            .then((value) => added = true);
+      }
+
+      return added;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }

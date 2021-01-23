@@ -1,4 +1,4 @@
-import 'package:SOSMAK/models/wanted.dart';
+import 'package:SOSMAK/models/wantedModel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:SOSMAK/widgets/alert.dart';
 import 'package:flutter/material.dart';
@@ -160,14 +160,14 @@ class _CreateWantedState extends State<CreateWanted> {
               ),
             ),
       Positioned(
-        left: 95,
-        top: 95,
+        left: 110,
+        top: 110,
         child: ClipOval(
           child: Material(
             color: Colors.grey[200],
             child: InkWell(
               child: SizedBox(
-                  width: 42, height: 42, child: Icon(Icons.photo_camera)),
+                  width: 40, height: 40, child: Icon(Icons.photo_camera)),
               onTap: () => getImage(),
             ),
           ),

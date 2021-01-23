@@ -120,6 +120,8 @@ class _MapViewState extends State<MapView> {
   Completer<GoogleMapController> _controller = Completer();
 
   void _showDirectionsPanel() {
+    markers.clear();
+    polylines.clear();
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -155,9 +157,11 @@ class _MapViewState extends State<MapView> {
   }
 
   void searchNearby(double latitude, double longitude) async {
+    PolylineId id = PolylineId('poly');
     setState(() {
       placesMarkers.clear();
-      polylines.clear();
+      if (polylines.isNotEmpty) polylines.clear();
+      if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
     });
     String url =
         '$baseUrl?key=$_API_KEY&location=${_currentPosition.latitude},${_currentPosition.longitude}&radius=3000&keyword=$keyword';
@@ -212,7 +216,7 @@ class _MapViewState extends State<MapView> {
   }
 
   int btnCTR = 0;
-  void getHospitals(Position pos) async {
+  getHospitals(Position pos) async {
     setState(() {
       placesMarkers.clear();
     });
@@ -619,6 +623,7 @@ class _MapViewState extends State<MapView> {
                             keyword = 'Hospital';
                             searchNearby(_currentPosition.latitude,
                                 _currentPosition.longitude);
+                            btnCTR = 0;
                             _showPlacesPanel();
                           },
                         ),
@@ -629,6 +634,8 @@ class _MapViewState extends State<MapView> {
                             keyword = 'Police-Station';
                             searchNearby(_currentPosition.latitude,
                                 _currentPosition.longitude);
+
+                            btnCTR = 0;
                             _showPlacesPanel();
                           },
                         ),
@@ -639,6 +646,8 @@ class _MapViewState extends State<MapView> {
                             keyword = 'Fire-Station';
                             searchNearby(_currentPosition.latitude,
                                 _currentPosition.longitude);
+
+                            btnCTR = 0;
                             _showPlacesPanel();
                           },
                         ),
@@ -729,8 +738,8 @@ class _MapViewState extends State<MapView> {
                       Position posit = Position(
                           latitude: first.coordinates.latitude,
                           longitude: first.coordinates.longitude);
-                      getHospitals(posit);
-                      print("asdasd ${first.coordinates.latitude}");
+                      await getHospitals(posit);
+                      await getHospitals(posit);
                     } else {}
                   },
                   child: Card(
