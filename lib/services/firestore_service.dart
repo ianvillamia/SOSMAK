@@ -73,6 +73,8 @@ class UserService {
           await wantedList.add(wanted.toMap()).then((value) => added = true);
         });
       } else {
+        wanted.imageUrl =
+            'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/190640.png?alt=media&token=479813fa-4c85-46ce-a3ef-675941f0119a';
         await wantedList.add(wanted.toMap()).then((value) => added = true);
       }
 

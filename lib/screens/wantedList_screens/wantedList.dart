@@ -1,5 +1,8 @@
+import 'package:SOSMAK/models/userModel.dart';
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/wanted.dart';
 import '../wantedList_screens/createWanted.dart';
@@ -13,19 +16,36 @@ class WantedList extends StatefulWidget {
 
 class _WantedListState extends State<WantedList> {
   Size size;
+  UserDetailsProvider currentUser;
+  bool isAdmin = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    currentUser = Provider.of<UserDetailsProvider>(context, listen: false);
+    if (currentUser.currentUser.role == 'admin') {
+      setState(() {
+        isAdmin = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    print(currentUser.currentUser.role);
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          backgroundColor: Colors.red,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateWanted()),
-            );
-          },
+        floatingActionButton: Visibility(
+          visible: isAdmin,
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            backgroundColor: Colors.red,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateWanted()),
+              );
+            },
+          ),
         ),
         appBar: AppBar(
           backgroundColor: Colors.redAccent,
@@ -159,7 +179,8 @@ class _WantedPosterState extends State<WantedPoster> {
               style: TextStyle(
                   color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            Image.network(widget.wanted.imageUrl),
+            Container(
+                height: 150, child: Image.network(widget.wanted.imageUrl)),
             Text(
               'Reward:' + widget.wanted.reward,
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),

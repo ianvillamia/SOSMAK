@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/wanted.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
+import 'package:SOSMAK/widgets/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -82,7 +83,20 @@ class _CreateWantedState extends State<CreateWanted> {
 
                         //service
                         UserService()
-                            .addCriminalPoster(wanted: wanted, file: _image);
+                            .addCriminalPoster(wanted: wanted, file: _image)
+                            .then((value) {
+                          //reset controllers
+                          reset();
+                          Navigator.pop(context);
+                          // if (value == true) {
+                          //   Alerts.showAlertDialog(context,
+                          //       title: 'Created Successfully');
+                          // } else {
+                          //   //problem error
+                          //   Alerts.showAlertDialog(context,
+                          //       title: 'Problem with Create');
+                          // }
+                        });
                       }
                     })
               ],
@@ -91,6 +105,15 @@ class _CreateWantedState extends State<CreateWanted> {
         ),
       ),
     );
+  }
+
+  reset() {
+    nameController.text = '';
+    lastKnownAddressController.text = '';
+    aliasController.text = '';
+    contactController.text = '';
+    criminalNumberController.text = '';
+    rewardController.text = '';
   }
 
   textFormFeld(
