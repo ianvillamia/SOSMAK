@@ -70,7 +70,7 @@ class _ChatState extends State<Chat> {
               StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('conversation')
-                      .doc('jSpFfl33LGIre8OQ7Drq')
+                      .doc(widget.doc.id)
                       .collection('chats')
                       .orderBy('date')
                       .snapshots(),
@@ -114,7 +114,6 @@ class _ChatState extends State<Chat> {
                     ),
               Container(
                   width: size.width,
-                  height: size.height * .2,
                   child: Column(
                     children: [
                       _imagePreview(),

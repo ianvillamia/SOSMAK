@@ -11,7 +11,7 @@ class ChatService {
     List users = [user2, user1];
     var haveConversation;
     users.sort();
-    var conversation;
+    DocumentSnapshot conversation;
     await this
         .conversationCollection
         .limit(1)
@@ -21,7 +21,9 @@ class ChatService {
       if (snapshot.size == 0) {
         //create conversation
         print('no doc with that');
-        conversation = null;
+        await conversationCollection.add({'users': users}).then((doc) async {
+          conversation = await conversationCollection.doc(doc.id).get();
+        });
       } else {
         //call here?
         //fetch conversation
