@@ -22,27 +22,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isPolice = false;
-  Size size;
-  UserDetailsProvider userDetailsProvider;
   bool isAdmin = false;
   bool isCitizen = false;
+  Size size;
+  UserDetailsProvider userDetailsProvider;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     userDetailsProvider =
         Provider.of<UserDetailsProvider>(context, listen: false);
-    if (userDetailsProvider.currentUser.role == 'police') {
+    if (userDetailsProvider.currentUser.role == 'police' ?? '') {
       setState(() {
         isPolice = true;
       });
-    }
-    if (userDetailsProvider.currentUser.role == 'admin') {
+    } else if (userDetailsProvider.currentUser.role == 'admin' ?? '') {
       setState(() {
         isAdmin = true;
       });
-    }
-    if (userDetailsProvider.currentUser.role == 'citizen') {
+    } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
       setState(() {
         isCitizen = true;
       });

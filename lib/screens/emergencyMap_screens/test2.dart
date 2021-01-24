@@ -728,7 +728,7 @@ class _MapViewState extends State<MapView> {
                     setState(() {
                       btnCTR++;
                     });
-                    if (btnCTR <= 2) {
+                    if (btnCTR <= 1) {
                       String hospital = places[index].name;
                       //geocoding reverse
                       var addresses =
@@ -740,6 +740,8 @@ class _MapViewState extends State<MapView> {
                           longitude: first.coordinates.longitude);
                       await getHospitals(posit);
                       await getHospitals(posit);
+
+                      Navigator.pop(context);
                     } else {}
                   },
                   child: Card(
