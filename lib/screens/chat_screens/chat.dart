@@ -158,79 +158,74 @@ class _ChatState extends State<Chat> {
     }
   }
 
+  _buildMessageBox(
+      {@required Alignment alignment,
+      @required ChatModel chat,
+      @required bool withImage}) {
+    if (withImage) {
+      return Align(
+        alignment: alignment,
+        child: Card(
+          elevation: 5,
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(chat.message),
+                ),
+                chat.imageUrl != null
+                    ? _buildImages(chat.imageUrl.toString())
+                    : Container(),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Card(
+          elevation: 5,
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(chat.message),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   _buildMessage(DocumentSnapshot doc) {
     // print(doc.data()['imageUrl']);
     ChatModel chat = ChatModel.get(doc);
-    if (chat.imageUrl != null) {
-      if (chat.senderRef == firebaseUser.uid) {
-        return Align(
-          alignment: Alignment.centerRight,
-          child: Card(
-            elevation: 5,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(chat.message),
-                  ),
-                  chat.imageUrl != null
-                      ? _buildImages(chat.imageUrl.toString())
-                      : Container(),
-                ],
-              ),
-            ),
-          ),
-        );
+    //if (chat.imageUrl != null) {
+    if (chat.senderRef == firebaseUser.uid) {
+      //ako nag send
+      if (chat.imageUrl != null) {
+        return _buildMessageBox(
+            alignment: Alignment.centerRight, chat: chat, withImage: true);
       } else {
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: Card(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(chat.message),
-                ),
-              ],
-            ),
-          ),
-        );
+        return _buildMessageBox(
+            alignment: Alignment.centerRight, chat: chat, withImage: false);
       }
-    } else {
-      if (chat.senderRef == firebaseUser.uid) {
-        return Align(
-          alignment: Alignment.centerRight,
-          child: Card(
-            elevation: 5,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(chat.message),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+    }
+    //other sender
+    else {
+      if (chat.imageUrl != null) {
+        return _buildMessageBox(
+            alignment: Alignment.centerLeft, chat: chat, withImage: true);
       } else {
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: Card(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(chat.message),
-                ),
-              ],
-            ),
-          ),
-        );
+        return _buildMessageBox(
+            alignment: Alignment.centerRight, chat: chat, withImage: false);
       }
     }
   }

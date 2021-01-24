@@ -1,4 +1,5 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/screens/admin/incidentReportsAdmin/bottomSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,6 +12,7 @@ class IncidentReportAdmin extends StatefulWidget {
 
 class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   Size size;
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -117,135 +119,13 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   }
 
   _buildBottomSheet(BuildContext context, IncidentModel incident) {
-    bool showDispatch = true;
-    if (incident.status == 1) {
-      showDispatch = false;
-    }
-    return Container(
-        color: Colors.grey[900],
-        height: size.height * .5,
-        child: Stack(children: [
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              height: size.height * .45,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 5),
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Incident:',
-                              style: whiteText(),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            buildChip(text: incident.incident)
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Date: ' + incident.date,
-                          style: whiteText(),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Location:' + incident.location,
-                          style: whiteText(),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Description:',
-                          style: whiteText(),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            incident.desc,
-                            style: whiteText(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Visibility(
-                          visible: showDispatch,
-                          child: MaterialButton(
-                            color: Colors.blueAccent,
-                            elevation: 3,
-                            onPressed: () {},
-                            child: Text('Dispatch Officers'),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        MaterialButton(
-                          color: Colors.white,
-                          elevation: 2,
-                          onPressed: () {},
-                          child: Text('Update Status'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-              icon: Icon(
-                Icons.close,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ]));
+    return IncidentReportBottomSheet(
+      incident: incident,
+      context: context,
+    );
   }
 
   whiteText() {
     return TextStyle(color: Colors.white, fontSize: 17);
-  }
-
-  buildChip({@required String text}) {
-    Color color = Colors.red;
-    switch (text.toLowerCase()) {
-      case 'murder':
-        color = Colors.red;
-
-        break;
-      default:
-        color = Colors.grey;
-    }
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)), color: color),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          text,
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
   }
 }

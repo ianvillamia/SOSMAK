@@ -42,18 +42,15 @@ class _ChatListState extends State<ChatList> {
                   if (snapshot.hasData) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: SingleChildScrollView(
-                          child: Container(
-                            width: size.width * .95,
-                            height: size.height * .78,
-                            child: Scrollbar(
-                              child: Column(
-                                  children: snapshot.data.docs
-                                      .map<Widget>((doc) => _buildCard(doc))
-                                      .toList()),
-                            ),
+                      child: Container(
+                        width: size.width,
+                        height: size.height,
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            child: Column(
+                                children: snapshot.data.docs
+                                    .map<Widget>((doc) => _buildCard(doc))
+                                    .toList()),
                           ),
                         ),
                       ),
