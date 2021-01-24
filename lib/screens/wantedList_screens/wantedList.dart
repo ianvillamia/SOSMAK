@@ -17,7 +17,7 @@ class WantedList extends StatefulWidget {
 class _WantedListState extends State<WantedList> {
   Size size;
   UserDetailsProvider currentUser;
-  bool isAdmin = false;
+  bool isAdmin = true;
   @override
   void initState() {
     // TODO: implement initState

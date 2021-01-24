@@ -47,7 +47,6 @@ class AuthenticationWrapper extends StatelessWidget {
     //set current User here
 
     if (firebaseUser != null) {
-      AuthenticationService.getCurrentUser(firebaseUser.uid, context);
       return Home();
     }
 

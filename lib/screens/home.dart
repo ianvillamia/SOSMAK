@@ -5,6 +5,7 @@ import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
@@ -27,53 +28,57 @@ class _HomeState extends State<Home> {
   Size size;
   UserDetailsProvider userDetailsProvider;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+  setViews() {
     if (userDetailsProvider.currentUser.role == 'police' ?? '') {
-      setState(() {
-        isPolice = true;
-      });
+      isPolice = true;
     } else if (userDetailsProvider.currentUser.role == 'admin' ?? '') {
-      setState(() {
-        isAdmin = true;
-      });
+      isAdmin = true;
     } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
-      setState(() {
-        isCitizen = true;
-      });
+      isCitizen = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-
+    final firebaseUser = context.watch<User>();
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         width: size.width,
         height: size.height,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _buildTiles(),
-              // _buildButtons();
-              Align(
-                alignment: Alignment.center,
-                child: MaterialButton(
-                    color: Colors.redAccent,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      context.read<AuthenticationService>().signOut();
-                    },
-                    child: Text('Logout')),
-              ),
-            ],
-          ),
+        child: FutureBuilder(
+          future:
+              AuthenticationService.getCurrentUser(firebaseUser.uid, context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              setViews();
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _buildTiles(),
+                    // _buildButtons();
+                    Align(
+                      alignment: Alignment.center,
+                      child: MaterialButton(
+                          color: Colors.redAccent,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            context.read<AuthenticationService>().signOut();
+                          },
+                          child: Text('Logout')),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );

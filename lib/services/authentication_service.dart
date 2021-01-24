@@ -26,7 +26,7 @@ class AuthenticationService {
     }
   }
 
-  static getCurrentUser(String uid, BuildContext context) async {
+  static Future getCurrentUser(String uid, BuildContext context) async {
     try {
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
