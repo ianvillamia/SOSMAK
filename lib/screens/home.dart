@@ -13,6 +13,7 @@ import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './wantedList_screens/wantedList.dart';
+import 'admin/incidentReportsAdmin/incidentReportsAdmin.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -140,6 +141,7 @@ class _HomeState extends State<Home> {
             child: _buildTile(
                 color: Colors.white,
                 text: 'Incident Report Admin',
+                widget: IncidentReportAdmin(),
                 icon: Icons.bar_chart_sharp),
           )
         ],

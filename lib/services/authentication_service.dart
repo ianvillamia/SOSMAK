@@ -13,16 +13,18 @@ class AuthenticationService {
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   UserService _userService = UserService();
 
-  Future<String> signIn({String email, String password}) async {
+  Future signIn({String email, String password}) async {
+    var isSuccessful;
     try {
       await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) {
         //get user if
+        isSuccessful = true;
       });
-      return 'Signed in';
+      return isSuccessful;
     } on FirebaseAuthException catch (e) {
-      return Future.error(e.message);
+      return e;
     }
   }
 
@@ -39,21 +41,23 @@ class AuthenticationService {
     }
   }
 
-  Future<String> signUp(
+  Future signUp(
       {@required String email,
       @required String password,
       @required UserModel user}) async {
     try {
+      var isSuccessful;
       await _firebaseAuth
           .createUserWithEmailAndPassword(
               email: email.trim(), password: password.trim())
           .then((doc) async {
+        isSuccessful = true;
         await _userService.addUserToCollection(user: user, uid: doc.user.uid);
       });
-      return 'Signed Up';
+      return isSuccessful;
     } on FirebaseAuthException catch (e) {
       print(e);
-      return Future.error(e);
+      return e;
     }
   }
 
