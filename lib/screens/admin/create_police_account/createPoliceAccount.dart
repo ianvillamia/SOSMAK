@@ -1,7 +1,9 @@
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreatePoliceAccount extends StatefulWidget {
   CreatePoliceAccount({Key key}) : super(key: key);
@@ -11,6 +13,13 @@ class CreatePoliceAccount extends StatefulWidget {
 }
 
 class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
+  bool isAdmin;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;

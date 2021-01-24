@@ -7,5 +7,6 @@ class UserDetailsProvider extends ChangeNotifier {
   setCurrentUser(DocumentSnapshot doc) {
     UserModel _user = UserModel.get(doc);
     this.currentUser = _user;
+    notifyListeners();
   }
 }
