@@ -24,8 +24,7 @@ class IncidentModel {
       'incident': this.incident,
       'desc': this.desc,
       'imageUrl': this.imageUrl,
-      'status':
-          0 //status are 0=no action yet //1= onRoute police //2 = resolved
+      'status': 0 //status are 0=no action yet //1= onRoutes //2 = resolved
     };
   }
 }

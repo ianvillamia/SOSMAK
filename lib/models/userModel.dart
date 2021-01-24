@@ -7,14 +7,14 @@ class UserModel {
   String ref = '';
   String address = '';
   String role = '';
-  String hivTest = 'Negative',
-      tbTest = 'Negative',
-      heartDisease = 'Negative',
-      highBlood = 'Negative',
-      malaria = 'Negative',
-      liverFunction = 'Negative',
-      vdrlTest = 'Negative',
-      tpaTest = 'Negative';
+  bool hivTest,
+      tbTest,
+      heartDisease,
+      highBlood,
+      malaria,
+      liverFunction,
+      vdrlTest,
+      tpaTest;
 
   String tempPassword = '';
   UserModel.get(DocumentSnapshot doc) {

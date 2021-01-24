@@ -94,27 +94,24 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                                 style: whiteText(),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Visibility(
-                              visible: showDispatch,
-                              child: MaterialButton(
-                                color: Colors.blueAccent,
-                                elevation: 3,
-                                onPressed: () {
-                                  _pageController.animateToPage(
-                                    1,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
-                                child: Text('Dispatch Officers'),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            // Visibility(
+                            //   visible: showDispatch,
+                            //   child: MaterialButton(
+                            //     color: Colors.blueAccent,
+                            //     elevation: 3,
+                            //     onPressed: () {
+                            //       _pageController.animateToPage(
+                            //         1,
+                            //         duration: const Duration(milliseconds: 400),
+                            //         curve: Curves.easeInOut,
+                            //       );
+                            //     },
+                            //     child: Text('Dispatch Officers'),
+                            //   ),
+                            // ),
                             MaterialButton(
                               color: Colors.white,
                               elevation: 2,

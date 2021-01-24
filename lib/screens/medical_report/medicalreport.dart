@@ -22,19 +22,15 @@ class RadioGroups {
 class _MedicalReportState extends State<MedicalReport> {
   Size size;
 
-  String hivGroup = "Negative";
-  String tbGroup = "Negative";
-  String hdGroup = "Negative";
-  String hbGroup = "Negative";
-  String malGroup = "Negative";
-  String lfGroup = "Negative";
-  String vdrlGroup = "Negative";
-  String tpaGroup = "Negative";
+  UserDetailsProvider userDetailsProvider;
 
   List<String> _hivChoice = ["Positive", "Negative"];
 
   @override
   Widget build(BuildContext context) {
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
+    print(userDetailsProvider.currentUser.hivTest);
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -96,14 +92,30 @@ class _MedicalReportState extends State<MedicalReport> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
-                      result(result: 'Negative'),
+                      result(
+                          result: userDetailsProvider.currentUser.hivTest
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.tbTest
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.heartDisease
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.highBlood
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.malaria
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.liverFunction
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.vdrlTest
+                              .toString()),
+                      result(
+                          result: userDetailsProvider.currentUser.tpaTest
+                              .toString()),
                     ],
                   ),
                 ),

@@ -12,15 +12,6 @@ class _UpdateMedicalReportState extends State<UpdateMedicalReport> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   Size size;
 
-  bool choice1 = false,
-      choice2 = false,
-      choice3 = false,
-      choice4 = false,
-      choice5 = false,
-      choice6 = false,
-      choice7 = false,
-      choice8 = false;
-
   String hivGroup = "Negative";
   String tbGroup = "Negative";
   String hdGroup = "Negative";
@@ -117,46 +108,6 @@ class _UpdateMedicalReportState extends State<UpdateMedicalReport> {
                     })),
             RaisedButton(
               onPressed: () {
-                // if (hivGroup == 'Positive') {
-                //   choice1 = true;
-                // } else {
-                //   choice1 = false;
-                // }
-                // if (tbGroup == 'Positive') {
-                //   choice2 = true;
-                // } else {
-                //   choice2 = false;
-                // }
-                // if (hdGroup == 'Positive') {
-                //   choice3 = true;
-                // } else {
-                //   choice3 = false;
-                // }
-                // if (hbGroup == 'Positive') {
-                //   choice4 = true;
-                // } else {
-                //   choice4 = false;
-                // }
-                // if (malGroup == 'Positive') {
-                //   choice5 = true;
-                // } else {
-                //   choice5 = false;
-                // }
-                // if (lfGroup == 'Positive') {
-                //   choice6 = true;
-                // } else {
-                //   choice6 = false;
-                // }
-                // if (vdrlGroup == 'Positive') {
-                //   choice7 = true;
-                // } else {
-                //   choice7 = false;
-                // }
-                // if (tpaGroup == 'Positive') {
-                //   choice8 = true;
-                // } else {
-                //   choice8 = false;
-                // }
                 print('printing ${_hivChoice[1]}');
 
                 User user = auth.currentUser;
@@ -164,14 +115,14 @@ class _UpdateMedicalReportState extends State<UpdateMedicalReport> {
                     .collection('users')
                     .doc(user.uid)
                     .update({
-                      'HIV Test': hivGroup,
-                      'Tuberculosis Test': tbGroup,
-                      'Heart Disease': hdGroup,
-                      'High Blood': hbGroup,
-                      'Malaria': malGroup,
-                      'Liver Function': lfGroup,
-                      'VDRL Test': vdrlGroup,
-                      'TPA Test': tpaGroup,
+                      'hivTest': toBool(hivGroup),
+                      'tbTest': toBool(tbGroup),
+                      'heartDisease': toBool(hdGroup),
+                      'highBlood': toBool(hbGroup),
+                      'malaria': toBool(malGroup),
+                      'liverFunction': toBool(lfGroup),
+                      'vdrlTest': toBool(vdrlGroup),
+                      'tpaTest': toBool(tpaGroup),
                     })
                     .then((value) => print("Added"))
                     .catchError((error) => print("Failed to add quiz: $error"));
@@ -183,6 +134,13 @@ class _UpdateMedicalReportState extends State<UpdateMedicalReport> {
         ),
       ),
     );
+  }
+
+  toBool(String value) {
+    if (value == 'Positive')
+      return true;
+    else
+      return false;
   }
 
   _medicalCat({@required String title, @required onChanged, @required group}) {
