@@ -6,7 +6,7 @@ class UserModel {
   String email = '';
   String ref = '';
   String address = '';
-  String role = '';
+  String role;
   bool hivTest,
       tbTest,
       heartDisease,

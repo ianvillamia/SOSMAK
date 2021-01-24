@@ -1,12 +1,11 @@
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
-
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
-
-import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:SOSMAK/screens/medical_report/medicalRerport2.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
+import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
@@ -40,21 +39,39 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  getUser(String uid) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) {
+      final userDetailsProvider =
+          Provider.of<UserDetailsProvider>(context, listen: false);
+      userDetailsProvider.setCurrentUser(doc);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+    // userDetailsProvider =
+    //     Provider.of<UserDetailsProvider>(context, listen: true);
+
     return Scaffold(
       body: Container(
         width: size.width,
         height: size.height,
         child: FutureBuilder(
-          future:
-              AuthenticationService.getCurrentUser(firebaseUser.uid, context),
+          future: getUser(firebaseUser.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              setViews();
+              //setViews();
               return SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -103,7 +120,7 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Medical Report',
-              widget: MedicalReport(),
+              widget: MedicalReport2(),
               icon: Icons.medical_services),
           _buildTile(
               color: Colors.white,

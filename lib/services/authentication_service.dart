@@ -30,12 +30,17 @@ class AuthenticationService {
 
   static Future getCurrentUser(String uid, BuildContext context) async {
     try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc('sZ3QWKrGWfUumTb7zMbp1d5sxm52')
+          .get()
+          .then((doc) {
+        final userDetailsProvider =
+            Provider.of<UserDetailsProvider>(context, listen: false);
+        userDetailsProvider.setCurrentUser(doc);
+      });
       //set current user
-      final userDetailsProvider =
-          Provider.of<UserDetailsProvider>(context, listen: false);
-      userDetailsProvider.setCurrentUser(userDoc);
+
     } catch (e) {
       debugPrint(e);
     }
