@@ -1,10 +1,15 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'updateIncident.dart';
+
 class IncidentReportBottomSheet extends StatefulWidget {
+  final DocumentSnapshot doc;
   final IncidentModel incident;
   final BuildContext context;
-  IncidentReportBottomSheet({@required this.incident, @required this.context});
+  IncidentReportBottomSheet(
+      {@required this.doc, @required this.incident, @required this.context});
 
   @override
   _IncidentReportBottomSheetState createState() =>
@@ -34,58 +39,62 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
     var size = MediaQuery.of(context).size;
     return Container(
         color: Colors.grey[900],
-        height: size.height * .5,
+        height: size.height * .7,
         child: PageView(
           physics: NeverScrollableScrollPhysics(),
           controller: _pageController,
           children: [
             Stack(children: [
               Align(
-                alignment: Alignment.bottomLeft,
+                alignment: Alignment.topLeft,
                 child: Container(
-                  height: size.height * .45,
+                  height: size.height * .7,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 5),
+                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
                     child: Scrollbar(
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: size.height * 0.05),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Incident:',
+                                      style: whiteText(),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    buildChip(text: widget.incident.incident),
+                                  ],
+                                ),
                                 Text(
-                                  'Incident:',
+                                  'Date: ' + widget.incident.date,
                                   style: whiteText(),
                                 ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                buildChip(text: widget.incident.incident)
                               ],
                             ),
+
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              'Date: ' + widget.incident.date,
+                              'Location: ' + widget.incident.location,
                               style: whiteText(),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              'Location:' + widget.incident.location,
+                              'Description: ',
                               style: whiteText(),
                             ),
                             SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Description:',
-                              style: whiteText(),
-                            ),
-                            SizedBox(
-                              height: 10,
+                              height: 7,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(5.0),
@@ -112,11 +121,19 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                             //     child: Text('Dispatch Officers'),
                             //   ),
                             // ),
+                            Image.network(widget.incident.imageUrl ?? '',
+                                width: 80, height: 80),
                             MaterialButton(
                               color: Colors.white,
                               elevation: 2,
-                              onPressed: () {},
                               child: Text('Update Status'),
+                              onPressed: () {
+                                _pageController.animateToPage(
+                                  1,
+                                  duration: const Duration(milliseconds: 400),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -139,12 +156,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
               ),
             ]),
             //DIPATCH OFFICERS//
-            Container(
-              child: Text(
-                'Dispatch',
-                style: whiteText(),
-              ),
-            ),
+            UpdateIncidentReport(doc: widget.doc, incident: widget.incident),
           ],
         ));
   }

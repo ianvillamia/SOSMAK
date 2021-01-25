@@ -162,4 +162,18 @@ class UserService {
       return false;
     }
   }
+
+  Future<void> updateIncident(DocumentSnapshot doc, String location,
+      String date, String time, String incident, String desc) {
+    return incidentReport
+        .doc(doc.id)
+        .update({
+          'location': location,
+          'date': '$date, $time',
+          'incident': incident,
+          'desc': desc,
+        })
+        .then((value) => print("Incident Updated"))
+        .catchError((error) => print("Failed to update incident: $error"));
+  }
 }

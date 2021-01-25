@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class IncidentReport extends StatefulWidget {
   @override
@@ -107,6 +109,48 @@ class _IncidentReportState extends State<IncidentReport> {
     });
   }
 
+  List<Asset> images = List<Asset>();
+  List<File> files = List<File>();
+  Future<void> pickImages() async {
+    List<Asset> resultList = List<Asset>();
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 5,
+        enableCamera: true,
+        selectedAssets: images,
+        materialOptions: MaterialOptions(
+          actionBarTitle: "SOSMAK",
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    setState(() {
+      images = resultList;
+      getFileList();
+    });
+  }
+
+  Future<File> getImageFileFromAsset(String path) async {
+    final file = File(path);
+    return file;
+  }
+
+  void getFileList() async {
+    files.clear();
+    for (int i = 0; i < images.length; i++) {
+      var path2 =
+          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
+      //var path = await images[i].filePath;
+      print('asdasd $path2');
+      var file = await getImageFileFromAsset(path2);
+      print('asdasd $file');
+      files.add(file);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -186,86 +230,75 @@ class _IncidentReportState extends State<IncidentReport> {
                   controller: descController,
                   label: 'Description',
                 ),
-                Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      child: button(
-                        name: 'Gallery',
-                        btncolor: Colors.blue,
-                        color: Colors.white,
-                        haveIcon: true,
-                        icon: Icons.image,
-                        onPressed: () {
-                          getImagefromGallery();
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.02,
-                    ),
-                    Container(
-                      width: 40,
-                      child: button(
-                        name: 'Camera',
-                        btncolor: Colors.blue,
-                        color: Colors.white,
-                        haveIcon: true,
-                        icon: Icons.photo_camera,
-                        onPressed: () {
-                          getImagefromCamera();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: image == null
-                      ? SizedBox()
-                      : Container(
-                          width: 80,
-                          height: 80,
-                          child: Image.file(
-                            image,
-                            fit: BoxFit.fill,
-                          )),
+                  child: Container(
+                    width: size.width * 0.3,
+                    child: button(
+                      name: 'Gallery',
+                      btncolor: Colors.blue,
+                      color: Colors.white,
+                      haveIcon: true,
+                      icon: Icons.image,
+                      onPressed: pickImages,
+                    ),
+                  ),
                 ),
+                SizedBox(
+                    height: 80.0,
+                    width: size.width,
+                    child: images == null
+                        ? Container(
+                            child: Text('none'),
+                          )
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: images.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: AssetThumb(
+                                    height: 200,
+                                    width: 200,
+                                    asset: images[index],
+                                  ),
+                                ))),
                 button(
                   name: 'Save',
                   btncolor: Colors.blue,
                   color: Colors.white,
                   onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      IncidentModel incident = IncidentModel();
-                      incident.location = locationController.text;
-                      incident.date =
-                          '${dateController.text}, ${timeController.text}';
-                      incident.incident = _selectedIncident.name;
-                      incident.desc = descController.text;
+                    print(images.toList());
+                    // if (_formKey.currentState.validate()) {
+                    //   IncidentModel incident = IncidentModel();
+                    //   incident.location = locationController.text;
+                    //   incident.date =
+                    //       '${dateController.text}, ${timeController.text}';
+                    //   incident.incident = _selectedIncident.name;
+                    //   incident.desc = descController.text;
 
-                      UserService()
-                          .addIncidentReport(incident: incident, file: image)
-                          .then((value) {
-                        setState(() {
-                          reset();
-                        });
+                    //   UserService()
+                    //       .addIncidentReport(incident: incident, file: image)
+                    //       .then((value) {
+                    //     setState(() {
+                    //       reset();
+                    //     });
 
-                        _scaffoldKey.currentState.showSnackBar(
-                          SnackBar(
-                            content: Text('Incident Reported Successfully'),
-                          ),
-                        );
-                        // if (value == true) {
-                        //   Alerts.showAlertDialog(context,
-                        //       title: 'Created Successfully');
-                        // } else {
-                        //   //problem error
-                        //   Alerts.showAlertDialog(context,
-                        //       title: 'Problem with Create');
-                        // }
-                      });
-                    }
+                    //     _scaffoldKey.currentState.showSnackBar(
+                    //       SnackBar(
+                    //         content: Text('Incident Reported Successfully'),
+                    //       ),
+                    //     );
+                    //     // if (value == true) {
+                    //     //   Alerts.showAlertDialog(context,
+                    //     //       title: 'Created Successfully');
+                    //     // } else {
+                    //     //   //problem error
+                    //     //   Alerts.showAlertDialog(context,
+                    //     //       title: 'Problem with Create');
+                    //     // }
+                    //   });
+                    // }
                   },
                 )
               ],
@@ -326,7 +359,16 @@ class _IncidentReportState extends State<IncidentReport> {
       onPressed: onPressed,
       color: btncolor,
       child: haveIcon ?? false
-          ? Icon(icon, color: Colors.white)
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Icon(icon, color: Colors.white),
+                Text(
+                  'Add Images',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            )
           : Text(name, style: TextStyle(color: color ?? Colors.black)),
     );
   }

@@ -6,6 +6,7 @@ class IncidentModel {
   String incident;
   String desc;
   String imageUrl;
+  List images;
   int status;
   IncidentModel.get(DocumentSnapshot doc) {
     this.location = doc.data()['location'] ?? '';

@@ -52,7 +52,11 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title),
+                        Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
                         Container(
                           width: size.width * .95,
                           height: size.height * .2,
@@ -70,16 +74,24 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                 ),
               );
             } else {
-              return Container(
-                width: size.width,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title),
-                      Text('empty'),
-                    ],
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                            width: size.width * .95,
+                            height: size.height * .2,
+                            child: Text("There's no In Progress Incident")),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -99,18 +111,25 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
       elevation: 5,
       child: InkWell(
         onTap: () {
-          showBottomSheet(
+          showModalBottomSheet(
+              isScrollControlled: true,
               context: context,
-              builder: (context) => _buildBottomSheet(context, incident));
+              builder: (context) => Container(
+                  height: MediaQuery.of(context).size.height * 0.95,
+                  child: _buildBottomSheet(doc, context, incident)));
         },
         child: Container(
+          padding: EdgeInsets.all(8),
           width: size.width * .5,
           height: size.height * .1,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Incident:' + '\n' + doc.id),
-              Text('Date:' + '\n' + incident.date),
+              Text('Incident:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(incident.incident),
+              SizedBox(height: size.height * 0.04),
+              Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(incident.date)
             ],
           ),
         ),
@@ -118,8 +137,10 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
     );
   }
 
-  _buildBottomSheet(BuildContext context, IncidentModel incident) {
+  _buildBottomSheet(
+      DocumentSnapshot doc, BuildContext context, IncidentModel incident) {
     return IncidentReportBottomSheet(
+      doc: doc,
       incident: incident,
       context: context,
     );

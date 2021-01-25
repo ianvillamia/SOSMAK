@@ -58,7 +58,8 @@ class _SignupState extends State<Signup> {
                     controller: addressController,
                     label: 'Address',
                     maxLines: 3),
-                _buildTextFormField(controller: emailContoller, label: 'Email'),
+                _buildTextFormField(
+                    caps: false, controller: emailContoller, label: 'Email'),
                 _buildTextFormField(
                     controller: passwordController,
                     label: 'Password',
@@ -127,14 +128,18 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  _buildTextFormField(
-      {TextEditingController controller,
-      String label,
-      bool isPassword,
-      int maxLines}) {
+  _buildTextFormField({
+    TextEditingController controller,
+    String label,
+    bool isPassword,
+    int maxLines,
+    bool caps = true,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
+        textCapitalization:
+            caps ? TextCapitalization.words : TextCapitalization.none,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter a value';
