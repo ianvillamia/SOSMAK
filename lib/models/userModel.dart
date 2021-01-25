@@ -18,20 +18,21 @@ class UserModel {
 
   String tempPassword = '';
   UserModel.get(DocumentSnapshot doc) {
-    this.firstName = doc.data()['firstName'] ?? '';
-    this.lastName = doc.data()['lastName'] ?? '';
-    this.email = doc.data()['email'] ?? '';
-    this.ref = doc.data()['ref'] ?? '';
-    this.role = doc.data()['role'] ?? 'citizen';
-
-    this.hivTest = doc.data()['hivTest'] ?? '';
-    this.tbTest = doc.data()['tbTest'] ?? '';
-    this.heartDisease = doc.data()['heartDisease'] ?? '';
-    this.highBlood = doc.data()['highBlood'] ?? '';
-    this.malaria = doc.data()['malaria'] ?? '';
-    this.liverFunction = doc.data()['liverFunction'] ?? '';
-    this.vdrlTest = doc.data()['vdrlTest'] ?? '';
-    this.tpaTest = doc.data()['tpaTest'] ?? '';
+    try {
+      this.firstName = doc.data()['firstName'] ?? '';
+      this.lastName = doc.data()['lastName'] ?? '';
+      this.email = doc.data()['email'] ?? '';
+      this.ref = doc.data()['ref'] ?? '';
+      this.role = doc.data()['role'] ?? 'citizen';
+      this.hivTest = doc.data()['hivTest'] ?? '';
+      this.tbTest = doc.data()['tbTest'] ?? '';
+      this.heartDisease = doc.data()['heartDisease'] ?? '';
+      this.highBlood = doc.data()['highBlood'] ?? '';
+      this.malaria = doc.data()['malaria'] ?? '';
+      this.liverFunction = doc.data()['liverFunction'] ?? '';
+      this.vdrlTest = doc.data()['vdrlTest'] ?? '';
+      this.tpaTest = doc.data()['tpaTest'] ?? '';
+    } catch (e) {}
   }
   UserModel();
   toMap() {

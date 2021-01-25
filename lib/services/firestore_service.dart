@@ -54,19 +54,19 @@ class UserService {
     }
   }
 
-  Future uploadMultipleImages({List<File> images}) {
-    //  List<Asset> images = List<Asset>();
-    List urls = [];
-    images.forEach((image) {
-      //
-      uploadFile(image).then((value) async {
-        String downUrl = await value.ref.getDownloadURL();
-        //add downurl
-        urls.add(downUrl);
-      });
-      //'images':urls
-    });
-  }
+  // Future uploadMultipleImages({List<File> images}) {
+  //   //  List<Asset> images = List<Asset>();
+  //   List urls = [];
+  //   images.forEach((image) {
+  //     //
+  //     uploadFile(image).then((value) async {
+  //       String downUrl = await value.ref.getDownloadURL();
+  //       //add downurl
+  //       urls.add(downUrl);
+  //     });
+  //     //'images':urls
+  //   });
+  // }
 
   Future uploadFile(File file) async {
     // File file = File(filePath);

@@ -5,6 +5,7 @@ import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import './emergencyMap_screens/test2.dart';
@@ -49,31 +50,36 @@ class _HomeState extends State<Home> {
       body: Container(
         width: size.width,
         height: size.height,
-        child: FutureBuilder(
-          future:
-              AuthenticationService.getCurrentUser(firebaseUser.uid, context),
+        child: FutureBuilder<DocumentSnapshot>(
+          future: AuthenticationService.getCurrentUser(firebaseUser.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              setViews();
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildTiles(),
-                    // _buildButtons();
-                    Align(
-                      alignment: Alignment.center,
-                      child: MaterialButton(
-                          color: Colors.redAccent,
-                          textColor: Colors.white,
-                          onPressed: () {
-                            context.read<AuthenticationService>().signOut();
-                          },
-                          child: Text('Logout')),
-                    ),
-                  ],
-                ),
-              );
+              if (snapshot.hasData) {
+                //  print(snapshot.data);
+                //set thing?
+                userDetailsProvider.setCurrentUser(snapshot.data);
+                setViews();
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // setViews(),
+                      _buildTiles(),
+                      // _buildButtons();
+                      Align(
+                        alignment: Alignment.center,
+                        child: MaterialButton(
+                            color: Colors.redAccent,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              context.read<AuthenticationService>().signOut();
+                            },
+                            child: Text('Logout')),
+                      ),
+                    ],
+                  ),
+                );
+              }
             } else {
               return Center(
                 child: CircularProgressIndicator(),
