@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+//import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
@@ -139,16 +139,16 @@ class _IncidentReportState extends State<IncidentReport> {
   }
 
   void getFileList() async {
-    files.clear();
-    for (int i = 0; i < images.length; i++) {
-      var path2 =
-          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
-      //var path = await images[i].filePath;
-      print('asdasd $path2');
-      var file = await getImageFileFromAsset(path2);
-      print('asdasd $file');
-      files.add(file);
-    }
+    // files.clear();
+    // for (int i = 0; i < images.length; i++) {
+    //   var path2 =
+    //       await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
+    //   //var path = await images[i].filePath;
+    //   print('asdasd $path2');
+    //   var file = await getImageFileFromAsset(path2);
+    //   print('asdasd $file');
+    //   files.add(file);
+    // }
   }
 
   @override

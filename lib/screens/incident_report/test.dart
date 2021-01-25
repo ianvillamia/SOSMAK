@@ -9,7 +9,6 @@ class MyAppSSSS extends StatefulWidget {
 
 class _MyAppSSSSState extends State<MyAppSSSS> {
   List<Asset> images = List<Asset>();
-
   @override
   void initState() {
     super.initState();
@@ -26,7 +25,11 @@ class _MyAppSSSSState extends State<MyAppSSSS> {
         materialOptions: MaterialOptions(
           actionBarTitle: "FlutterCorner.com",
         ),
-      );
+      ).then((value) {
+        resultList.forEach((image) {
+          print(image.runtimeType);
+        });
+      });
     } on Exception catch (e) {
       print(e);
     }
