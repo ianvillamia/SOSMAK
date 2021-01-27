@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 
 class UserDetailsProvider extends ChangeNotifier {
   UserModel currentUser;
+
   setCurrentUser(DocumentSnapshot doc) {
     UserModel _user = UserModel.get(doc);
     this.currentUser = _user;
-
     // notifyListeners();
   }
 }

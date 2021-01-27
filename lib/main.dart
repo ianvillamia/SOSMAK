@@ -50,7 +50,7 @@ class AuthenticationWrapper extends StatelessWidget {
     //set current User here
 
     if (firebaseUser != null) {
-      return IncidentReport();
+      return Home();
     }
 
     return Login();

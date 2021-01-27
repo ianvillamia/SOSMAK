@@ -6,15 +6,15 @@ class UserModel {
   String email = '';
   String ref = '';
   String address = '';
-  String role = '';
-  bool hivTest,
-      tbTest,
-      heartDisease,
-      highBlood,
-      malaria,
-      liverFunction,
-      vdrlTest,
-      tpaTest;
+  String role;
+  bool isHiv,
+      isHeartDisease,
+      isHighBlood,
+      isLiverFunction,
+      isMalaria,
+      isTb,
+      isTpaTest,
+      isVDRLTest;
 
   String tempPassword = '';
   UserModel.get(DocumentSnapshot doc) {
@@ -24,14 +24,14 @@ class UserModel {
       this.email = doc.data()['email'] ?? '';
       this.ref = doc.data()['ref'] ?? '';
       this.role = doc.data()['role'] ?? 'citizen';
-      this.hivTest = doc.data()['hivTest'] ?? '';
-      this.tbTest = doc.data()['tbTest'] ?? '';
-      this.heartDisease = doc.data()['heartDisease'] ?? '';
-      this.highBlood = doc.data()['highBlood'] ?? '';
-      this.malaria = doc.data()['malaria'] ?? '';
-      this.liverFunction = doc.data()['liverFunction'] ?? '';
-      this.vdrlTest = doc.data()['vdrlTest'] ?? '';
-      this.tpaTest = doc.data()['tpaTest'] ?? '';
+      this.isHiv = doc.data()['isHiv'] ?? '';
+      this.isTb = doc.data()['isTb'] ?? '';
+      this.isHeartDisease = doc.data()['isHeartDisease'] ?? false;
+      this.isHighBlood = doc.data()['isHighBlood'] ?? false;
+      this.isMalaria = doc.data()['isMalaria'] ?? false;
+      this.isLiverFunction = doc.data()['isLiverFunction'] ?? false;
+      this.isVDRLTest = doc.data()['isVDRL'] ?? false;
+      this.isTpaTest = doc.data()['isTPA'] ?? false;
     } catch (e) {}
   }
   UserModel();
@@ -45,15 +45,14 @@ class UserModel {
       'address': this.address,
       'imageUrl':
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
-      'tempPassword': this.tempPassword,
-      'hivTest': this.hivTest,
-      'tbTest': this.tbTest,
-      'heartDisease': this.heartDisease,
-      'highBlood': this.highBlood,
-      'malaria': this.malaria,
-      'liverFunction': this.liverFunction,
-      'vdrlTest': this.vdrlTest,
-      'tpaTest': this.tpaTest,
+      'isHiv': isHiv,
+      'isHearDisease': isHeartDisease,
+      'isHighBlood': isHighBlood,
+      'isLiverFunction': isLiverFunction,
+      'isMalaria': isMalaria,
+      'isTb': isTb,
+      'isTPA': isTpaTest,
+      'isVDRL': isVDRLTest
     };
   }
 }

@@ -1,10 +1,10 @@
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
-import 'package:SOSMAK/screens/medical_report/updateMedical.dart';
+import 'package:SOSMAK/screens/medical_report/updateDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:group_radio_button/group_radio_button.dart';
+
 import 'package:provider/provider.dart';
 
 class MedicalReport extends StatefulWidget {
@@ -30,7 +30,7 @@ class _MedicalReportState extends State<MedicalReport> {
   Widget build(BuildContext context) {
     userDetailsProvider =
         Provider.of<UserDetailsProvider>(context, listen: false);
-    print(userDetailsProvider.currentUser.hivTest);
+
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -48,106 +48,75 @@ class _MedicalReportState extends State<MedicalReport> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UpdateMedicalReport()),
-              );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UpdateMedical()));
             },
           )
         ],
       ),
-      body: Container(
-        width: size.width,
-        height: size.height,
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              'Medical Report',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      cateogry(title: 'HIV Test'),
-                      cateogry(title: 'Tuberculosis Test'),
-                      cateogry(title: 'Heart Disease'),
-                      cateogry(title: 'High Blood'),
-                      cateogry(title: 'Malaria'),
-                      cateogry(title: 'Liver Function'),
-                      cateogry(title: 'VDRL Test'),
-                      cateogry(title: 'TPA Test'),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      result(
-                          result: userDetailsProvider.currentUser.hivTest
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.tbTest
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.heartDisease
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.highBlood
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.malaria
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.liverFunction
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.vdrlTest
-                              .toString()),
-                      result(
-                          result: userDetailsProvider.currentUser.tpaTest
-                              .toString()),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 10)
-              ],
-            ),
-            SizedBox(height: size.height * 0.1),
-            // Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: RaisedButton(
-            //     onPressed: () {},
-            //     child: Text('Update'),
-            //   ),
-            // ),
-          ],
-        ),
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc('sZ3QWKrGWfUumTb7zMbp1d5sxm52')
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            print(snapshot.connectionState);
+
+            if (snapshot.connectionState == ConnectionState.active) {
+              if (snapshot.hasData) {
+                //_buildMedicalReport(snapshot.data);
+                print(snapshot.data);
+                return _buildMedicalReport(snapshot.data);
+              }
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
+    );
+  }
+
+  _buildMedicalReport(DocumentSnapshot doc) {
+    UserModel user = UserModel.get(doc);
+    return Container(
+      width: size.width,
+      height: size.height,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildRow(title: 'HIV TEST', value: user.isHiv),
+          _buildRow(title: 'Tuberculosis TEST', value: user.isTb),
+          _buildRow(title: 'Heart Disease', value: user.isHeartDisease),
+          _buildRow(title: 'High Blood', value: user.isHighBlood),
+          _buildRow(title: 'Malaria', value: user.isMalaria),
+          _buildRow(title: 'Liver Function', value: user.isLiverFunction),
+          _buildRow(title: 'VRDL TEST', value: user.isVDRLTest),
+          _buildRow(title: 'TPA TEST', value: user.isTpaTest),
+        ],
       ),
     );
   }
 
-  cateogry({@required String title}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Text(title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  result({@required String result}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Text(result, style: TextStyle(fontSize: 18)),
+  _buildRow({@required String title, @required bool value}) {
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+              Text(value.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22))
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
