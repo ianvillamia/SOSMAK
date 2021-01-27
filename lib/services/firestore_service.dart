@@ -127,41 +127,41 @@ class UserService {
     });
   }
 
-  Future uploadIncidentImage(File file) async {
-    // File file = File(filePath);
-    DateTime date = DateTime.now();
-    String fileName = date.toString();
+  // Future uploadIncidentImage(File file) async {
+  //   // File file = File(filePath);
+  //   DateTime date = DateTime.now();
+  //   String fileName = date.toString();
 
-    return await firebase_storage.FirebaseStorage.instance
-        .ref('uploads/incident/$fileName.png')
-        .putFile(file);
-  }
+  //   return await firebase_storage.FirebaseStorage.instance
+  //       .ref('uploads/incident/$fileName.png')
+  //       .putFile(file);
+  // }
 
-  Future addIncidentReport(
-      {@required IncidentModel incident, File file}) async {
-    bool added;
-    try {
-      if (file != null) {
-        uploadIncidentImage(file).then((value) async {
-          String downUrl = await value.ref.getDownloadURL();
-          incident.imageUrl = downUrl;
-          await incidentReport
-              .add(incident.toMap())
-              .then((value) => added = true);
-        });
-      } else {
-        incident.imageUrl = '';
-        await incidentReport
-            .add(incident.toMap())
-            .then((value) => added = true);
-      }
+  // Future addIncidentReport(
+  //     {@required IncidentModel incident, File file}) async {
+  //   bool added;
+  //   try {
+  //     if (file != null) {
+  //       uploadIncidentImage(file).then((value) async {
+  //         String downUrl = await value.ref.getDownloadURL();
+  //         incident.imageUrl = downUrl;
+  //         await incidentReport
+  //             .add(incident.toMap())
+  //             .then((value) => added = true);
+  //       });
+  //     } else {
+  //       incident.imageUrl = '';
+  //       await incidentReport
+  //           .add(incident.toMap())
+  //           .then((value) => added = true);
+  //     }
 
-      return added;
-    } catch (e) {
-      print(e);
-      return false;
-    }
-  }
+  //     return added;
+  //   } catch (e) {
+  //     print(e);
+  //     return false;
+  //   }
+  // }
 
   Future<void> updateIncident(DocumentSnapshot doc, String location,
       String date, String time, String incident, String desc) {

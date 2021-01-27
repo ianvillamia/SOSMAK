@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:image_picker/image_picker.dart';
@@ -110,46 +112,8 @@ class _IncidentReportState extends State<IncidentReport> {
   }
 
   List<Asset> images = List<Asset>();
-  List<File> files = List<File>();
-  Future<void> pickImages() async {
-    List<Asset> resultList = List<Asset>();
-
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
-        enableCamera: true,
-        selectedAssets: images,
-        materialOptions: MaterialOptions(
-          actionBarTitle: "SOSMAK",
-        ),
-      );
-    } on Exception catch (e) {
-      print(e);
-    }
-
-    setState(() {
-      images = resultList;
-      getFileList();
-    });
-  }
-
-  Future<File> getImageFileFromAsset(String path) async {
-    final file = File(path);
-    return file;
-  }
-
-  void getFileList() async {
-    // files.clear();
-    // for (int i = 0; i < images.length; i++) {
-    //   var path2 =
-    //       await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
-    //   //var path = await images[i].filePath;
-    //   print('asdasd $path2');
-    //   var file = await getImageFileFromAsset(path2);
-    //   print('asdasd $file');
-    //   files.add(file);
-    // }
-  }
+  List imageUrls = [];
+  String _error = 'No Error Dectected';
 
   @override
   Widget build(BuildContext context) {
@@ -235,21 +199,21 @@ class _IncidentReportState extends State<IncidentReport> {
                   child: Container(
                     width: size.width * 0.3,
                     child: button(
-                      name: 'Gallery',
+                      name: 'Add Images',
                       btncolor: Colors.blue,
                       color: Colors.white,
                       haveIcon: true,
                       icon: Icons.image,
-                      onPressed: pickImages,
+                      onPressed: loadAssets,
                     ),
                   ),
                 ),
                 SizedBox(
                     height: 80.0,
                     width: size.width,
-                    child: images == null
+                    child: images.length == 0
                         ? Container(
-                            child: Text('none'),
+                            child: Text('Please select images'),
                           )
                         : ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -268,37 +232,48 @@ class _IncidentReportState extends State<IncidentReport> {
                   btncolor: Colors.blue,
                   color: Colors.white,
                   onPressed: () {
-                    print(images.toList());
-                    // if (_formKey.currentState.validate()) {
-                    //   IncidentModel incident = IncidentModel();
-                    //   incident.location = locationController.text;
-                    //   incident.date =
-                    //       '${dateController.text}, ${timeController.text}';
-                    //   incident.incident = _selectedIncident.name;
-                    //   incident.desc = descController.text;
+                    if (images.length == 0 &&
+                        locationController.text == '' &&
+                        dateController.text == '' &&
+                        timeController.text == '' &&
+                        _selectedIncident.name == '' &&
+                        descController.text == '') {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (_) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              content: Text(
+                                "Missing data. Do not leave blanks.",
+                              ),
+                              actions: <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    width: 80,
+                                    height: 30,
+                                    color: Colors.blue,
+                                    child: Center(
+                                        child: Text(
+                                      "Ok",
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                                  ),
+                                )
+                              ],
+                            );
+                          });
+                    } else {
+                      SnackBar snackbar = SnackBar(
+                          duration: const Duration(seconds: 3),
+                          content: Text('Please wait, we are uploading'));
+                      _scaffoldKey.currentState.showSnackBar(snackbar);
 
-                    //   UserService()
-                    //       .addIncidentReport(incident: incident, file: image)
-                    //       .then((value) {
-                    //     setState(() {
-                    //       reset();
-                    //     });
-
-                    //     _scaffoldKey.currentState.showSnackBar(
-                    //       SnackBar(
-                    //         content: Text('Incident Reported Successfully'),
-                    //       ),
-                    //     );
-                    //     // if (value == true) {
-                    //     //   Alerts.showAlertDialog(context,
-                    //     //       title: 'Created Successfully');
-                    //     // } else {
-                    //     //   //problem error
-                    //     //   Alerts.showAlertDialog(context,
-                    //     //       title: 'Problem with Create');
-                    //     // }
-                    //   });
-                    // }
+                      uploadIncident();
+                    }
                   },
                 )
               ],
@@ -313,9 +288,10 @@ class _IncidentReportState extends State<IncidentReport> {
     locationController.text = '';
     dateController.text = '';
     timeController.text = '';
-    _selectedIncident.name = '';
+    _selectedIncident = null;
     descController.text = '';
-    image = null;
+    images = [];
+    imageUrls = [];
   }
 
   textFormFeld(
@@ -364,7 +340,7 @@ class _IncidentReportState extends State<IncidentReport> {
               children: [
                 Icon(icon, color: Colors.white),
                 Text(
-                  'Add Images',
+                  name,
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -373,33 +349,78 @@ class _IncidentReportState extends State<IncidentReport> {
     );
   }
 
-  Future getImagefromGallery() async {
-    final fileGallery = await picker.getImage(source: ImageSource.gallery);
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 10,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Upload Image",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+      print(resultList.length);
+      print((await resultList[0].getThumbByteData(122, 100)));
+      print((await resultList[0].getByteData()));
+      print((await resultList[0].metadata));
+    } on Exception catch (e) {
+      error = e.toString();
+    }
 
+    if (!mounted) return;
     setState(() {
-      if (fileGallery != null) {
-        image = File(fileGallery.path);
-
-        debugPrint('hey');
-        print(image);
-      } else {
-        print('No image selected.');
-      }
+      images = resultList;
+      _error = error;
     });
   }
 
-  Future getImagefromCamera() async {
-    var fileCamera = await picker.getImage(source: ImageSource.camera);
+  void uploadIncident() {
+    for (var imageFile in images) {
+      postImage(imageFile).then((downloadUrl) {
+        imageUrls.add(downloadUrl.toString());
+        if (imageUrls.length == images.length) {
+          //String documnetID = DateTime.now().toString();
+          FirebaseFirestore.instance
+              .collection('incidentReport')
+              .doc(_selectedIncident.name)
+              .set({
+            'location': locationController.text,
+            'date': '${dateController.text}, ${timeController.text}',
+            'incident': _selectedIncident.name,
+            'desc': descController.text,
+            'imageUrls': imageUrls,
+            'status': 0,
+          }).then((_) {
+            SnackBar snackbar =
+                SnackBar(content: Text('Uploaded Successfully'));
+            _scaffoldKey.currentState.showSnackBar(snackbar);
+            setState(() {
+              reset();
+            });
+          });
+        }
+      }).catchError((err) {
+        print(err);
+      });
+    }
+  }
 
-    setState(() {
-      if (fileCamera != null) {
-        image = File(fileCamera.path);
-
-        debugPrint('hey');
-        print(image);
-      } else {
-        print('No image selected.');
-      }
-    });
+  Future<dynamic> postImage(Asset imageFile) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref('uploads/images/$fileName');
+    UploadTask uploadTask =
+        reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    //TaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    var imageUrl = await (await uploadTask).ref.getDownloadURL();
+    print(imageUrl);
+    return imageUrl;
   }
 }

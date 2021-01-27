@@ -1,6 +1,9 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/screens/incident_report/viewImages.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'updateIncident.dart';
 
@@ -31,12 +34,13 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
     super.dispose();
   }
 
+  Size size;
   @override
   Widget build(BuildContext context) {
     if (widget.incident.status != 0) {
       showDispatch = false;
     }
-    var size = MediaQuery.of(context).size;
+    size = MediaQuery.of(context).size;
     return Container(
         color: Colors.grey[900],
         height: size.height * .7,
@@ -44,117 +48,108 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
           physics: NeverScrollableScrollPhysics(),
           controller: _pageController,
           children: [
-            Stack(children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  height: size.height * .7,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: size.height * 0.05),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              children: [
+                Stack(children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      height: size.height * .5,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                SizedBox(height: size.height * 0.05),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Incident:',
+                                          style: whiteText(),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        buildChip(
+                                            text: widget.incident.incident),
+                                      ],
+                                    ),
                                     Text(
-                                      'Incident:',
+                                      'Date: ' + widget.incident.date,
                                       style: whiteText(),
                                     ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    buildChip(text: widget.incident.incident),
                                   ],
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Text(
-                                  'Date: ' + widget.incident.date,
+                                  'Location: ' + widget.incident.location,
                                   style: whiteText(),
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Description: ',
+                                  style: whiteText(),
+                                ),
+                                SizedBox(
+                                  height: 7,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 5, 5, 20),
+                                  child: Text(
+                                    widget.incident.desc,
+                                    style: whiteText(),
+                                  ),
+                                ),
+                                Text(
+                                  'Images: ${widget.incident.imageUrls.length}',
+                                  style: whiteText(),
+                                ),
+                                getImages(doc: widget.doc),
                               ],
                             ),
-
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Location: ' + widget.incident.location,
-                              style: whiteText(),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Description: ',
-                              style: whiteText(),
-                            ),
-                            SizedBox(
-                              height: 7,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                widget.incident.desc,
-                                style: whiteText(),
-                              ),
-                            ),
-                            // SizedBox(
-                            //   height: 10,
-                            // ),
-                            // Visibility(
-                            //   visible: showDispatch,
-                            //   child: MaterialButton(
-                            //     color: Colors.blueAccent,
-                            //     elevation: 3,
-                            //     onPressed: () {
-                            //       _pageController.animateToPage(
-                            //         1,
-                            //         duration: const Duration(milliseconds: 400),
-                            //         curve: Curves.easeInOut,
-                            //       );
-                            //     },
-                            //     child: Text('Dispatch Officers'),
-                            //   ),
-                            // ),
-                            Image.network(widget.incident.imageUrl ?? '',
-                                width: 80, height: 80),
-                            MaterialButton(
-                              color: Colors.white,
-                              elevation: 2,
-                              child: Text('Update Status'),
-                              onPressed: () {
-                                _pageController.animateToPage(
-                                  1,
-                                  duration: const Duration(milliseconds: 400),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: Colors.white,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
+                ]),
+                MaterialButton(
+                  color: Colors.white,
+                  elevation: 2,
+                  child: Text('Update Status'),
                   onPressed: () {
-                    Navigator.pop(context);
+                    _pageController.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
                   },
                 ),
-              ),
-            ]),
+              ],
+            ),
             //DIPATCH OFFICERS//
             UpdateIncidentReport(doc: widget.doc, incident: widget.incident),
           ],
@@ -186,5 +181,31 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         ),
       ),
     );
+  }
+
+  getImages({@required DocumentSnapshot doc}) {
+    List images = doc.data()['imageUrls'];
+    print(doc);
+    if (images.length != 0) {
+      return Container(
+        width: size.width,
+        height: size.height * .25,
+        child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: images
+                    ?.map<Widget>((doc) => Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: ('assets/loading.gif'),
+                            image: doc.toString(),
+                            width: 120,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ))
+                    ?.toList() ??
+                []),
+      );
+    }
   }
 }

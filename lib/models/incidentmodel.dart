@@ -5,18 +5,19 @@ class IncidentModel {
   String date;
   String incident;
   String desc;
-  String imageUrl;
-  List images;
+  List imageUrls = [];
   int status;
+
   IncidentModel.get(DocumentSnapshot doc) {
     this.location = doc.data()['location'] ?? '';
     this.date = doc.data()['date'] ?? '';
-    this.incident = doc.data()['incident'] ?? [];
-
     this.desc = doc.data()['desc'];
-    this.imageUrl = doc.data()['imageUrl'];
+    this.incident = doc.data()['incident'] ?? '';
+    this.desc = doc.data()['desc'] ?? '';
+    this.imageUrls = doc.data()['imageUrls'] ?? [];
     this.status = doc.data()['status'];
   }
+
   IncidentModel();
   toMap() {
     return {
@@ -24,8 +25,8 @@ class IncidentModel {
       'date': this.date,
       'incident': this.incident,
       'desc': this.desc,
-      'imageUrl': this.imageUrl,
-      'status': 0 //status are 0=no action yet //1= onRoutes //2 = resolved
+      'images': this.imageUrls,
+      'status': 0
     };
   }
 }

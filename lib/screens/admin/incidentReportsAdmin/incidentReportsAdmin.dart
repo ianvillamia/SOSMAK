@@ -106,7 +106,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
 
   _buildCard(DocumentSnapshot doc, BuildContext context) {
     IncidentModel incident = IncidentModel.get(doc);
-
+    List images = incident.imageUrls;
     return Card(
       elevation: 5,
       child: InkWell(
@@ -129,7 +129,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
               Text(incident.incident),
               SizedBox(height: size.height * 0.04),
               Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(incident.date)
+              Text(incident.date),
             ],
           ),
         ),
