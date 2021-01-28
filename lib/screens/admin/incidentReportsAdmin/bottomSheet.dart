@@ -54,7 +54,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: Container(
-                      height: size.height * .5,
+                      height: size.height * .8,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
                         child: Scrollbar(
@@ -62,7 +62,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: size.height * 0.05),
+                                SizedBox(height: size.height * 0.1),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -71,7 +71,10 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                                       children: [
                                         Text(
                                           'Incident:',
-                                          style: whiteText(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
                                           width: 10,
@@ -80,41 +83,30 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                                             text: widget.incident.incident),
                                       ],
                                     ),
-                                    Text(
-                                      'Date: ' + widget.incident.date,
-                                      style: whiteText(),
-                                    ),
+                                    buildText(
+                                        title: 'Date: ',
+                                        data: widget.incident.date)
                                   ],
                                 ),
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text(
-                                  'Location: ' + widget.incident.location,
-                                  style: whiteText(),
-                                ),
+                                buildText(
+                                    title: 'Location: ',
+                                    data: widget.incident.location),
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text(
-                                  'Description: ',
-                                  style: whiteText(),
-                                ),
+                                buildText(
+                                    title: 'Description: ',
+                                    data: widget.incident.desc),
                                 SizedBox(
-                                  height: 7,
+                                  height: 10,
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 5, 5, 20),
-                                  child: Text(
-                                    widget.incident.desc,
-                                    style: whiteText(),
-                                  ),
-                                ),
-                                Text(
-                                  'Images: ${widget.incident.imageUrls.length}',
-                                  style: whiteText(),
-                                ),
+                                buildText(
+                                    title: 'Image/s: ',
+                                    data:
+                                        '${widget.incident.imageUrls.length}'),
                                 getImages(doc: widget.doc),
                               ],
                             ),
@@ -123,6 +115,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                       ),
                     ),
                   ),
+                  Align(alignment: Alignment.topLeft, child: buildStatus()),
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
@@ -141,11 +134,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                   elevation: 2,
                   child: Text('Update Status'),
                   onPressed: () {
-                    _pageController.animateToPage(
-                      1,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                    );
+                    _showMaterialDialog();
                   },
                 ),
               ],
@@ -156,8 +145,85 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         ));
   }
 
-  whiteText() {
-    return TextStyle(color: Colors.white, fontSize: 17);
+  _showMaterialDialog() {
+    String selected;
+    int status;
+    showDialog(
+        context: context,
+        builder: (_) {
+          if (widget.incident.status == 0) {
+            selected = 'Pending';
+          } else if (widget.incident.status == 1) {
+            selected = 'In Progress';
+          } else if (widget.incident.status == 2) {
+            selected = 'Solved';
+          }
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Update Status'),
+              content: Container(
+                width: size.width,
+                height: size.height * 0.085,
+                child: DropdownButton(
+                  isExpanded: true,
+                  items: ['Pending', 'In Progress', 'Solved'].map((option) {
+                    return DropdownMenuItem(
+                      child: Text("$option"),
+                      value: option,
+                    );
+                  }).toList(),
+                  value: selected,
+                  onChanged: (String value) {
+                    setState(() {
+                      selected = value;
+                    });
+                  },
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Save'),
+                  onPressed: () {
+                    if (selected == 'Pending') {
+                      status = 0;
+                    } else if (selected == 'In Progress') {
+                      status = 1;
+                    } else if (selected == 'Solved') {
+                      status = 2;
+                    }
+                    changeStatus(status, widget.doc);
+                    print('Status Changed');
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+        });
+  }
+
+  changeStatus(int status, DocumentSnapshot doc) {
+    CollectionReference incidentReport =
+        FirebaseFirestore.instance.collection('incidentReport');
+    return incidentReport.doc(doc.id).update({'status': status});
+  }
+
+  buildText({@required String title, @required String data}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold)),
+        Flexible(
+            child:
+                Text(data, style: TextStyle(color: Colors.white, fontSize: 17)))
+      ],
+    );
   }
 
   buildChip({@required String text}) {
@@ -181,6 +247,37 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         ),
       ),
     );
+  }
+
+  buildStatus() {
+    if (widget.incident.status == 0) {
+      return Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Text('Pending',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
+      );
+    } else if (widget.incident.status == 1) {
+      return Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Text('In Progress',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
+      );
+    } else if (widget.incident.status == 2) {
+      return Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Text('Solved',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
+      );
+    }
   }
 
   getImages({@required DocumentSnapshot doc}) {

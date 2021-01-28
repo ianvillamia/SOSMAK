@@ -12,11 +12,13 @@ class IncidentReportAdmin extends StatefulWidget {
 
 class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   Size size;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Incident Report Admin'),
       ),
@@ -27,9 +29,10 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
           children: [
             //pending
             _buildStream(status: 0, title: 'Pending'),
-            _buildStream(status: 1, title: 'In Progress')
             //is in progress
+            _buildStream(status: 1, title: 'In Progress'),
             //closed
+            _buildStream(status: 2, title: 'Solved')
           ],
         ),
       ),
@@ -46,7 +49,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
           if (snapshot.hasData) {
             if (snapshot.data.docs.length != 0) {
               return Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 child: Scrollbar(
                   child: SingleChildScrollView(
                     child: Column(
@@ -75,7 +78,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
               );
             } else {
               return Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 child: Scrollbar(
                   child: SingleChildScrollView(
                     child: Column(
@@ -89,7 +92,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                         Container(
                             width: size.width * .95,
                             height: size.height * .2,
-                            child: Text("There's no In Progress Incident")),
+                            child: Text("There's no $title Incident")),
                       ],
                     ),
                   ),

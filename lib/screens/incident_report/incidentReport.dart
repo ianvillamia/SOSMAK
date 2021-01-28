@@ -232,11 +232,11 @@ class _IncidentReportState extends State<IncidentReport> {
                   btncolor: Colors.blue,
                   color: Colors.white,
                   onPressed: () {
-                    if (images.length == 0 &&
-                        locationController.text == '' &&
-                        dateController.text == '' &&
-                        timeController.text == '' &&
-                        _selectedIncident.name == '' &&
+                    if (images.length == 0 ||
+                        locationController.text == '' ||
+                        dateController.text == '' ||
+                        timeController.text == '' ||
+                        _selectedIncident.name == '' ||
                         descController.text == '') {
                       showDialog(
                           barrierDismissible: false,
@@ -268,8 +268,9 @@ class _IncidentReportState extends State<IncidentReport> {
                           });
                     } else {
                       SnackBar snackbar = SnackBar(
-                          duration: const Duration(seconds: 3),
-                          content: Text('Please wait, we are uploading'));
+                          duration: const Duration(seconds: 2),
+                          content:
+                              Text('Please wait, we are sending your report'));
                       _scaffoldKey.currentState.showSnackBar(snackbar);
 
                       uploadIncident();
@@ -399,7 +400,7 @@ class _IncidentReportState extends State<IncidentReport> {
             'status': 0,
           }).then((_) {
             SnackBar snackbar =
-                SnackBar(content: Text('Uploaded Successfully'));
+                SnackBar(content: Text('Reported Successfully'));
             _scaffoldKey.currentState.showSnackBar(snackbar);
             setState(() {
               reset();
@@ -415,7 +416,7 @@ class _IncidentReportState extends State<IncidentReport> {
   Future<dynamic> postImage(Asset imageFile) async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     Reference reference =
-        FirebaseStorage.instance.ref('uploads/images/$fileName');
+        FirebaseStorage.instance.ref('uploads/incidentImages/$fileName');
     UploadTask uploadTask =
         reference.putData((await imageFile.getByteData()).buffer.asUint8List());
     //TaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;

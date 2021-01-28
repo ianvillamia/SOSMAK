@@ -1,17 +1,22 @@
 import 'dart:io';
 
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class UpdateIncidentReport extends StatefulWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final DocumentSnapshot doc;
   final IncidentModel incident;
-  UpdateIncidentReport({@required this.doc, @required this.incident});
+  UpdateIncidentReport(
+      {this.scaffoldKey, @required this.doc, @required this.incident});
   @override
   _UpdateIncidentReportState createState() => _UpdateIncidentReportState();
 }
@@ -27,6 +32,10 @@ class _UpdateIncidentReportState extends State<UpdateIncidentReport> {
   File image;
   final picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
+
+  List<Asset> images = List<Asset>();
+  List imageUrls = [];
+  String _error = 'No Error Dectected';
 
   String location, date, time, incident, descripton;
   String _hour, _minute, _time;
@@ -183,39 +192,6 @@ class _UpdateIncidentReportState extends State<UpdateIncidentReport> {
                   initiaLValue: widget.incident.desc,
                   label: 'Description',
                   onChanged: (String description) => getDesc(description)),
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    child: button(
-                      name: 'Gallery',
-                      btncolor: Colors.blue,
-                      color: Colors.white,
-                      haveIcon: true,
-                      icon: Icons.image,
-                      onPressed: () {
-                        getImagefromGallery();
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.02,
-                  ),
-                  Container(
-                    width: 40,
-                    child: button(
-                      name: 'Camera',
-                      btncolor: Colors.blue,
-                      color: Colors.white,
-                      haveIcon: true,
-                      icon: Icons.photo_camera,
-                      onPressed: () {
-                        getImagefromCamera();
-                      },
-                    ),
-                  ),
-                ],
-              ),
               MaterialButton(
                 color: Colors.white,
                 elevation: 2,
@@ -312,38 +288,118 @@ class _UpdateIncidentReportState extends State<UpdateIncidentReport> {
       onPressed: onPressed,
       color: btncolor,
       child: haveIcon ?? false
-          ? Icon(icon, color: Colors.white)
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Icon(icon, color: Colors.white),
+                Text(
+                  name,
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            )
           : Text(name, style: TextStyle(color: color ?? Colors.black)),
     );
   }
 
-  Future getImagefromGallery() async {
-    final fileGallery = await picker.getImage(source: ImageSource.gallery);
+  getImages({@required DocumentSnapshot doc}) {
+    List images = doc.data()['imageUrls'];
+    print(doc);
+    if (images.length != 0) {
+      return Container(
+        width: size.width,
+        height: size.height * .25,
+        child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: images
+                    ?.map<Widget>((doc) => Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: ('assets/loading.gif'),
+                            image: doc.toString(),
+                            width: 120,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ))
+                    ?.toList() ??
+                []),
+      );
+    }
+  }
 
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 10,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Upload Image",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+      print(resultList.length);
+      print((await resultList[0].getThumbByteData(122, 100)));
+      print((await resultList[0].getByteData()));
+      print((await resultList[0].metadata));
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    if (!mounted) return;
     setState(() {
-      if (fileGallery != null) {
-        image = File(fileGallery.path);
-
-        debugPrint('hey');
-        print(image);
-      } else {
-        print('No image selected.');
-      }
+      images = resultList;
+      _error = error;
     });
   }
 
-  Future getImagefromCamera() async {
-    var fileCamera = await picker.getImage(source: ImageSource.camera);
+  void uploadIncident() {
+    for (var imageFile in images) {
+      postImage(imageFile).then((downloadUrl) {
+        imageUrls.add(downloadUrl.toString());
+        if (imageUrls.length == images.length) {
+          //String documnetID = DateTime.now().toString();
+          FirebaseFirestore.instance
+              .collection('incidentReport')
+              .doc(widget.incident.incident)
+              .update({
+            'location': locationController.text,
+            'date': '${dateController.text}, ${timeController.text}',
+            'incident': widget.incident.incident,
+            'desc': descController.text,
+            'imageUrls': imageUrls,
+            'status': 0,
+          }).then((_) {
+            SnackBar snackbar =
+                SnackBar(content: Text('Reported Successfully'));
+            widget.scaffoldKey.currentState.showSnackBar(snackbar);
+            setState(() {
+              Navigator.pop(context);
+            });
+          });
+        }
+      }).catchError((err) {
+        print(err);
+      });
+    }
+  }
 
-    setState(() {
-      if (fileCamera != null) {
-        image = File(fileCamera.path);
-
-        debugPrint('hey');
-        print(image);
-      } else {
-        print('No image selected.');
-      }
-    });
+  Future<dynamic> postImage(Asset imageFile) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref('uploads/incidentImages/$fileName');
+    UploadTask uploadTask =
+        reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    //TaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    var imageUrl = await (await uploadTask).ref.getDownloadURL();
+    print(imageUrl);
+    return imageUrl;
   }
 }

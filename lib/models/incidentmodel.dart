@@ -11,7 +11,6 @@ class IncidentModel {
   IncidentModel.get(DocumentSnapshot doc) {
     this.location = doc.data()['location'] ?? '';
     this.date = doc.data()['date'] ?? '';
-    this.desc = doc.data()['desc'];
     this.incident = doc.data()['incident'] ?? '';
     this.desc = doc.data()['desc'] ?? '';
     this.imageUrls = doc.data()['imageUrls'] ?? [];
