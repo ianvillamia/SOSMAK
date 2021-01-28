@@ -71,17 +71,20 @@ class _CurrentIncidentState extends State<CurrentIncident> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Card(
-            elevation: 5,
-            color: color,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(status,
-                  textAlign: TextAlign.center,
-                  style: _buildtextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontsize: 20,
-                      color: Colors.white)),
+          Align(
+            alignment: Alignment.center,
+            child: Card(
+              elevation: 5,
+              color: color,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(status,
+                    textAlign: TextAlign.center,
+                    style: _buildtextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontsize: 20,
+                        color: Colors.white)),
+              ),
             ),
           ),
           SizedBox(

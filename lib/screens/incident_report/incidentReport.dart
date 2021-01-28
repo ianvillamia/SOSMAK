@@ -176,12 +176,15 @@ class _IncidentReportState extends State<IncidentReport> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 IncidentChecker incident = snapshot.data;
-                print(snapshot.data);
-                return incident.status != 0
-                    ? _buildIncidentForm()
-                    : CurrentIncident(
+                bool showIncident = false;
+                if (incident.status == 0 || incident.status == 1) {
+                  showIncident = true;
+                }
+                return showIncident
+                    ? CurrentIncident(
                         documentId: incident.ref,
-                      );
+                      )
+                    : _buildIncidentForm();
               }
 
               return Center(
