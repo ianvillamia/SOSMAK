@@ -1,8 +1,12 @@
 import 'dart:io';
 
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/models/userModel.dart';
+import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
+import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_absolute_path/flutter_absolute_path.dart';
@@ -10,6 +14,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
+
+class IncidentChecker {
+  String ref;
+  int status;
+}
 
 class IncidentReport extends StatefulWidget {
   @override
@@ -114,171 +124,218 @@ class _IncidentReportState extends State<IncidentReport> {
   List<Asset> images = List<Asset>();
   List imageUrls = [];
   String _error = 'No Error Dectected';
+  User firebaseUser;
+  Future checkCurrentReport(String uid) async {
+    //get current user
+    IncidentChecker incidentChecker = IncidentChecker();
+
+    await AuthenticationService.getCurrentUser(uid).then((doc) async {
+      UserModel user = UserModel.get(doc);
+      String currentIncident = user.currentIncidentRef;
+      incidentChecker.ref = currentIncident;
+      //get status
+      await UserService().getCurrentIncident(currentIncident).then((doc2) {
+        IncidentModel incident = IncidentModel.get(doc2);
+        incidentChecker.status = incident.status;
+        // if (incident.status == 2) {
+        //   //can create
+
+        // } else {
+        //   //show incident
+        //   Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => CurrentIncident(
+        //                 documentId: currentIncident,
+        //               )));
+        // }
+      });
+    });
+    return incidentChecker;
+  }
 
   @override
   Widget build(BuildContext context) {
+    firebaseUser = context.watch<User>();
     size = MediaQuery.of(context).size;
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text('SOSMAK'),
-        leading: IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Container(
-          width: size.width,
-          height: size.height,
-          padding: EdgeInsets.all(10),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Incident Report',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                textFormFeld(
-                  width: size.width,
-                  controller: locationController,
-                  label: 'Location',
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFormFeld(
-                        enable: false,
-                        width: size.width * 0.6,
-                        controller: dateController,
-                        label: 'Date',
-                      ),
-                      button(
-                          name: 'Set Date',
-                          btncolor: Colors.white70,
-                          onPressed: () => _selectDate(context)),
-                    ]),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFormFeld(
-                        enable: false,
-                        width: size.width * 0.6,
-                        controller: timeController,
-                        label: 'Time',
-                      ),
-                      button(
-                          name: 'Set Time',
-                          btncolor: Colors.white70,
-                          onPressed: () => _selectTime(context)),
-                    ]),
-                Container(
-                  width: size.width,
-                  height: size.height * 0.085,
-                  child: DropdownButton(
-                    isExpanded: true,
-                    hint: Text('Please select an Incident'),
-                    value: _selectedIncident,
-                    items: _dropdownMenuItems,
-                    onChanged: onChangeDropdownItem,
-                  ),
-                ),
-                textFormFeld(
-                  maxLines: 5,
-                  width: size.width,
-                  controller: descController,
-                  label: 'Description',
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    width: size.width * 0.3,
-                    child: button(
-                      name: 'Add Images',
-                      btncolor: Colors.blue,
-                      color: Colors.white,
-                      haveIcon: true,
-                      icon: Icons.image,
-                      onPressed: loadAssets,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                    height: 80.0,
-                    width: size.width,
-                    child: images.length == 0
-                        ? Container(
-                            child: Text('Please select images'),
-                          )
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: images.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: AssetThumb(
-                                    height: 200,
-                                    width: 200,
-                                    asset: images[index],
-                                  ),
-                                ))),
-                button(
-                  name: 'Save',
-                  btncolor: Colors.blue,
-                  color: Colors.white,
-                  onPressed: () {
-                    if (images.length == 0 ||
-                        locationController.text == '' ||
-                        dateController.text == '' ||
-                        timeController.text == '' ||
-                        _selectedIncident.name == '' ||
-                        descController.text == '') {
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              content: Text(
-                                "Missing data. Do not leave blanks.",
-                              ),
-                              actions: <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    width: 80,
-                                    height: 30,
-                                    color: Colors.blue,
-                                    child: Center(
-                                        child: Text(
-                                      "Ok",
-                                      style: TextStyle(color: Colors.white),
-                                    )),
-                                  ),
-                                )
-                              ],
-                            );
-                          });
-                    } else {
-                      SnackBar snackbar = SnackBar(
-                          duration: const Duration(seconds: 2),
-                          content:
-                              Text('Please wait, we are sending your report'));
-                      _scaffoldKey.currentState.showSnackBar(snackbar);
+    //check docu? here?
 
-                      uploadIncident();
-                    }
-                  },
-                )
-              ],
-            ),
+    return Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text('SOSMAK'),
+          leading: IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: FutureBuilder(
+            future: checkCurrentReport(firebaseUser.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                IncidentChecker incident = snapshot.data;
+                print(snapshot.data);
+                return incident.status != 0
+                    ? _buildIncidentForm()
+                    : CurrentIncident(
+                        documentId: incident.ref,
+                      );
+              }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }));
+  }
+
+  _buildIncidentForm() {
+    return Form(
+      key: _formKey,
+      child: Container(
+        width: size.width,
+        height: size.height,
+        padding: EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'Incident Report',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              textFormFeld(
+                width: size.width,
+                controller: locationController,
+                label: 'Location',
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                textFormFeld(
+                  enable: false,
+                  width: size.width * 0.6,
+                  controller: dateController,
+                  label: 'Date',
+                ),
+                button(
+                    name: 'Set Date',
+                    btncolor: Colors.white70,
+                    onPressed: () => _selectDate(context)),
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                textFormFeld(
+                  enable: false,
+                  width: size.width * 0.6,
+                  controller: timeController,
+                  label: 'Time',
+                ),
+                button(
+                    name: 'Set Time',
+                    btncolor: Colors.white70,
+                    onPressed: () => _selectTime(context)),
+              ]),
+              Container(
+                width: size.width,
+                height: size.height * 0.085,
+                child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text('Please select an Incident'),
+                  value: _selectedIncident,
+                  items: _dropdownMenuItems,
+                  onChanged: onChangeDropdownItem,
+                ),
+              ),
+              textFormFeld(
+                maxLines: 5,
+                width: size.width,
+                controller: descController,
+                label: 'Description',
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  width: size.width * 0.3,
+                  child: button(
+                    name: 'Add Images',
+                    btncolor: Colors.blue,
+                    color: Colors.white,
+                    haveIcon: true,
+                    icon: Icons.image,
+                    onPressed: loadAssets,
+                  ),
+                ),
+              ),
+              SizedBox(
+                  height: 80.0,
+                  width: size.width,
+                  child: images.length == 0
+                      ? Container(
+                          child: Text('Please select images'),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: images.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: AssetThumb(
+                                  height: 200,
+                                  width: 200,
+                                  asset: images[index],
+                                ),
+                              ))),
+              button(
+                name: 'Save',
+                btncolor: Colors.blue,
+                color: Colors.white,
+                onPressed: () {
+                  if (images.length == 0 ||
+                      locationController.text == '' ||
+                      dateController.text == '' ||
+                      timeController.text == '' ||
+                      _selectedIncident.name == '' ||
+                      descController.text == '') {
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: Text(
+                              "Missing data. Do not leave blanks.",
+                            ),
+                            actions: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 30,
+                                  color: Colors.blue,
+                                  child: Center(
+                                      child: Text(
+                                    "Ok",
+                                    style: TextStyle(color: Colors.white),
+                                  )),
+                                ),
+                              )
+                            ],
+                          );
+                        });
+                  } else {
+                    SnackBar snackbar = SnackBar(
+                        duration: const Duration(seconds: 2),
+                        content:
+                            Text('Please wait, we are sending your report'));
+                    _scaffoldKey.currentState.showSnackBar(snackbar);
+
+                    uploadIncident();
+                  }
+                },
+              )
+            ],
           ),
         ),
       ),
@@ -384,27 +441,25 @@ class _IncidentReportState extends State<IncidentReport> {
 
   void uploadIncident() {
     for (var imageFile in images) {
-      postImage(imageFile).then((downloadUrl) {
+      postImage(imageFile).then((downloadUrl) async {
         imageUrls.add(downloadUrl.toString());
         if (imageUrls.length == images.length) {
           //String documnetID = DateTime.now().toString();
-          FirebaseFirestore.instance
-              .collection('incidentReport')
-              .doc(_selectedIncident.name)
-              .set({
-            'location': locationController.text,
-            'date': '${dateController.text}, ${timeController.text}',
-            'incident': _selectedIncident.name,
-            'desc': descController.text,
-            'imageUrls': imageUrls,
-            'status': 0,
-          }).then((_) {
-            SnackBar snackbar =
-                SnackBar(content: Text('Reported Successfully'));
-            _scaffoldKey.currentState.showSnackBar(snackbar);
-            setState(() {
-              reset();
-            });
+          IncidentModel incident = IncidentModel();
+          incident.location = locationController.text;
+          incident.date = '${dateController.text}, ${timeController.text}';
+          incident.incident = _selectedIncident.name;
+          incident.imageUrls = imageUrls;
+          incident.status = 0;
+          incident.desc = descController.text;
+          incident.reporterRef = firebaseUser.uid;
+          await UserService().addIncident(incident).then((value) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CurrentIncident(
+                          documentId: value,
+                        )));
           });
         }
       }).catchError((err) {

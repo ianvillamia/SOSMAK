@@ -7,6 +7,7 @@ class UserModel {
   String ref = '';
   String address = '';
   String role;
+  String currentIncidentRef = '';
   bool isHiv,
       isHeartDisease,
       isHighBlood,
@@ -32,6 +33,7 @@ class UserModel {
       this.isLiverFunction = doc.data()['isLiverFunction'] ?? false;
       this.isVDRLTest = doc.data()['isVDRL'] ?? false;
       this.isTpaTest = doc.data()['isTPA'] ?? false;
+      this.currentIncidentRef = doc.data()['currentIncidentRef'] ?? '';
     } catch (e) {}
   }
   UserModel();
@@ -52,7 +54,8 @@ class UserModel {
       'isMalaria': isMalaria,
       'isTb': isTb,
       'isTPA': isTpaTest,
-      'isVDRL': isVDRLTest
+      'isVDRL': isVDRLTest,
+      'currentIncidentRef': ''
     };
   }
 }

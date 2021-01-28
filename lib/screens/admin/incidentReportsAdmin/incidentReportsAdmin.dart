@@ -42,7 +42,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   _buildStream({@required int status, @required String title}) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('incidentReport')
+            .collection('incidentReports')
             .where('status', isEqualTo: status)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

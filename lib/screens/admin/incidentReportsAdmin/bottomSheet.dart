@@ -1,6 +1,5 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
-import 'package:SOSMAK/screens/incident_report/viewImages.dart';
-import 'package:carousel_pro/carousel_pro.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

@@ -15,8 +15,9 @@ class UserService {
       FirebaseFirestore.instance.collection('courses');
   CollectionReference wantedList =
       FirebaseFirestore.instance.collection('wantedList');
-  CollectionReference incidentReport =
-      FirebaseFirestore.instance.collection('incidentReport');
+  CollectionReference incidentReports =
+      FirebaseFirestore.instance.collection('incidentReports');
+
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
     this.users.doc(uid).set(user.toMap()).then((value) {});
@@ -54,19 +55,25 @@ class UserService {
     }
   }
 
-  // Future uploadMultipleImages({List<File> images}) {
-  //   //  List<Asset> images = List<Asset>();
-  //   List urls = [];
-  //   images.forEach((image) {
-  //     //
-  //     uploadFile(image).then((value) async {
-  //       String downUrl = await value.ref.getDownloadURL();
-  //       //add downurl
-  //       urls.add(downUrl);
-  //     });
-  //     //'images':urls
-  //   });
-  // }
+  Future addIncident(IncidentModel incident) async {
+    String docRef;
+    await incidentReports.add(incident.toMap()).then((value) async {
+      //add to user
+      // DocumentSnapshot _docu = await value.get();
+      // IncidentModel incidentModel = IncidentModel.get(_docu);
+
+      // await users
+      //     .doc(incident.reporterRef)
+      //     .collection('incidentReports')
+      //     .doc(value.id)
+      //     .set(incidentModel.toMap());
+      await users
+          .doc(incident.reporterRef)
+          .update({'currentIncidentRef': value.id});
+      docRef = value.id;
+    });
+    return docRef;
+  }
 
   Future uploadFile(File file) async {
     // File file = File(filePath);
@@ -100,6 +107,13 @@ class UserService {
       print(e);
       return false;
     }
+  }
+
+  Future<DocumentSnapshot> getCurrentIncident(String docId) async {
+    return await FirebaseFirestore.instance
+        .collection('incidentReports')
+        .doc(docId)
+        .get();
   }
 
   void addCoursesToUser(uid) async {
@@ -165,7 +179,7 @@ class UserService {
 
   Future<void> updateIncident(DocumentSnapshot doc, String location,
       String date, String time, String incident, String desc) {
-    return incidentReport
+    return incidentReports
         .doc(doc.id)
         .update({
           'location': location,
