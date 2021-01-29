@@ -133,23 +133,21 @@ class _IncidentReportState extends State<IncidentReport> {
       UserModel user = UserModel.get(doc);
       String currentIncident = user.currentIncidentRef;
       incidentChecker.ref = currentIncident;
-      //get status
-      await UserService().getCurrentIncident(currentIncident).then((doc2) {
-        IncidentModel incident = IncidentModel.get(doc2);
-        incidentChecker.status = incident.status;
-        // if (incident.status == 2) {
-        //   //can create
 
-        // } else {
-        //   //show incident
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => CurrentIncident(
-        //                 documentId: currentIncident,
-        //               )));
-        // }
-      });
+      if (currentIncident == '') {
+        print('no current report');
+        incidentChecker.status = -1;
+      } else {
+        await UserService().getCurrentIncident(currentIncident).then((doc2) {
+          IncidentModel incident = IncidentModel.get(doc2);
+          incidentChecker.status = incident.status;
+          print(incident.status);
+          print(' current report');
+        });
+      }
+      //if()
+      //get status
+      // if(currentIncident)
     });
     return incidentChecker;
   }
@@ -177,6 +175,7 @@ class _IncidentReportState extends State<IncidentReport> {
               if (snapshot.connectionState == ConnectionState.done) {
                 IncidentChecker incident = snapshot.data;
                 bool showIncident = false;
+
                 if (incident.status == 0 || incident.status == 1) {
                   showIncident = true;
                 }
