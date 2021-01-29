@@ -109,7 +109,6 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
 
   _buildCard(DocumentSnapshot doc, BuildContext context) {
     IncidentModel incident = IncidentModel.get(doc);
-    List images = incident.imageUrls;
     return Card(
       elevation: 5,
       child: InkWell(

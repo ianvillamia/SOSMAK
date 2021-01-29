@@ -1,3 +1,6 @@
+import 'package:SOSMAK/models/emergencyModel.dart';
+import 'package:SOSMAK/screens/sos_screen/sosNumbers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -46,34 +49,61 @@ class _SOSPageState extends State<SOSPage> {
 
   _buildTiles() {
     return Wrap(
+      spacing: 5,
       children: [
         _buildTile(
-            color: Colors.white,
-            text: 'Police',
-            image: 'assets/police-car.png'),
+          color: Colors.white,
+          text: 'Police',
+          image: 'assets/police-car.png',
+          onTap: () => _launchURL(number: '12345'),
+        ),
         _buildTile(
-            color: Colors.white,
-            text: 'Ambulance',
-            image: 'assets/ambulance.png'),
+          color: Colors.white,
+          text: 'Ambulance',
+          image: 'assets/ambulance.png',
+          onTap: () => _launchURL(number: '12345'),
+        ),
         _buildTile(
-            color: Colors.white,
-            text: 'Fire Station',
-            image: 'assets/fire-station.png'),
+          color: Colors.white,
+          text: 'Fire Station',
+          image: 'assets/fire-station.png',
+          onTap: () => _launchURL(number: '12345'),
+        ),
+        _buildTile(
+          color: Colors.white,
+          text: 'Others',
+          image: 'assets/more.png',
+          onTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SosNumbers())),
+        ),
       ],
     );
   }
 
   _buildTile(
-      {@required Color color, @required String text, @required String image}) {
+      {@required Color color,
+      @required String text,
+      @required String image,
+      @required onTap}) {
+    //     DocumentSnapshot doc,
+    // EmergencyModel emergency = EmergencyModel.get(doc);
+    // return StreamBuilder(
+    //     stream: FirebaseFirestore.instance.collection('emergencyNumbers').snapshots(),
+    //     builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return Center(
+    //           child: SizedBox(),
+    //         );
+    //       } else {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 5,
         child: InkWell(
           splashColor: Colors.blue,
-          onTap: () => _launchURL(),
+          onTap: onTap,
           child: Container(
-            width: size.width * .25,
+            width: size.width * .3,
             height: size.height * .2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -94,8 +124,8 @@ class _SOSPageState extends State<SOSPage> {
     );
   }
 
-  _launchURL() async {
-    const url = 'tel:+639292052188';
+  _launchURL({String number}) async {
+    String url = 'tel:$number';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

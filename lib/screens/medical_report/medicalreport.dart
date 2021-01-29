@@ -33,6 +33,7 @@ class _MedicalReportState extends State<MedicalReport> {
 
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Medical Report'),
         leading: IconButton(
@@ -57,7 +58,7 @@ class _MedicalReportState extends State<MedicalReport> {
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc('sZ3QWKrGWfUumTb7zMbp1d5sxm52')
+              .doc(userDetailsProvider.currentUser.ref)
               .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -80,28 +81,76 @@ class _MedicalReportState extends State<MedicalReport> {
 
   _buildMedicalReport(DocumentSnapshot doc) {
     UserModel user = UserModel.get(doc);
+    String result1,
+        result2,
+        result3,
+        result4,
+        result5,
+        result6,
+        result7,
+        result8;
+    if (user.isHiv == true) {
+      result1 = 'Positive';
+    } else {
+      result1 = 'Negative';
+    }
+    if (user.isTb == true) {
+      result2 = 'Positive';
+    } else {
+      result2 = 'Negative';
+    }
+    if (user.isHeartDisease == true) {
+      result3 = 'Positive';
+    } else {
+      result3 = 'Negative';
+    }
+    if (user.isHighBlood == true) {
+      result4 = 'Positive';
+    } else {
+      result4 = 'Negative';
+    }
+    if (user.isMalaria == true) {
+      result5 = 'Positive';
+    } else {
+      result5 = 'Negative';
+    }
+    if (user.isLiverFunction == true) {
+      result6 = 'Positive';
+    } else {
+      result6 = 'Negative';
+    }
+    if (user.isVDRLTest == true) {
+      result7 = 'Positive';
+    } else {
+      result7 = 'Negative';
+    }
+    if (user.isTpaTest == true) {
+      result8 = 'Positive';
+    } else {
+      result8 = 'Negative';
+    }
     return Container(
       width: size.width,
       height: size.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildRow(title: 'HIV TEST', value: user.isHiv),
-          _buildRow(title: 'Tuberculosis TEST', value: user.isTb),
-          _buildRow(title: 'Heart Disease', value: user.isHeartDisease),
-          _buildRow(title: 'High Blood', value: user.isHighBlood),
-          _buildRow(title: 'Malaria', value: user.isMalaria),
-          _buildRow(title: 'Liver Function', value: user.isLiverFunction),
-          _buildRow(title: 'VRDL TEST', value: user.isVDRLTest),
-          _buildRow(title: 'TPA TEST', value: user.isTpaTest),
+          _buildRow(title: 'HIV TEST', result: result1),
+          _buildRow(title: 'Tuberculosis TEST', result: result2),
+          _buildRow(title: 'Heart Disease', result: result3),
+          _buildRow(title: 'High Blood', result: result4),
+          _buildRow(title: 'Malaria', result: result5),
+          _buildRow(title: 'Liver Function', result: result6),
+          _buildRow(title: 'VRDL TEST', result: result7),
+          _buildRow(title: 'TPA TEST', result: result8),
         ],
       ),
     );
   }
 
-  _buildRow({@required String title, @required bool value}) {
+  _buildRow({@required String title, @required String result}) {
     return Card(
-      elevation: 5,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -111,7 +160,7 @@ class _MedicalReportState extends State<MedicalReport> {
             children: [
               Text(title,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-              Text(value.toString(),
+              Text(result,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22))
             ],
           ),

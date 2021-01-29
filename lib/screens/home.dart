@@ -98,9 +98,9 @@ class _HomeState extends State<Home> {
         children: [
           _buildTile(
               color: Colors.white,
-              text: 'Emergency SOS',
+              text: 'Emergency HOTLINE',
               widget: SOSPage(),
-              icon: Icons.notifications),
+              icon: Icons.call),
           _buildTile(
               color: Colors.white,
               text: 'Emergency Maps',

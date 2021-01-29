@@ -204,7 +204,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
 
   changeStatus(int status, DocumentSnapshot doc) {
     CollectionReference incidentReport =
-        FirebaseFirestore.instance.collection('incidentReport');
+        FirebaseFirestore.instance.collection('incidentReports');
     return incidentReport.doc(doc.id).update({'status': status});
   }
 
