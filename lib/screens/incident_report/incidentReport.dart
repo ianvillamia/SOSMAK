@@ -135,6 +135,7 @@ class _IncidentReportState extends State<IncidentReport> {
       incidentChecker.ref = currentIncident;
 
       if (currentIncident == '') {
+        print('hey' + user.currentIncidentRef);
         print('no current report');
         incidentChecker.status = -1;
       } else {
@@ -160,35 +161,41 @@ class _IncidentReportState extends State<IncidentReport> {
 
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text('SOSMAK'),
-          leading: IconButton(
-            icon: Icon(Icons.home),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        // appBar: AppBar(
+        //   title: Text('SOSMAK'),
+        //   leading: IconButton(
+        //     icon: Icon(Icons.home),
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //   ),
+        // ),
         body: FutureBuilder(
             future: checkCurrentReport(firebaseUser.uid),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                IncidentChecker incident = snapshot.data;
-                bool showIncident = false;
+                if (snapshot.hasData) {
+                  print(snapshot.data.status);
+                  IncidentChecker incident = snapshot.data;
+                  bool showIncident = false;
 
-                if (incident.status == 0 || incident.status == 1) {
-                  showIncident = true;
+                  if (incident.status == 0 ||
+                      incident.status == 1 ||
+                      incident.status == -1) {
+                    showIncident = true;
+                    return _buildIncidentForm();
+                  } else {
+                    print(incident.ref);
+                    return Container();
+                  }
+
+                  // return CurrentIncident(
+                  //   documentId: incident.ref,
+                  // );
+
                 }
-                return showIncident
-                    ? CurrentIncident(
-                        documentId: incident.ref,
-                      )
-                    : _buildIncidentForm();
               }
-
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return CircularProgressIndicator();
             }));
   }
 
