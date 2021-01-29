@@ -20,6 +20,15 @@ class _SignupState extends State<Signup> {
       lastNameController = TextEditingController();
   Size size;
   final _formKey = GlobalKey<FormState>();
+
+  bool _isHidden = true;
+
+  void _toggleVisibility() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -57,13 +66,11 @@ class _SignupState extends State<Signup> {
                 _buildTextFormField(
                     controller: addressController,
                     label: 'Address',
-                    maxLines: 3),
+                    maxLines: 2),
                 _buildTextFormField(
                     caps: false, controller: emailContoller, label: 'Email'),
-                _buildTextFormField(
-                    controller: passwordController,
-                    label: 'Password',
-                    isPassword: true),
+                _buildPasswordField(
+                    controller: passwordController, label: 'Password'),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -136,7 +143,7 @@ class _SignupState extends State<Signup> {
     bool caps = true,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5.0),
       child: TextFormField(
         textCapitalization:
             caps ? TextCapitalization.words : TextCapitalization.none,
@@ -150,9 +157,34 @@ class _SignupState extends State<Signup> {
         maxLines: maxLines ?? 1,
         obscureText: isPassword ?? false,
         decoration: InputDecoration(
+            alignLabelWithHint: true,
             labelText: label,
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+      ),
+    );
+  }
+
+  _buildPasswordField({TextEditingController controller, String label}) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextFormField(
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Password is required';
+          }
+          return null;
+        },
+        controller: controller,
+        obscureText: _isHidden,
+        decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+            suffixIcon: IconButton(
+                onPressed: _toggleVisibility,
+                icon: _isHidden
+                    ? Icon(Icons.visibility_off, size: 20)
+                    : Icon(Icons.visibility, size: 20))),
       ),
     );
   }

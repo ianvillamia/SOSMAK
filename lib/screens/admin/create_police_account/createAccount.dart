@@ -32,11 +32,15 @@ class _CreateAccountState extends State<CreateAccount> {
             child: Column(
               children: [
                 _buildTextFormField(
-                    controller: emailController, label: 'Email'),
+                    controller: emailController, label: 'Email', caps: false),
                 _buildTextFormField(
-                    controller: lastNameController, label: 'Last Name'),
+                    controller: firstNameController,
+                    label: 'First Name',
+                    caps: true),
                 _buildTextFormField(
-                    controller: firstNameController, label: 'First Name'),
+                    controller: lastNameController,
+                    label: 'Last Name',
+                    caps: true),
                 MaterialButton(
                     color: Colors.blueAccent,
                     textColor: Colors.white,
@@ -60,7 +64,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 message: 'Account Already Exists');
                           } else {
                             showAlertDialog(context,
-                                message: 'hey',
+                                message: 'Hey',
                                 widget: Container(
                                   height: size.height * .2,
                                   child: Center(
@@ -70,7 +74,11 @@ class _CreateAccountState extends State<CreateAccount> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Text('Account Created'),
+                                        Text(
+                                          'Account Created',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                         Text('Email:' + emailController.text),
                                         Text('Temporary Password:' +
                                             temporaryPassword),
@@ -92,10 +100,12 @@ class _CreateAccountState extends State<CreateAccount> {
   }
 
   _buildTextFormField(
-      {TextEditingController controller, String label, bool isPassword}) {
+      {TextEditingController controller, String label, bool caps}) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextFormField(
+        textCapitalization:
+            caps ? TextCapitalization.words : TextCapitalization.none,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter some text';
@@ -103,7 +113,6 @@ class _CreateAccountState extends State<CreateAccount> {
           return null;
         },
         controller: controller,
-        obscureText: isPassword ?? false,
         decoration: InputDecoration(
             labelText: label,
             border:

@@ -1,5 +1,5 @@
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
-import 'package:SOSMAK/screens/admin/create_police_account/createPoliceAccount.dart';
+import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
 
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 
