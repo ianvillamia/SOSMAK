@@ -160,16 +160,15 @@ class _IncidentReportState extends State<IncidentReport> {
     //check docu? here?
 
     return Scaffold(
-        key: _scaffoldKey,
-        // appBar: AppBar(
-        //   title: Text('SOSMAK'),
-        //   leading: IconButton(
-        //     icon: Icon(Icons.home),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        // ),
+        appBar: AppBar(
+          title: Text('SOSMAK'),
+          leading: IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
         body: FutureBuilder(
             future: checkCurrentReport(firebaseUser.uid),
             builder: (context, snapshot) {
@@ -183,19 +182,18 @@ class _IncidentReportState extends State<IncidentReport> {
                       incident.status == 1 ||
                       incident.status == -1) {
                     showIncident = true;
-                    return _buildIncidentForm();
+                    //return Container();
+                    return showIncident == true
+                        ? CurrentIncident(
+                            documentId: incident.ref,
+                          )
+                        : _buildIncidentForm();
                   } else {
-                    print(incident.ref);
-                    return Container();
+                    return _buildIncidentForm();
                   }
-
-                  // return CurrentIncident(
-                  //   documentId: incident.ref,
-                  // );
-
                 }
               }
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }));
   }
 
@@ -462,14 +460,14 @@ class _IncidentReportState extends State<IncidentReport> {
           incident.status = 0;
           incident.desc = descController.text;
           incident.reporterRef = firebaseUser.uid;
-          await UserService().addIncident(incident).then((value) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CurrentIncident(
-                          documentId: value,
-                        )));
-          });
+          // await UserService().addIncident(incident).then((value) {
+          //   Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => CurrentIncident(
+          //                 documentId: value,
+          //               )));
+          // });
         }
       }).catchError((err) {
         print(err);

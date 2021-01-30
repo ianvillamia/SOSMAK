@@ -4,7 +4,7 @@ import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-
+import 'package:multi_image_picker/src/asset.dart';
 import '../models/userModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -58,15 +58,6 @@ class UserService {
   Future addIncident(IncidentModel incident) async {
     String docRef;
     await incidentReports.add(incident.toMap()).then((value) async {
-      //add to user
-      // DocumentSnapshot _docu = await value.get();
-      // IncidentModel incidentModel = IncidentModel.get(_docu);
-
-      // await users
-      //     .doc(incident.reporterRef)
-      //     .collection('incidentReports')
-      //     .doc(value.id)
-      //     .set(incidentModel.toMap());
       await users
           .doc(incident.reporterRef)
           .update({'currentIncidentRef': value.id});
@@ -130,6 +121,55 @@ class UserService {
     });
   }
 
+  Future<List> getImageUrls(List<Asset> images) {
+    List<String> imageUrls = [];
+    images.map((image) async {
+      String url = await postImage(image);
+      print(url);
+      imageUrls.add(url);
+    });
+    return Future.value(imageUrls);
+  }
+
+  Future postIncident(
+      {@required IncidentModel incident, @required List<Asset> images}) async {
+    List imageUrls = [];
+    String docRef;
+
+    images.forEach((image) async {
+      await postImage(image).then((downloadUrl) async {
+        //add to list
+        imageUrls.add(downloadUrl);
+        if (imageUrls.length == images.length) {
+          // create docu?
+          incident.imageUrls = imageUrls;
+          await incidentReports.add(incident.toMap()).then((value) async {
+            docRef = value.id;
+            await users
+                .doc(incident.reporterRef)
+                .update({'currentIncidentRef': value.id});
+          });
+        }
+      });
+    });
+
+    return docRef;
+  }
+
+  //single image only
+  Future<dynamic> postImage(Asset imageFile) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    firebase_storage.Reference reference = firebase_storage
+        .FirebaseStorage.instance
+        .ref('uploads/incidentImages/$fileName');
+    firebase_storage.UploadTask uploadTask =
+        reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    //TaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    var imageUrl = await (await uploadTask).ref.getDownloadURL();
+    print(imageUrl);
+    return imageUrl;
+  }
+
   void createPoliceAccount() {}
 
   getUser({User user}) async {
@@ -137,45 +177,8 @@ class UserService {
       if (doc.exists) {
         return UserModel.get(doc);
       }
-      // return UserModel.get(doc);
     });
   }
-
-  // Future uploadIncidentImage(File file) async {
-  //   // File file = File(filePath);
-  //   DateTime date = DateTime.now();
-  //   String fileName = date.toString();
-
-  //   return await firebase_storage.FirebaseStorage.instance
-  //       .ref('uploads/incident/$fileName.png')
-  //       .putFile(file);
-  // }
-
-  // Future addIncidentReport(
-  //     {@required IncidentModel incident, File file}) async {
-  //   bool added;
-  //   try {
-  //     if (file != null) {
-  //       uploadIncidentImage(file).then((value) async {
-  //         String downUrl = await value.ref.getDownloadURL();
-  //         incident.imageUrl = downUrl;
-  //         await incidentReport
-  //             .add(incident.toMap())
-  //             .then((value) => added = true);
-  //       });
-  //     } else {
-  //       incident.imageUrl = '';
-  //       await incidentReport
-  //           .add(incident.toMap())
-  //           .then((value) => added = true);
-  //     }
-
-  //     return added;
-  //   } catch (e) {
-  //     print(e);
-  //     return false;
-  //   }
-  // }
 
   Future<void> updateIncident(DocumentSnapshot doc, String location,
       String date, String time, String incident, String desc) {

@@ -2,6 +2,7 @@ import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
 
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
+import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
 
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
@@ -50,10 +51,14 @@ class _HomeState extends State<Home> {
       body: Container(
         width: size.width,
         height: size.height,
-        child: FutureBuilder<DocumentSnapshot>(
-          future: AuthenticationService.getCurrentUser(firebaseUser.uid),
+        child: StreamBuilder<DocumentSnapshot>(
+          // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(firebaseUser.uid)
+              .snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
                 //  print(snapshot.data);
                 //set thing?
@@ -132,7 +137,11 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Incident Report',
                 icon: Icons.warning_outlined,
-                widget: IncidentReport()),
+                widget: IncidentReportV2(
+                  userRef: userDetailsProvider.currentUser.ref,
+                  currentIncidentDoc:
+                      userDetailsProvider.currentUser.currentIncidentRef,
+                )),
           ),
           Visibility(
             visible: isAdmin,

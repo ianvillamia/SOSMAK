@@ -5,13 +5,20 @@ import 'package:flutter/material.dart';
 
 class CurrentIncident extends StatefulWidget {
   final String documentId;
-  CurrentIncident({this.documentId});
+
+  CurrentIncident({@required this.documentId});
 
   @override
   _CurrentIncidentState createState() => _CurrentIncidentState();
 }
 
 class _CurrentIncidentState extends State<CurrentIncident> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.documentId);
+  }
+
   Size size;
   @override
   Widget build(BuildContext context) {
