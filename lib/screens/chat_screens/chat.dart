@@ -188,9 +188,6 @@ class _ChatState extends State<Chat> {
       return Align(
         alignment: Alignment.centerRight,
         child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
           elevation: 5,
           child: Container(
             child: Column(
@@ -198,7 +195,9 @@ class _ChatState extends State<Chat> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text(chat.message, style: TextStyle(fontSize: 20)),
+                  child: Text(
+                    chat.message,
+                  ),
                 ),
               ],
             ),
@@ -229,7 +228,7 @@ class _ChatState extends State<Chat> {
             alignment: Alignment.centerLeft, chat: chat, withImage: true);
       } else {
         return _buildMessageBox(
-            alignment: Alignment.centerRight, chat: chat, withImage: false);
+            alignment: Alignment.centerLeft, chat: chat, withImage: false);
       }
     }
   }
