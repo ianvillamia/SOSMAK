@@ -160,8 +160,8 @@ class _CreateWantedState extends State<CreateWanted> {
               ),
             ),
       Positioned(
-        left: 110,
-        top: 110,
+        left: 100,
+        top: 100,
         child: ClipOval(
           child: Material(
             color: Colors.grey[200],

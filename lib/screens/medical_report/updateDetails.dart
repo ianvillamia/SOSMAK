@@ -62,7 +62,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
         child: FutureBuilder<DocumentSnapshot>(
             future: AuthenticationService.getCurrentUser(firebaseUser.uid),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
                 if (counter == 0) {
                   setData(snapshot.data);
                   counter++;

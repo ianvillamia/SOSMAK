@@ -135,7 +135,7 @@ class _MapViewState extends State<MapView> {
   }
 
   void _showPlacesPanel() {
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       showModalBottomSheet(
           backgroundColor: Colors.transparent,
           context: context,
@@ -235,6 +235,15 @@ class _MapViewState extends State<MapView> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
     }
+
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          zoom: 14,
+        ),
+      ),
+    );
 
     PolylineId id = PolylineId('poly');
     Polyline polyline = Polyline(
@@ -530,7 +539,7 @@ class _MapViewState extends State<MapView> {
           children: <Widget>[
             // Map View
             GoogleMap(
-              markers: markers != null ? Set<Marker>.from(placesMarkers) : null,
+              markers: markers != null ? Set<Marker>.of(placesMarkers) : null,
               initialCameraPosition: _initialLocation,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
@@ -739,7 +748,7 @@ class _MapViewState extends State<MapView> {
                           latitude: first.coordinates.latitude,
                           longitude: first.coordinates.longitude);
                       await getHospitals(posit);
-                      await getHospitals(posit);
+                      getHospitals(posit);
 
                       Navigator.pop(context);
                     } else {}

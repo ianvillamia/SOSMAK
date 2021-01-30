@@ -37,7 +37,7 @@ class _MedicalReportState extends State<MedicalReport> {
       appBar: AppBar(
         title: Text('Medical Report'),
         leading: IconButton(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },

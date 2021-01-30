@@ -111,31 +111,28 @@ class _WantedListState extends State<WantedList> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
+        contentPadding: EdgeInsets.all(12),
         content: Container(
-      width: size.width * .7,
-      height: size.height * .65,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          WantedPoster(
-            isMini: false,
-            wanted: wanted,
+          width: size.width * .7,
+          height: size.height * .68,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              WantedPoster(
+                isMini: false,
+                wanted: wanted,
+              ),
+              MaterialButton(
+                color: Colors.redAccent,
+                onPressed: () => _launchURL(wanted.contactHotline),
+                child: Text(
+                  'Contact Hotline',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
+            ],
           ),
-          // Image.network(
-          //   wanted.imageUrl,
-          //   fit: BoxFit.contain,
-          // ),
-          MaterialButton(
-            color: Colors.redAccent,
-            onPressed: () => _launchURL(wanted.contactHotline),
-            child: Text(
-              'Contact Hotline',
-              style: TextStyle(color: Colors.white),
-            ),
-          )
-        ],
-      ),
-    ));
+        ));
 
     // show the dialog
     showDialog(
@@ -200,74 +197,78 @@ class _WantedPosterState extends State<WantedPoster> {
       return Container(
         child: Stack(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Republic of the Philippines',
-                  style: customTextStyle(12.0),
-                ),
-                Text(
-                  'National Police Commission',
-                  style: customTextStyle(15.0),
-                ),
-                Text(
-                  'Philippine National Police',
-                  style: customTextStyle(12.0),
-                ),
-                Text(
-                  'WANTED',
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                Image.network(
-                  widget.wanted.imageUrl,
-                  fit: BoxFit.contain,
-                ),
-                Text(
-                  widget.wanted.name,
-                  style: customTextStyle(12.0),
-                ),
-                Text(
-                  'AKA:' + widget.wanted.alias,
-                  style: customTextStyle(12.0),
-                ),
-                Text(
-                  "REWARD:" + widget.wanted.reward,
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Republic of the Philippines',
+                    style: customTextStyle(12.0),
                   ),
-                ),
-                Text(
-                  'Criminal Case Number',
-                  style: customTextStyle(10.0),
-                ),
-                Text(
-                  widget.wanted.criminalCaseNumber,
-                  textAlign: TextAlign.center,
-                  style: customTextStyle(10.0),
-                ),
-                Text(
-                  'Last Known Address',
-                  style: customTextStyle(12.0),
-                ),
-                Text(
-                  widget.wanted.lastKnownAddress,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+                  Text(
+                    'National Police Commission',
+                    style: customTextStyle(15.0),
+                  ),
+                  Text(
+                    'Philippine National Police',
+                    style: customTextStyle(12.0),
+                  ),
+                  Text(
+                    'WANTED',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Image.network(
+                    widget.wanted.imageUrl,
+                    fit: BoxFit.contain,
+                    height: 220,
+                  ),
+                  Text(
+                    widget.wanted.name,
+                    style: customTextStyle(12.0),
+                  ),
+                  Text(
+                    'AKA:' + widget.wanted.alias,
+                    style: customTextStyle(12.0),
+                  ),
+                  Text(
+                    "REWARD:" + widget.wanted.reward,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    'Criminal Case Number',
+                    style: customTextStyle(10.0),
+                  ),
+                  Text(
+                    widget.wanted.criminalCaseNumber,
+                    textAlign: TextAlign.center,
+                    style: customTextStyle(10.0),
+                  ),
+                  Text(
+                    'Last Known Address',
+                    style: customTextStyle(12.0),
+                  ),
+                  Text(
+                    widget.wanted.lastKnownAddress,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
             Align(
               alignment: Alignment.topLeft,
               child: Container(
-                  width: 60,
-                  height: 60,
+                  width: 70,
+                  height: 70,
                   child: Image.asset(
                     'assets/pnp-logo.png',
                     fit: BoxFit.contain,

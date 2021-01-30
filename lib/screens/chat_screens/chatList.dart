@@ -100,7 +100,10 @@ class _ChatListState extends State<ChatList> {
                     width: 80,
                     child: Image.network(police.imageUrl)),
               ),
-              Text(police.firstName + " " + police.lastName)
+              Text(
+                police.firstName + " " + police.lastName,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              )
             ],
           ),
         )),
@@ -115,46 +118,43 @@ class _ChatListState extends State<ChatList> {
       elevation: 5,
       child: Container(
         color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                  width: size.width * .78,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: new OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(50.0),
-                      ),
-                    )),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+                width: size.width * .78,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                      border: new OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(
+                      const Radius.circular(50.0),
+                    ),
                   )),
-              ClipOval(
-                child: Material(
-                  color: Colors.white,
-                  child: Center(
-                    child: Ink(
-                      decoration: const ShapeDecoration(
-                        color: Colors.lightBlue,
-                        shape: CircleBorder(),
-                      ),
-                      child: ClipOval(
-                        child: IconButton(
-                          icon: Icon(Icons.send),
-                          color: Colors.white,
-                          onPressed: () {
-                            //send message
-                          },
-                        ),
+                )),
+            ClipOval(
+              child: Material(
+                color: Colors.white,
+                child: Center(
+                  child: Ink(
+                    decoration: const ShapeDecoration(
+                      color: Colors.lightBlue,
+                      shape: CircleBorder(),
+                    ),
+                    child: ClipOval(
+                      child: IconButton(
+                        icon: Icon(Icons.send),
+                        color: Colors.white,
+                        onPressed: () {
+                          //send message
+                        },
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

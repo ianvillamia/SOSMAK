@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'updateIncident.dart';
-
 class IncidentReportBottomSheet extends StatefulWidget {
   final DocumentSnapshot doc;
   final IncidentModel incident;
@@ -43,103 +41,91 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
     return Container(
         color: Colors.grey[900],
         height: size.height * .7,
-        child: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _pageController,
+        child: Column(
           children: [
-            Column(
-              children: [
-                Stack(children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                      height: size.height * .8,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                        child: Scrollbar(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            Stack(children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Container(
+                  height: size.height * .8,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: size.height * 0.1),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(height: size.height * 0.1),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Incident:',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        buildChip(
-                                            text: widget.incident.incident),
-                                      ],
+                                    Text(
+                                      'Incident:',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    buildText(
-                                        title: 'Date: ',
-                                        data: widget.incident.date)
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    buildChip(text: widget.incident.incident),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 10,
-                                ),
                                 buildText(
-                                    title: 'Location: ',
-                                    data: widget.incident.location),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                buildText(
-                                    title: 'Description: ',
-                                    data: widget.incident.desc),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                buildText(
-                                    title: 'Image/s: ',
-                                    data:
-                                        '${widget.incident.imageUrls.length}'),
-                                getImages(doc: widget.doc),
+                                    title: 'Date: ', data: widget.incident.date)
                               ],
                             ),
-                          ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            buildText(
+                                title: 'Location: ',
+                                data: widget.incident.location),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            buildText(
+                                title: 'Description: ',
+                                data: widget.incident.desc),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            buildText(
+                                title: 'Image/s: ',
+                                data: '${widget.incident.imageUrls.length}'),
+                            getImages(doc: widget.doc),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  Align(alignment: Alignment.topLeft, child: buildStatus()),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
+                ),
+              ),
+              Align(alignment: Alignment.topLeft, child: buildStatus()),
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
                   ),
-                ]),
-                MaterialButton(
-                  color: Colors.white,
-                  elevation: 2,
-                  child: Text('Update Status'),
                   onPressed: () {
-                    _showMaterialDialog();
+                    Navigator.pop(context);
                   },
                 ),
-              ],
+              ),
+            ]),
+            MaterialButton(
+              color: Colors.white,
+              elevation: 2,
+              child: Text('Update Status'),
+              onPressed: () {
+                _showMaterialDialog();
+              },
             ),
-            //DIPATCH OFFICERS//
-            UpdateIncidentReport(doc: widget.doc, incident: widget.incident),
           ],
         ));
   }
@@ -289,19 +275,50 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         child: ListView(
             scrollDirection: Axis.horizontal,
             children: images
-                    ?.map<Widget>((doc) => Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: FadeInImage.assetNetwork(
-                            placeholder: ('assets/loading.gif'),
-                            image: doc.toString(),
-                            width: 120,
-                            height: 100,
-                            fit: BoxFit.cover,
+                    ?.map<Widget>((doc) => InkWell(
+                          onTap: () {
+                            showImageDialog(doc.toString());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: ('assets/loading.gif'),
+                              image: doc.toString(),
+                              width: 120,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ))
                     ?.toList() ??
                 []),
       );
     }
+  }
+
+  showImageDialog(String image) {
+    showGeneralDialog(
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          return Transform.scale(
+            scale: a1.value,
+            child: Opacity(
+              opacity: a1.value,
+              child: AlertDialog(
+                shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0)),
+                content: Container(
+                    width: size.width * 0.9,
+                    height: size.height * 0.5,
+                    child: Image.network(image)),
+              ),
+            ),
+          );
+        },
+        transitionDuration: Duration(milliseconds: 200),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {});
   }
 }

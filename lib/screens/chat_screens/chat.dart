@@ -79,7 +79,8 @@ class _ChatState extends State<Chat> {
                     if (snapshot.hasData) {
                       return Container(
                         width: size.width,
-                        height: size.height * .77,
+                        height: size.height * .785,
+                        padding: EdgeInsets.all(5),
                         color: Colors.grey,
                         child: Scrollbar(
                           child: SingleChildScrollView(
@@ -187,14 +188,17 @@ class _ChatState extends State<Chat> {
       return Align(
         alignment: Alignment.centerRight,
         child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
           elevation: 5,
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(chat.message),
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(chat.message, style: TextStyle(fontSize: 20)),
                 ),
               ],
             ),
@@ -251,44 +255,53 @@ class _ChatState extends State<Chat> {
   _buildTextFormField(
       {TextEditingController controller, String label, bool isPassword}) {
     return TextFormField(
+      textCapitalization: TextCapitalization.sentences,
       controller: controller,
       obscureText: isPassword ?? false,
       decoration: InputDecoration(
-          suffix: IconButton(
-            icon: Icon(
-              Icons.photo,
-              color: Colors.blue,
-            ),
-            //onPressed: () {},
-            onPressed: () => getImage(),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () {
-              //
-              //   print(images[0]);
-              if (message.text != '') {
-                print(message.text);
-                ChatModel chat = ChatModel();
-                chat.date = DateTime.now();
-                chat.message = message.text;
-                chat.senderRef = firebaseUser.uid;
-                ChatService()
-                    .sendMessage(
-                        chatModel: chat, chatID: widget.doc.id, image: _image)
-                    .then((value) {
-                  _image = null;
-                  message.clear();
-                  _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.ease);
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                });
+          suffixIcon: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.photo,
+                  color: Colors.blue,
+                ),
+                //onPressed: () {},
+                onPressed: () => getImage(),
+              ),
+              IconButton(
+                icon: Icon(Icons.send, color: Colors.lightBlue),
+                onPressed: () {
+                  //
+                  //   print(images[0]);
+                  if (message.text != '') {
+                    print(message.text);
+                    ChatModel chat = ChatModel();
+                    chat.date = DateTime.now();
+                    chat.message = message.text;
+                    chat.senderRef = firebaseUser.uid;
+                    ChatService()
+                        .sendMessage(
+                            chatModel: chat,
+                            chatID: widget.doc.id,
+                            image: _image)
+                        .then((value) {
+                      _image = null;
+                      message.clear();
+                      _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.ease);
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    });
 
-                //create
-              }
-            },
+                    //create
+                  }
+                },
+              ),
+            ],
           ),
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
