@@ -1,5 +1,4 @@
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
-import 'package:SOSMAK/screens/admin/incidentReportsAdmin/incidentReportsAdmin.dart';
 import 'package:SOSMAK/screens/auth_screens/login.dart';
 import 'package:SOSMAK/screens/home.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
@@ -7,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'screens/incident_report/incidentReport.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

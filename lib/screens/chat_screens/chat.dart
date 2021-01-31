@@ -186,7 +186,7 @@ class _ChatState extends State<Chat> {
       );
     } else {
       return Align(
-        alignment: Alignment.centerRight,
+        alignment: alignment,
         child: Card(
           elevation: 5,
           child: Container(

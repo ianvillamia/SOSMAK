@@ -1,13 +1,9 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
-import 'package:SOSMAK/models/userModel.dart';
-import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:provider/src/provider.dart';
 
 class IncidentReportV2 extends StatefulWidget {
   final String userRef;
@@ -24,7 +20,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   Size size;
   String dropdownValue = 'Robbery';
   List<Asset> images = List<Asset>();
-  String _error = 'No Error Dectected';
+
   TextEditingController locationController = TextEditingController(),
       descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -34,7 +30,6 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     //get current user\
@@ -53,7 +48,11 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         .collection('incidentReports')
         .doc(currentIncidentRef)
         .get();
+    if (doc.exists) {
+      //see first if document exists
+    }
     IncidentModel incident = IncidentModel.get(doc);
+
     print(incident.status);
     if (incident.status == 2) {
       setState(() {
@@ -64,7 +63,6 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
   @override
   void didChangeDependencies() async {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     //fetch status
     check();
@@ -269,7 +267,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     if (!mounted) return;
     setState(() {
       images = resultList;
-      _error = error;
+
       // print(images);
     });
   }

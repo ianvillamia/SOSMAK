@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MedicalReportModel {
@@ -22,7 +21,7 @@ class MedicalReportModel {
     this.isTPA = data['isTPA'];
   }
 
-  MedicalReportModel() {}
+  MedicalReportModel();
   toMap({@required MedicalReportModel medical}) {
     var map = {
       'isHIV': this.isHIV,

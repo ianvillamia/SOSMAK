@@ -1,10 +1,8 @@
 import 'package:SOSMAK/models/police.dart';
-import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CreatePoliceAccount extends StatefulWidget {
   CreatePoliceAccount({Key key}) : super(key: key);
@@ -17,7 +15,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
   bool isAdmin;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -33,8 +30,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => CreateAccount()));
-            // router.navigateTo(context, Routes.createAccount,
-            //     transition: TransitionType.cupertino);
           },
           child: Icon(Icons.add),
         ),
@@ -140,38 +135,46 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     }
     Widget okButton = FlatButton(
       child: Text("OK"),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pop(context);
+      },
     );
     AlertDialog alert = AlertDialog(
       title: Image.network(police.imageUrl, width: 100, height: 100),
       content: Container(
-        height: size.height * .45,
-        child: Column(
-          children: [
-            buildInfo('Name: ', '${police.firstName}, ${police.lastName}',
-                false, doc),
-            buildInfo('Email: ', police.email, false, doc),
-            buildInfo('Temporary Password: ', police.tempPassword, false, doc),
-            SizedBox(height: size.height * 0.03),
-            Text('Medical Status',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: size.height * 0.03),
-            buildInfo('HIV Test: ', result1, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('Tuberculosis Test: ', result2, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('Heart Disease: ', result3, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('High Blood: ', result4, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('Malaria: ', result5, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('Liver Function: ', result6, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('VDRL Test: ', result7, true, doc),
-            SizedBox(height: size.height * 0.01),
-            buildInfo('TPA Test: ', result8, true, doc),
-          ],
+        height: size.height * .5,
+        width: size.width * .7,
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                buildInfo('Name: ', '${police.firstName}, ${police.lastName}',
+                    false, doc),
+                buildInfo('Email: ', police.email, false, doc),
+                buildInfo(
+                    'Temporary Password: ', police.tempPassword, false, doc),
+                SizedBox(height: size.height * 0.03),
+                Text('Medical Status',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: size.height * 0.03),
+                buildInfo('HIV Test: ', result1, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('Tuberculosis Test: ', result2, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('Heart Disease: ', result3, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('High Blood: ', result4, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('Malaria: ', result5, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('Liver Function: ', result6, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('VDRL Test: ', result7, true, doc),
+                SizedBox(height: size.height * 0.01),
+                buildInfo('TPA Test: ', result8, true, doc),
+              ],
+            ),
+          ),
         ),
       ),
       actions: [

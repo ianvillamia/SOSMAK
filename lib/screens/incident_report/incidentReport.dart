@@ -1,15 +1,12 @@
 import 'dart:io';
-
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';

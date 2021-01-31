@@ -1,6 +1,5 @@
 import 'package:SOSMAK/models/wantedModel.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
-import 'package:SOSMAK/widgets/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

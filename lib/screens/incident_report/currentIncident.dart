@@ -1,5 +1,4 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
-import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -48,6 +47,10 @@ class _CurrentIncidentState extends State<CurrentIncident> {
                   child: CircularProgressIndicator(),
                 );
               }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }),
       ),
     );

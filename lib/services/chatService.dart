@@ -9,7 +9,6 @@ class ChatService {
       FirebaseFirestore.instance.collection('conversation');
   Future setChat({String user1, String user2}) async {
     List users = [user2, user1];
-    var haveConversation;
     users.sort();
     DocumentSnapshot conversation;
     await this
@@ -30,7 +29,6 @@ class ChatService {
         conversation = snapshot.docs[0];
 
         print('Conversation Already Exists');
-        haveConversation = true;
       }
     });
     return conversation;

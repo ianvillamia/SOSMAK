@@ -5,7 +5,6 @@ import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
 
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
-import 'package:SOSMAK/screens/incident_report/incidentReport.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -90,6 +89,9 @@ class _HomeState extends State<Home> {
                 child: CircularProgressIndicator(),
               );
             }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           },
         ),
       ),

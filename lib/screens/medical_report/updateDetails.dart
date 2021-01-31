@@ -1,5 +1,4 @@
 import 'package:SOSMAK/models/userModel.dart';
-import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
