@@ -26,6 +26,8 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool isButtonDisabled = true;
+  bool newIncident = false;
+  bool showFab = false;
   //controllers
 
   @override
@@ -56,7 +58,8 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     print(incident.status);
     if (incident.status == 2) {
       setState(() {
-        doesIncidentExist = true;
+        showFab = true;
+        //doesIncidentExist = true;
       });
     }
   }
@@ -73,6 +76,16 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     size = MediaQuery.of(context).size;
     //  print(currentIncident);
     return Scaffold(
+        floatingActionButton: showFab
+            ? FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    newIncident = true;
+                  });
+                },
+                child: Icon(Icons.add),
+              )
+            : Container(),
         appBar: AppBar(
           title: Text('Incident Report'),
           leading: IconButton(
@@ -83,21 +96,27 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
           ),
         ),
         body: isLoading
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    Text('Please wait..'),
-                  ],
-                ),
-              )
-            : doesIncidentExist
+            ? _buildLoading()
+            : newIncident == true
                 ? _buildForm()
-                : CurrentIncident(
-                    documentId: currentIncidentRef,
-                  ));
+                : doesIncidentExist
+                    ? _buildForm()
+                    : CurrentIncident(
+                        documentId: currentIncidentRef,
+                      ));
+  }
+
+  _buildLoading() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          Text('Please wait..'),
+        ],
+      ),
+    );
   }
 
   _buildForm() {
