@@ -37,7 +37,7 @@ class _MedicalReportState extends State<MedicalReport> {
       appBar: AppBar(
         title: Text('Medical Report'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.home),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -160,8 +160,7 @@ class _MedicalReportState extends State<MedicalReport> {
             children: [
               Text(title,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-              Text(result,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22))
+              Text(result, style: TextStyle(fontSize: 22))
             ],
           ),
         ),

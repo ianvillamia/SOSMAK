@@ -95,7 +95,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                             ),
                             buildText(
                                 title: 'Image/s: ',
-                                data: '${widget.incident.imageUrls.length}'),
+                                data: '${widget.incident.images.length}'),
                             getImages(doc: widget.doc),
                           ],
                         ),
@@ -266,7 +266,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
   }
 
   getImages({@required DocumentSnapshot doc}) {
-    List images = doc.data()['imageUrls'];
+    List images = doc.data()['images'];
     print(doc);
     if (images.length != 0) {
       return Container(

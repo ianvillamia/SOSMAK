@@ -160,7 +160,7 @@ class _IncidentReportState extends State<IncidentReport> {
         appBar: AppBar(
           title: Text('SOSMAK'),
           leading: IconButton(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -453,7 +453,7 @@ class _IncidentReportState extends State<IncidentReport> {
           incident.location = locationController.text;
           incident.date = '${dateController.text}, ${timeController.text}';
           incident.incident = _selectedIncident.name;
-          incident.imageUrls = imageUrls;
+          incident.images = images;
           incident.status = 0;
           incident.desc = descController.text;
           incident.reporterRef = firebaseUser.uid;

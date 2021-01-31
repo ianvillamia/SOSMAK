@@ -72,7 +72,7 @@ class UserService {
     String fileName = date.toString();
 
     return await firebase_storage.FirebaseStorage.instance
-        .ref('uploads/$fileName.png')
+        .ref('uploads/chat/$fileName.png')
         .putFile(file);
   }
 
@@ -142,7 +142,7 @@ class UserService {
         imageUrls.add(downloadUrl);
         if (imageUrls.length == images.length) {
           // create docu?
-          incident.imageUrls = imageUrls;
+          incident.images = images;
           await incidentReports.add(incident.toMap()).then((value) async {
             docRef = value.id;
             await users

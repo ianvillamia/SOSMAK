@@ -17,32 +17,61 @@ class _SosNumbersState extends State<SosNumbers> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Emergency HOTLINE',
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Container(
-            child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('emergencyNumbers')
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return Scrollbar(
-                      child: SingleChildScrollView(
-                        child: ListView(
-                            shrinkWrap: true,
-                            children: snapshot.data.docs
-                                .map<Widget>((doc) => buildTiles(
-                                      doc: doc,
-                                    ))
-                                .toList()),
-                      ),
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
-                })
-            //
+          width: size.width,
+          height: size.height,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    child: Text(
+                      'TAP TO CALL',
+                      style:
+                          TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(height: size.height * .03),
+                Container(
+                  height: size.height * 0.8,
+                  child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('emergencyNumbers')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return SingleChildScrollView(
+                            child: Column(
+                                children: snapshot.data.docs
+                                    .map<Widget>((doc) => buildTiles(
+                                          doc: doc,
+                                        ))
+                                    .toList()),
+                          );
+                        }
+                        return Center(child: CircularProgressIndicator());
+                      }),
+                ),
+              ],
             ),
+          ),
+        ),
       ),
     );
   }
@@ -50,9 +79,11 @@ class _SosNumbersState extends State<SosNumbers> {
   buildTiles({DocumentSnapshot doc}) {
     EmergencyModel emergency = EmergencyModel.get(doc);
     return Container(
+      padding: EdgeInsets.all(3),
       child: Column(
         children: [
           Card(
+            elevation: 3,
             child: ListTile(
               title: Text(emergency.name,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),

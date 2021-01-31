@@ -77,7 +77,9 @@ class _ChatState extends State<Chat> {
                   if (snapshot.hasData) {
                     return Container(
                       width: size.width,
-                      height: size.height * .785,
+                      height: _image == null
+                          ? size.height * .785
+                          : size.height * .66,
                       padding: EdgeInsets.all(5),
                       color: Colors.grey,
                       child: Scrollbar(
@@ -94,25 +96,23 @@ class _ChatState extends State<Chat> {
                       ),
                     );
                   }
-
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }),
-
-            //textformfield
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                  width: size.width,
-                  height: _image == null ? size.height * .1 : size.height * .2,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      _imagePreview(),
-                      _buildTextFormField(controller: message),
-                    ],
-                  )),
+                width: size.width,
+                height: _image == null ? size.height * .09 : size.height * .22,
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    _imagePreview(),
+                    _buildTextFormField(controller: message),
+                  ],
+                ),
+              ),
             )
           ],
         ),
@@ -140,16 +140,18 @@ class _ChatState extends State<Chat> {
       return Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          color: Colors.red,
-          width: size.width * .15,
+          width: size.width * .25,
+          padding: EdgeInsets.all(5),
           child: Image.file(
             _image,
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
+            width: 75,
+            height: 70,
           ),
         ),
       );
     } else {
-      return Container();
+      return SizedBox();
     }
   }
 

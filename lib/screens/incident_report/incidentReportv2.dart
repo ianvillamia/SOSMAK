@@ -102,29 +102,26 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         height: size.height,
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.all(30),
+          padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Incident Report'),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text('Incident Report',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                ),
+                SizedBox(height: 20),
                 _buildTextFormField(
                     label: 'Location', controller: locationController),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('Select an Incident'),
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: _dropDownButton(),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 10),
+                Text('Please select an Incident'),
+                _dropDownButton(),
+                SizedBox(height: 10),
                 Text('Tell us what Happend'),
-                SizedBox(
-                  height: 5,
-                ),
                 _buildTextFormField(
                     label: 'Description',
                     maxLines: 4,
@@ -132,13 +129,15 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                 SizedBox(
                   height: 5,
                 ),
-                _imagePreviews(),
                 _imagePicker(),
-                Text('Images are required'),
+                _imagePreviews(),
                 SizedBox(
                   height: 10,
                 ),
-                _submitButton(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _submitButton(),
+                )
               ],
             ),
           ),
@@ -151,9 +150,10 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
       {@required String label,
       TextEditingController controller,
       int maxLines}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      width: size.width,
       child: TextFormField(
+          textCapitalization: TextCapitalization.words,
           validator: (value) {
             if (value.isEmpty) {
               return 'Please enter some text';
@@ -162,16 +162,21 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
           },
           maxLines: maxLines ?? 1,
           controller: controller,
-          decoration:
-              InputDecoration(labelText: label, border: OutlineInputBorder())),
+          decoration: InputDecoration(
+              alignLabelWithHint: true,
+              labelText: label,
+              border: OutlineInputBorder())),
     );
   }
 
   _dropDownButton() {
     return Container(
+      width: size.width,
+      height: size.height * 0.085,
       child: DropdownButton<String>(
+        isExpanded: true,
         value: dropdownValue,
-        icon: Icon(Icons.arrow_downward),
+        icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
         style: TextStyle(color: Colors.redAccent),
@@ -222,18 +227,23 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   _imagePreviews() {
     if (this.images.length != 0) {
       return Container(
-        width: size.width * .5,
-        height: size.height * .1,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: images.map<Widget>((image) {
-              Asset asset = image;
-              return AssetThumb(
-                asset: asset,
-                width: 500,
-                height: 600,
-              );
-            }).toList()),
+        width: size.width,
+        height: size.height * .18,
+        child: images.length == 0
+            ? Container(
+                child: Text('Images are required. Please select images'),
+              )
+            : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: images.length,
+                itemBuilder: (BuildContext context, int index) => Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: AssetThumb(
+                        height: 300,
+                        width: 300,
+                        asset: images[index],
+                      ),
+                    )),
       );
     } else {
       return Container(
@@ -249,7 +259,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 3,
+        maxImages: 5,
         enableCamera: false,
         selectedAssets: images,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),

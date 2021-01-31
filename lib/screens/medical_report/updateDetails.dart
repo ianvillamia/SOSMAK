@@ -67,20 +67,21 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                   counter++;
                 }
                 // setData(snapshot.data);
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: size.height * .1,
-                    ),
-                    _buildHead(),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * .05),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: size.height * .1,
+                      ),
+                      _buildHead(),
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('HIV TEST'),
+                          Text('HIV Test',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -104,15 +105,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Tubercolosis TEST'),
+                          Text('Tubercolosis Test',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -136,16 +135,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    //
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Heart Disease'),
+                          Text('Heart Disease',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -169,17 +165,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    //
-
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('High Blood'),
+                          Text('High Blood',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -203,17 +195,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    //
-
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Malaria'),
+                          Text('Malaria',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -237,17 +225,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    //
-
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Liver Function'),
+                          Text('Liver Function',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -271,17 +255,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    //
-
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('VDRL TEST'),
+                          Text('VDRL Test',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -305,18 +285,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-
-                    //
-
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * .1),
-                      child: Row(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('TPA TEST'),
+                          Text('TPA Test',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22)),
                           Row(
                             children: [
                               Radio(
@@ -340,33 +315,34 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           )
                         ],
                       ),
-                    ),
-                    MaterialButton(
-                      color: Colors.blue,
-                      onPressed: () async {
-                        //update here
-                        // print(_user.currentUser.ref);
+                      SizedBox(height: 50),
+                      MaterialButton(
+                        color: Colors.blue,
+                        onPressed: () async {
+                          //update here
+                          // print(_user.currentUser.ref);
 
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(firebaseUser.uid)
-                            .update({
-                          'isHiv': isHiv,
-                          'isHeartDisease': isHeartDisease,
-                          'isHighBlood': isHighBlood,
-                          'isLiverFunction': isLiverFunction,
-                          'isMalaria': isMalaria,
-                          'isTb': isTb,
-                          'isTPA': isTpaTest,
-                          'isVDRL': isVDRLTest
-                        }).then((value) => Navigator.pop(context));
-                      },
-                      child: Text(
-                        'Save',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  ],
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(firebaseUser.uid)
+                              .update({
+                            'isHiv': isHiv,
+                            'isHeartDisease': isHeartDisease,
+                            'isHighBlood': isHighBlood,
+                            'isLiverFunction': isLiverFunction,
+                            'isMalaria': isMalaria,
+                            'isTb': isTb,
+                            'isTPA': isTpaTest,
+                            'isVDRL': isVDRLTest
+                          }).then((value) => Navigator.pop(context));
+                        },
+                        child: Text(
+                          'Save',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
                 );
               }
               return Center(
@@ -379,16 +355,16 @@ class _UpdateMedicalState extends State<UpdateMedical> {
 
   _buildHead() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: size.width * .1),
+      padding: EdgeInsets.symmetric(horizontal: size.width * .03),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('Positive'),
+          Text('Positive', style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(
             width: 22,
           ),
-          Text('Negative'),
+          Text('Negative', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

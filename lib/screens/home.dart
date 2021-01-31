@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './wantedList_screens/wantedList.dart';
 import 'admin/incidentReportsAdmin/incidentReportsAdmin.dart';
+import 'sos_screen/sosNumbers.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -106,7 +107,7 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Emergency HOTLINE',
-              widget: SOSPage(),
+              widget: SosNumbers(),
               icon: Icons.call),
           _buildTile(
               color: Colors.white,

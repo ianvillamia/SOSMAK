@@ -50,6 +50,12 @@ class _WantedListState extends State<WantedList> {
         appBar: AppBar(
           backgroundColor: Colors.redAccent,
           title: Text('Most Wanted List'),
+          leading: IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: StreamBuilder<QuerySnapshot>(
             stream:
