@@ -33,7 +33,7 @@ class UserModel {
       this.isLiverFunction = doc.data()['isLiverFunction'] ?? false;
       this.isVDRLTest = doc.data()['isVDRL'] ?? false;
       this.isTpaTest = doc.data()['isTPA'] ?? false;
-      this.currentIncidentRef = doc.data()['currentIncidentRef'] ?? '';
+      this.currentIncidentRef = doc.data()['currentIncidentRef'];
     } catch (e) {}
   }
   UserModel();

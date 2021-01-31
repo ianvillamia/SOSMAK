@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
   bool isAdmin = false;
   bool isCitizen = false;
   Size size;
+  String currentIncident;
   UserDetailsProvider userDetailsProvider;
 
   setViews() {
@@ -60,7 +61,8 @@ class _HomeState extends State<Home> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
-                //  print(snapshot.data);
+                currentIncident = snapshot.data.data()['currentIncidentRef'];
+                //  print(snapshot.data.data()['currentIncidentRef']);
                 //set thing?
                 userDetailsProvider.setCurrentUser(snapshot.data);
                 setViews();
@@ -142,8 +144,7 @@ class _HomeState extends State<Home> {
                 icon: Icons.warning_outlined,
                 widget: IncidentReportV2(
                   userRef: userDetailsProvider.currentUser.ref,
-                  currentIncidentDoc:
-                      userDetailsProvider.currentUser.currentIncidentRef,
+                  currentIncidentDoc: this.currentIncident,
                 )),
           ),
           Visibility(

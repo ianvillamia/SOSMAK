@@ -133,26 +133,29 @@ class UserService {
 
   Future postIncident(
       {@required IncidentModel incident, @required List<Asset> images}) async {
-    List imageUrls = [];
-    String docRef;
+    var docRef;
 
-    images.forEach((image) async {
-      await postImage(image).then((downloadUrl) async {
-        //add to list
-        imageUrls.add(downloadUrl);
+    await incidentReports.add(incident.toMap()).then((value) async {
+      docRef = value.id;
+      await users
+          .doc(incident.reporterRef)
+          .update({'currentIncidentRef': value.id});
+    }).then((value) {
+      //create doc
+      List imageUrls = [];
+      images.forEach((image) async {
+        await postImage(image).then((downloadUrl) async {
+          imageUrls.add(downloadUrl);
+        });
         if (imageUrls.length == images.length) {
-          // create docu?
-          incident.images = images;
-          await incidentReports.add(incident.toMap()).then((value) async {
-            docRef = value.id;
-            await users
-                .doc(incident.reporterRef)
-                .update({'currentIncidentRef': value.id});
-          });
+          //call firestore to
+          await incidentReports.doc(docRef).update(
+              {'images': FieldValue.arrayUnion(imageUrls), 'updated': 'true'});
         }
       });
     });
 
+    // await incidentReports.doc(docRef).update({'images': imageUrls});
     return docRef;
   }
 

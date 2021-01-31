@@ -37,7 +37,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     if (widget.currentIncidentDoc == '' || widget.currentIncidentDoc == null) {
       doesIncidentExist = true;
     }
-
+    print(widget.userRef);
     print(doesIncidentExist);
     print(widget.currentIncidentDoc);
     check();
@@ -84,7 +84,14 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         ),
         body: isLoading
             ? Center(
-                child: CircularProgressIndicator(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text('please wait'),
+                  ],
+                ),
               )
             : doesIncidentExist
                 ? _buildForm()
@@ -259,7 +266,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
+        maxImages: 3,
         enableCamera: false,
         selectedAssets: images,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
@@ -311,11 +318,13 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
               await UserService()
                   .postIncident(incident: incident, images: images)
                   .then((doc) async {
-                setState(() {
-                  isLoading = false;
-                  currentIncidentRef = doc;
+                Future.delayed(Duration(seconds: 3), () {
+                  setState(() {
+                    isLoading = false;
+                    currentIncidentRef = doc;
+                  });
+                  Navigator.pop(context);
                 });
-                Navigator.pop(context);
               });
             } else {
               showAlertDialog(context);

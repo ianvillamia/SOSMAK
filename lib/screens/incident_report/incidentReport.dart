@@ -457,14 +457,6 @@ class _IncidentReportState extends State<IncidentReport> {
           incident.status = 0;
           incident.desc = descController.text;
           incident.reporterRef = firebaseUser.uid;
-          // await UserService().addIncident(incident).then((value) {
-          //   Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => CurrentIncident(
-          //                 documentId: value,
-          //               )));
-          // });
         }
       }).catchError((err) {
         print(err);
