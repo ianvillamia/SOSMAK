@@ -72,7 +72,7 @@ class UserService {
     String fileName = date.toString();
 
     return await firebase_storage.FirebaseStorage.instance
-        .ref('uploads/chat/$fileName.png')
+        .ref('uploads/$fileName.png')
         .putFile(file);
   }
 

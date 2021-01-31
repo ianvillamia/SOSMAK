@@ -120,6 +120,7 @@ class _IncidentReportState extends State<IncidentReport> {
 
   List<Asset> images = List<Asset>();
   List imageUrls = [];
+  // ignore: unused_field
   String _error = 'No Error Dectected';
   User firebaseUser;
   Future checkCurrentReport(String uid) async {
@@ -453,7 +454,7 @@ class _IncidentReportState extends State<IncidentReport> {
           incident.location = locationController.text;
           incident.date = '${dateController.text}, ${timeController.text}';
           incident.incident = _selectedIncident.name;
-          incident.images = images;
+          incident.imageUrls = images;
           incident.status = 0;
           incident.desc = descController.text;
           incident.reporterRef = firebaseUser.uid;

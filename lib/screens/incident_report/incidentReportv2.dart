@@ -89,7 +89,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(),
-                    Text('please wait'),
+                    Text('Please wait..'),
                   ],
                 ),
               )
@@ -160,7 +160,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     return Container(
       width: size.width,
       child: TextFormField(
-          textCapitalization: TextCapitalization.words,
+          textCapitalization: TextCapitalization.sentences,
           validator: (value) {
             if (value.isEmpty) {
               return 'Please enter some text';
@@ -232,29 +232,27 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   }
 
   _imagePreviews() {
-    if (this.images.length != 0) {
+    if (this.images.length == 0) {
       return Container(
-        width: size.width,
-        height: size.height * .18,
-        child: images.length == 0
-            ? Container(
-                child: Text('Images are required. Please select images'),
-              )
-            : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: images.length,
-                itemBuilder: (BuildContext context, int index) => Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: AssetThumb(
-                        height: 300,
-                        width: 300,
-                        asset: images[index],
-                      ),
-                    )),
+        child: Text('Images are required. Please select images'),
       );
     } else {
       return Container(
-        color: Colors.blue,
+        width: size.width,
+        height: size.height * .18,
+        child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: images.map<Widget>((image) {
+              Asset asset = image;
+              return Padding(
+                padding: EdgeInsets.all(8),
+                child: AssetThumb(
+                  asset: asset,
+                  width: 300,
+                  height: 300,
+                ),
+              );
+            }).toList()),
       );
     }
   }
@@ -262,6 +260,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   //
   Future<void> loadAssets() async {
     List<Asset> resultList = List<Asset>();
+    // ignore: unused_local_variable
     String error = 'No Error Dectected';
 
     try {

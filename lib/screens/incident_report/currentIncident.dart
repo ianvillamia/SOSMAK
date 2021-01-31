@@ -25,6 +25,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
+        color: Colors.grey[100],
         width: size.width,
         height: size.height,
         child: StreamBuilder<DocumentSnapshot>(
@@ -76,7 +77,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
         break;
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -143,10 +144,10 @@ class _CurrentIncidentState extends State<CurrentIncident> {
             height: 10,
           ),
           Text(
-            'Location:\n' + incident.location,
+            'Image/s: ',
             style: _buildtextStyle(fontsize: 15),
           ),
-          //RHOWEL ADD IMAGES HERE
+          getImages(doc: doc)
         ],
       ),
     );
@@ -157,5 +158,38 @@ class _CurrentIncidentState extends State<CurrentIncident> {
         color: color ?? Colors.black,
         fontSize: fontsize ?? 14,
         fontWeight: fontWeight ?? FontWeight.normal);
+  }
+
+  getImages({@required DocumentSnapshot doc}) {
+    List images = doc.data()['images'];
+    print(doc);
+    if (images.length != 0) {
+      return Container(
+        width: size.width,
+        height: size.height * .25,
+        child: Scrollbar(
+          child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: images
+                      ?.map<Widget>((doc) => InkWell(
+                            onTap: () {
+                              //showImageDialog(doc.toString());
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: ('assets/loading.gif'),
+                                image: doc.toString(),
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ))
+                      ?.toList() ??
+                  []),
+        ),
+      );
+    }
   }
 }

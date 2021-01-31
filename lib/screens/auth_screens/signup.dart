@@ -45,10 +45,10 @@ class _SignupState extends State<Signup> {
                 Align(
                   alignment: Alignment.center,
                   child: Container(
-                      width: size.width * .3,
-                      height: size.height * .2,
+                      width: size.width * .35,
+                      height: size.height * .25,
                       child: Image.asset(
-                        'assets/sos-mak.png',
+                        'assets/sosmakLogo.png',
                         fit: BoxFit.cover,
                       )),
                 ),

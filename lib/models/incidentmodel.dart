@@ -5,7 +5,7 @@ class IncidentModel {
   String date;
   String incident;
   String desc;
-  List images = [];
+  List imageUrls = [];
   int status;
   String reporterRef;
 
@@ -14,7 +14,7 @@ class IncidentModel {
     this.date = doc.data()['date'] ?? '';
     this.incident = doc.data()['incident'] ?? '';
     this.desc = doc.data()['desc'] ?? '';
-    this.images = doc.data()['images'] ?? [];
+    this.imageUrls = doc.data()['imageUrls'] ?? [];
     this.status = doc.data()['status'];
     this.reporterRef = doc.data()['reporterRef'] ?? '';
   }
@@ -27,7 +27,7 @@ class IncidentModel {
       'date': this.date,
       'incident': this.incident,
       'desc': this.desc,
-      'images': this.images,
+      'images': this.imageUrls,
       'status': 0 //0 1 2
     };
   }
