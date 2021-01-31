@@ -63,66 +63,58 @@ class _ChatState extends State<Chat> {
       body: Container(
         width: size.width,
         height: size.height,
-        child: SingleChildScrollView(
-          dragStartBehavior: DragStartBehavior.start,
-          child: Column(
-            children: [
-              StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('conversation')
-                      .doc(widget.doc.id)
-                      .collection('chats')
-                      .orderBy('date')
-                      .snapshots(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      return Container(
-                        width: size.width,
-                        height: size.height * .785,
-                        padding: EdgeInsets.all(5),
-                        color: Colors.grey,
-                        child: Scrollbar(
-                          child: SingleChildScrollView(
-                            controller: _scrollController,
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: Column(
-                                  children: snapshot.data.docs
-                                      .map<Widget>((doc) => _buildMessage(doc))
-                                      .toList()),
-                            ),
+        child: Stack(
+          children: [
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('conversation')
+                    .doc(widget.doc.id)
+                    .collection('chats')
+                    .orderBy('date')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      width: size.width,
+                      height: size.height * .785,
+                      padding: EdgeInsets.all(5),
+                      color: Colors.grey,
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Column(
+                                children: snapshot.data.docs
+                                    .map<Widget>((doc) => _buildMessage(doc))
+                                    .toList()),
                           ),
                         ),
-                      );
-                    }
-
-                    return Center(
-                      child: CircularProgressIndicator(),
+                      ),
                     );
-                  }),
+                  }
 
-              //textformfield
-              images != null
-                  ? Container(
-                      color: Colors.amber,
-                      width: size.width * .2,
-                      height: size.height * .2,
-                      child: Image.asset(images[0]),
-                    )
-                  : Container(
-                      color: Colors.amber,
-                    ),
-              Container(
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
+
+            //textformfield
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
                   width: size.width,
+                  height: _image == null ? size.height * .1 : size.height * .2,
+                  color: Colors.white,
                   child: Column(
                     children: [
                       _imagePreview(),
                       _buildTextFormField(controller: message),
                     ],
-                  ))
-            ],
-          ),
+                  )),
+            )
+          ],
         ),
       ),
     );
@@ -135,7 +127,6 @@ class _ChatState extends State<Chat> {
       },
       child: Container(
         width: size.width * .5,
-        height: size.height * .2,
         child: Image.network(
           img,
           fit: BoxFit.contain,
@@ -151,7 +142,10 @@ class _ChatState extends State<Chat> {
         child: Container(
           color: Colors.red,
           width: size.width * .15,
-          child: Image.file(_image),
+          child: Image.file(
+            _image,
+            fit: BoxFit.contain,
+          ),
         ),
       );
     } else {
@@ -254,6 +248,14 @@ class _ChatState extends State<Chat> {
   _buildTextFormField(
       {TextEditingController controller, String label, bool isPassword}) {
     return TextFormField(
+      onTap: () {
+        Future.delayed(Duration(milliseconds: 200), () {
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease);
+        });
+      },
       textCapitalization: TextCapitalization.sentences,
       controller: controller,
       obscureText: isPassword ?? false,
@@ -273,8 +275,6 @@ class _ChatState extends State<Chat> {
               IconButton(
                 icon: Icon(Icons.send, color: Colors.lightBlue),
                 onPressed: () {
-                  //
-                  //   print(images[0]);
                   if (message.text != '') {
                     print(message.text);
                     ChatModel chat = ChatModel();
