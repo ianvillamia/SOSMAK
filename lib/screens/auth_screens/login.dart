@@ -37,18 +37,13 @@ class _LoginState extends State<Login> {
             child: Column(
               children: <Widget>[
                 SizedBox(
-                  height: size.height * .15,
+                  height: size.height * .1,
                 ),
                 Container(
-                    width: size.width * .45,
-                    height: size.height * .35,
-                    child: Image.asset(
-                      'assets/sosmakLogo.png',
-                      fit: BoxFit.cover,
-                    )),
-                SizedBox(
-                  height: size.height * .02,
-                ),
+                    width: size.width * .6,
+                    height: size.height * .45,
+                    child: Image.asset('assets/sosmakLogo.png',
+                        fit: BoxFit.contain)),
                 _buildEmailField(controller: emailController, label: 'Email'),
                 _buildPasswordField(
                     controller: passwordController, label: 'Password'),

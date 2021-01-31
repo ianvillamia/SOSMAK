@@ -49,7 +49,7 @@ class _SignupState extends State<Signup> {
                       height: size.height * .25,
                       child: Image.asset(
                         'assets/sosmakLogo.png',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       )),
                 ),
                 Padding(

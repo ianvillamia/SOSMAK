@@ -235,18 +235,18 @@ class _WantedPosterState extends State<WantedPoster> {
                   ),
                   Text(
                     widget.wanted.name,
-                    style: customTextStyle(12.0),
+                    style: customTextStyle(17.0),
                   ),
                   Text(
                     'AKA:' + widget.wanted.alias,
-                    style: customTextStyle(12.0),
+                    style: customTextStyle(17.0),
                   ),
                   Text(
                     "REWARD:" + widget.wanted.reward,
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 25,
                     ),
                   ),
                   Text(

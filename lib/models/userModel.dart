@@ -23,6 +23,7 @@ class UserModel {
       this.firstName = doc.data()['firstName'] ?? '';
       this.lastName = doc.data()['lastName'] ?? '';
       this.email = doc.data()['email'] ?? '';
+      this.address = doc.data()['address'] ?? '';
       this.ref = doc.data()['ref'] ?? '';
       this.role = doc.data()['role'] ?? 'citizen';
       this.isHiv = doc.data()['isHiv'] ?? '';
@@ -49,7 +50,7 @@ class UserModel {
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
       'isHiv': isHiv,
       'tempPassword': this.tempPassword,
-      'isHearDisease': isHeartDisease,
+      'isHeartDisease': isHeartDisease,
       'isHighBlood': isHighBlood,
       'isLiverFunction': isLiverFunction,
       'isMalaria': isMalaria,

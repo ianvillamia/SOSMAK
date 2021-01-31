@@ -95,7 +95,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                             ),
                             buildText(
                                 title: 'Image/s: ',
-                                data: '${widget.incident.imageUrls.length}'),
+                                data: '${widget.doc.data()['images'].length}'),
                             getImages(doc: widget.doc),
                           ],
                         ),

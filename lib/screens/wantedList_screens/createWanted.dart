@@ -125,6 +125,7 @@ class _CreateWantedState extends State<CreateWanted> {
       width: width,
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: TextFormField(
+        textCapitalization: TextCapitalization.words,
         enabled: enable,
         maxLines: maxLines ?? 1,
         controller: controller,

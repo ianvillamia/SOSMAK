@@ -5,6 +5,7 @@ import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
 
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:SOSMAK/screens/user_info/usersInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -162,7 +163,15 @@ class _HomeState extends State<Home> {
                 text: 'Incident Report Admin',
                 widget: IncidentReportAdmin(),
                 icon: Icons.bar_chart_sharp),
-          )
+          ),
+          Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+                color: Colors.white,
+                text: "Citizen's Info",
+                widget: UsersInfo(),
+                icon: Icons.people),
+          ),
         ],
       ),
     );
