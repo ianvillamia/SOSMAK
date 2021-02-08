@@ -1,5 +1,6 @@
 import 'package:SOSMAK/screens/auth_screens/signup.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
+import 'package:SOSMAK/services/errors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -156,9 +157,8 @@ class _LoginState extends State<Login> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Something went wrong"),
-          content: Text(problem.message.toString()),
-        );
+            title: Text("Something went wrong"),
+            content: Text("${Errors.show(problem.code)}"));
       },
     );
   }
