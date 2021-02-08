@@ -68,7 +68,7 @@ class _ChatListState extends State<ChatList> {
   }
 
   _buildCard(DocumentSnapshot doc) {
-    Police police = Police.getData(doc: doc);
+    Police police = Police.get(doc: doc);
     if (_currentUser.currentUser.ref != police.ref) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 5),

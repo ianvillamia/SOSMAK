@@ -1,6 +1,8 @@
+import 'package:SOSMAK/screens/emergencyMap_screens/data/photo.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/place_response.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/result.dart';
 import 'package:SOSMAK/screens/emergencyMap_screens/data/error.dart';
+import 'package:dio/dio.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -87,9 +89,14 @@ class _MapViewState extends State<MapView> {
 
   gPlaces.GoogleMapsPlaces _places = gPlaces.GoogleMapsPlaces(
       apiKey: 'AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8');
+
+  gPlaces.PlaceDetails place;
   String _startAddress = '';
   String _destinationAddress = '';
   String _placeDistance;
+
+  String placeDist;
+  bool showDistance = false;
 
   Set<Marker> markers = {};
 
@@ -135,7 +142,7 @@ class _MapViewState extends State<MapView> {
   }
 
   void _showPlacesPanel() {
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       showModalBottomSheet(
           backgroundColor: Colors.transparent,
           context: context,
@@ -164,7 +171,7 @@ class _MapViewState extends State<MapView> {
       if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
     });
     String url =
-        '$baseUrl?key=$_API_KEY&location=${_currentPosition.latitude},${_currentPosition.longitude}&radius=3000&keyword=$keyword';
+        '$baseUrl?key=$_API_KEY&location=${_currentPosition.latitude},${_currentPosition.longitude}&radius=500&keyword=$keyword';
     print(url);
     final response = await http.get(url);
 
@@ -254,6 +261,8 @@ class _MapViewState extends State<MapView> {
     );
     polylines[id] = polyline;
   }
+
+  getNearbyPlacesDistance() {}
 
   // Method for retrieving the current location
   _getCurrentLocation() async {
@@ -529,7 +538,15 @@ class _MapViewState extends State<MapView> {
             FloatingActionButton(
               heroTag: "mydirections",
               onPressed: () {
-                _showDirectionsPanel();
+                setState(() {
+                  showDistance = !showDistance;
+                });
+                placesMarkers.clear();
+                polylines.clear();
+
+                startAddressController.text = '';
+                destinationAddressController.text = '';
+                _placeDistance = '0.0';
               },
               child: Icon(Icons.directions),
             ),
@@ -628,8 +645,8 @@ class _MapViewState extends State<MapView> {
                         RaisedButton(
                           color: Colors.white,
                           child: Text('Hospital'),
-                          onPressed: () {
-                            keyword = 'Hospital';
+                          onPressed: () async {
+                            keyword = 'Emergency Hospital';
                             searchNearby(_currentPosition.latitude,
                                 _currentPosition.longitude);
                             btnCTR = 0;
@@ -640,7 +657,7 @@ class _MapViewState extends State<MapView> {
                           color: Colors.white,
                           child: Text('Police Station'),
                           onPressed: () {
-                            keyword = 'Police-Station';
+                            keyword = 'Police Station';
                             searchNearby(_currentPosition.latitude,
                                 _currentPosition.longitude);
 
@@ -666,6 +683,7 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
+            showDirectionsSheet()
           ],
         ),
       ),
@@ -674,7 +692,6 @@ class _MapViewState extends State<MapView> {
 
   placesDrawer() {
     _panelHeightOpen = MediaQuery.of(context).size.height * .80;
-
     return SlidingUpPanel(
         maxHeight: _panelHeightOpen,
         minHeight: _panelHeightClosed,
@@ -683,6 +700,10 @@ class _MapViewState extends State<MapView> {
               _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
                   _initFabHeight;
             }));
+  }
+
+  String buildPhotoURL(String photoReference) {
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8";
   }
 
   _panel(ScrollController sc) {
@@ -747,6 +768,7 @@ class _MapViewState extends State<MapView> {
                       Position posit = Position(
                           latitude: first.coordinates.latitude,
                           longitude: first.coordinates.longitude);
+
                       await getHospitals(posit);
                       getHospitals(posit);
 
@@ -756,7 +778,17 @@ class _MapViewState extends State<MapView> {
                   child: Card(
                     child: ListTile(
                       title: Text('${places[index].name}'),
-                      subtitle: Text('${places[index].vicinity}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${places[index].vicinity}'),
+                          Text(
+                              'User Ratings: ${places[index].userRatingsTotal}'),
+                          Text('General Rating: ${places[index].rating}'),
+                          // Text('${places[index].photos[}')
+                        ],
+                      ),
+                      trailing: Text("$placeDist"),
                     ),
                   ),
                 );
@@ -769,122 +801,125 @@ class _MapViewState extends State<MapView> {
   }
 
   showDirectionsSheet() {
-    return SafeArea(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20.0),
+    return Visibility(
+      visible: showDistance,
+      child: SafeArea(
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
+                ),
               ),
-            ),
-            width: size.width * 0.9,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    'Places',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  SizedBox(height: 10),
-                  _textField(
-                      label: 'Start',
-                      hint: 'Choose starting point',
-                      prefixIcon: Icon(Icons.looks_one),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.my_location),
-                        onPressed: () {
-                          startAddressController.text = _currentAddress;
-                          _startAddress = _currentAddress;
-                        },
-                      ),
-                      controller: startAddressController,
-                      focusNode: startAddressFocusNode,
-                      width: size.width,
-                      locationCallback: (String value) {
-                        setState(() {
-                          _startAddress = value;
-                        });
-                      }),
-                  SizedBox(height: 10),
-                  _textField(
-                      label: 'Destination',
-                      hint: 'Choose destination',
-                      prefixIcon: Icon(Icons.looks_two),
-                      controller: destinationAddressController,
-                      focusNode: desrinationAddressFocusNode,
-                      width: size.width,
-                      locationCallback: (String value) {
-                        setState(() {
-                          _destinationAddress = value;
-                        });
-                      }),
-                  SizedBox(height: 10),
-                  Visibility(
-                    visible: _placeDistance == null ? false : true,
-                    child: Text(
-                      'DISTANCE: $_placeDistance km',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+              width: size.width * 0.9,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Places',
+                      style: TextStyle(fontSize: 20.0),
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  RaisedButton(
-                    onPressed: (_startAddress != '' &&
-                            _destinationAddress != '')
-                        ? () async {
-                            startAddressFocusNode.unfocus();
-                            desrinationAddressFocusNode.unfocus();
-                            setState(() {
-                              if (markers.isNotEmpty) markers.clear();
-                              if (polylines.isNotEmpty) polylines.clear();
-                              if (polylineCoordinates.isNotEmpty)
-                                polylineCoordinates.clear();
-                              _placeDistance = null;
-                            });
-
-                            _calculateDistance().then((isCalculated) {
-                              if (isCalculated) {
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('Distance Calculated Sucessfully'),
-                                  ),
-                                );
-                              } else {
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error Calculating Distance'),
-                                  ),
-                                );
-                              }
-                            });
-                            Navigator.pop(context);
-                          }
-                        : null,
-                    color: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    SizedBox(height: 10),
+                    _textField(
+                        label: 'Start',
+                        hint: 'Choose starting point',
+                        prefixIcon: Icon(Icons.looks_one),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.my_location),
+                          onPressed: () {
+                            startAddressController.text = _currentAddress;
+                            _startAddress = _currentAddress;
+                          },
+                        ),
+                        controller: startAddressController,
+                        focusNode: startAddressFocusNode,
+                        width: size.width,
+                        locationCallback: (String value) {
+                          setState(() {
+                            _startAddress = value;
+                          });
+                        }),
+                    SizedBox(height: 10),
+                    _textField(
+                        label: 'Destination',
+                        hint: 'Choose destination',
+                        prefixIcon: Icon(Icons.looks_two),
+                        controller: destinationAddressController,
+                        focusNode: desrinationAddressFocusNode,
+                        width: size.width,
+                        locationCallback: (String value) {
+                          setState(() {
+                            _destinationAddress = value;
+                          });
+                        }),
+                    SizedBox(height: 10),
+                    Visibility(
+                      visible: _placeDistance == null ? false : true,
                       child: Text(
-                        'Show Route'.toUpperCase(),
+                        'DISTANCE: $_placeDistance km',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 5),
+                    RaisedButton(
+                      onPressed: (_startAddress != '' &&
+                              _destinationAddress != '')
+                          ? () async {
+                              startAddressFocusNode.unfocus();
+                              desrinationAddressFocusNode.unfocus();
+                              setState(() {
+                                if (markers.isNotEmpty) markers.clear();
+                                if (polylines.isNotEmpty) polylines.clear();
+                                if (polylineCoordinates.isNotEmpty)
+                                  polylineCoordinates.clear();
+                                _placeDistance = null;
+                              });
+
+                              _calculateDistance().then((isCalculated) {
+                                if (isCalculated) {
+                                  _scaffoldKey.currentState.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Distance Calculated Sucessfully'),
+                                    ),
+                                  );
+                                } else {
+                                  _scaffoldKey.currentState.showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Error Calculating Distance'),
+                                    ),
+                                  );
+                                }
+                              });
+                            }
+                          : null,
+                      color: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Show Route'.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

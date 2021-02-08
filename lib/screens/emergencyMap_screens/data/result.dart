@@ -14,6 +14,7 @@ class Result {
   final List<String> types;
   final int userRatingsTotal;
   final String vicinity;
+  final String number;
 
   Result(
       {this.geometry,
@@ -27,24 +28,25 @@ class Result {
       this.types,
       this.photos,
       this.userRatingsTotal,
-      this.rating});
+      this.rating,
+      this.number});
 
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
-      geometry: Geometry.fromJson(json['geometry']),
-      icon: json['icon'],
-      id: json['id'],
-      name: json['name'],
-      photos: json['photos'] != null
-          ? json['photos'].map<Photo>((i) => Photo.fromJson(i)).toList()
-          : [],
-      placeId: json['place_id'],
-      rating: json['rating'] != null ? json['rating'].toDouble() : 0.0,
-      reference: json['reference'],
-      scope: json['scope'],
-      types: List<String>.from(json['types']),
-      userRatingsTotal: json['user_ratings_total'],
-      vicinity: json['vicinity'],
-    );
+        geometry: Geometry.fromJson(json['geometry']),
+        icon: json['icon'],
+        id: json['id'],
+        name: json['name'],
+        photos: json['photo_reference'] != null
+            ? json['photos'].map<Photo>((i) => Photo.fromJson(i)).toList()
+            : [],
+        placeId: json['place_id'],
+        rating: json['rating'] != null ? json['rating'].toDouble() : 0.0,
+        reference: json['reference'],
+        scope: json['scope'],
+        types: List<String>.from(json['types']),
+        userRatingsTotal: json['user_ratings_total'],
+        vicinity: json['vicinity'],
+        number: json['formattedPhoneNumber']);
   }
 }
