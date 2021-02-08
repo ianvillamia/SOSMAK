@@ -1,4 +1,5 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/wantedModel.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,21 +24,21 @@ class UserService {
     this.users.doc(uid).set(user.toMap()).then((value) {});
   }
 
-  Future addPoliceAccount({UserModel user}) async {
+  Future addPoliceAccount({Police police}) async {
     try {
       var value;
       await this
           .users
           .limit(1)
-          .where('email', isEqualTo: user.email)
+          .where('email', isEqualTo: police.email)
           .get()
           .then((QuerySnapshot snapshot) async {
         if (snapshot.size == 0) {
           print('all good to create');
           //
           String docID = Utils.getRandomString(29);
-          user.ref = docID;
-          await this.users.doc(user.ref).set(user.toMap()).then((value) {
+          police.ref = docID;
+          await this.users.doc(police.ref).set(police.toMap()).then((value) {
             print('police added to collection');
           });
           value = true;
@@ -53,6 +54,26 @@ class UserService {
       print('never reached');
       return Future.error(e);
     }
+  }
+
+  Future<void> updateMedical(DocumentSnapshot doc, String firstName, lastName,
+      birthDate, birthPlace, bloodType, allergies, age, height, weight) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(doc.id)
+        .update({
+          'firstName': firstName,
+          'lastName': lastName,
+          'birthDate': birthDate,
+          'birthPlace': birthPlace,
+          'age': age,
+          'height': height,
+          'weight': weight,
+          'bloodType': bloodType,
+          'allergies': allergies
+        })
+        .then((value) => print("Lesson Updated"))
+        .catchError((error) => print("Failed to update lesson: $error"));
   }
 
   Future addIncident(IncidentModel incident) async {

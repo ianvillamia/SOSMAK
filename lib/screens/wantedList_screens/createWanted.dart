@@ -52,10 +52,11 @@ class _CreateWantedState extends State<CreateWanted> {
                   label: 'Last Known Address',
                 ),
                 textFormFeld(
-                  width: size.width,
-                  controller: contactController,
-                  label: 'Hotline Number',
-                ),
+                    width: size.width,
+                    controller: null,
+                    enable: false,
+                    label: '887-1798',
+                    initialValue: '887-1798'),
                 textFormFeld(
                   width: size.width,
                   controller: rewardController,
@@ -72,7 +73,7 @@ class _CreateWantedState extends State<CreateWanted> {
                       if (_formKey.currentState.validate()) {
                         Wanted wanted = Wanted();
                         wanted.alias = aliasController.text;
-                        wanted.contactHotline = contactController.text;
+                        wanted.contactHotline = '887-1798';
                         wanted.criminalCaseNumber =
                             criminalNumberController.text;
                         wanted.lastKnownAddress =
@@ -119,12 +120,14 @@ class _CreateWantedState extends State<CreateWanted> {
       {@required TextEditingController controller,
       @required String label,
       @required width,
+      String initialValue,
       int maxLines,
       bool enable}) {
     return Container(
       width: width,
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: TextFormField(
+        initialValue: initialValue,
         textCapitalization: TextCapitalization.words,
         enabled: enable,
         maxLines: maxLines ?? 1,

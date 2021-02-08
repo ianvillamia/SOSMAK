@@ -35,25 +35,13 @@ class _MedicalReportState extends State<MedicalReport> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Medical Report'),
+        title: Text('Medical Record'),
         leading: IconButton(
           icon: Icon(Icons.home),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.edit,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UpdateMedical()));
-            },
-          )
-        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
@@ -132,17 +120,94 @@ class _MedicalReportState extends State<MedicalReport> {
     return Container(
       width: size.width,
       height: size.height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildText(
+                title: 'Name: ',
+                data: '${user.firstName} ${user.lastName}',
+                title2: 'Birthday: ',
+                data2: user.birthDate,
+                doc: doc),
+            _buildText(
+                title: 'Age: ',
+                data: user.age,
+                title2: 'Birthplace: ',
+                data2: user.birthPlace,
+                doc: doc),
+            _buildText(
+                title: 'Height: ',
+                data: user.height,
+                title2: 'Weight: ',
+                data2: user.weight,
+                doc: doc),
+            _buildText(
+                title: 'BloodType: ',
+                data: user.bloodType,
+                title2: 'Allergies: ',
+                data2: user.allergies,
+                doc: doc),
+            SizedBox(height: size.height * 0.03),
+            _buildRow(title: 'HIV TEST', result: result1),
+            _buildRow(title: 'Tuberculosis TEST', result: result2),
+            _buildRow(title: 'Heart Disease', result: result3),
+            _buildRow(title: 'High Blood', result: result4),
+            _buildRow(title: 'Malaria', result: result5),
+            _buildRow(title: 'Liver Function', result: result6),
+            _buildRow(title: 'VRDL TEST', result: result7),
+            _buildRow(title: 'TPA TEST', result: result8),
+            SizedBox(height: size.height * 0.05),
+            RaisedButton(
+                color: Colors.blue[400],
+                child: Text('Update', style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UpdateMedical(
+                                user: user,
+                              )));
+                })
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildText(
+      {@required String title,
+      title2,
+      String data,
+      data2,
+      DocumentSnapshot doc}) {
+    UserModel user = UserModel.get(doc);
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildRow(title: 'HIV TEST', result: result1),
-          _buildRow(title: 'Tuberculosis TEST', result: result2),
-          _buildRow(title: 'Heart Disease', result: result3),
-          _buildRow(title: 'High Blood', result: result4),
-          _buildRow(title: 'Malaria', result: result5),
-          _buildRow(title: 'Liver Function', result: result6),
-          _buildRow(title: 'VRDL TEST', result: result7),
-          _buildRow(title: 'TPA TEST', result: result8),
+          Row(
+            children: [
+              Text(title,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(data, style: TextStyle(fontSize: 16)),
+            ],
+          ),
+          Container(
+            width: size.width * 0.5,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(title2,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Flexible(child: Text(data2, style: TextStyle(fontSize: 16))),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -152,15 +217,25 @@ class _MedicalReportState extends State<MedicalReport> {
     return Card(
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(5.0),
         child: Container(
           width: size.width,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-              Text(result, style: TextStyle(fontSize: 22))
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Container(
+                width: size.width * 0.5,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(result, style: TextStyle(fontSize: 16)),
+                    SizedBox(width: size.width * 0.05)
+                  ],
+                ),
+              ),
             ],
           ),
         ),

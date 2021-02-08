@@ -117,11 +117,14 @@ class _HomeState extends State<Home> {
               text: 'Emergency Maps',
               icon: Icons.map,
               widget: MapView()),
-          _buildTile(
-              color: Colors.white,
-              text: 'Medical Report',
-              widget: MedicalReport(),
-              icon: Icons.medical_services),
+          Visibility(
+            visible: isAdmin == true ? false : true,
+            child: _buildTile(
+                color: Colors.white,
+                text: 'Medical Report',
+                widget: MedicalReport(),
+                icon: Icons.medical_services),
+          ),
           _buildTile(
               color: Colors.white,
               text: 'Wanted List',
@@ -160,17 +163,17 @@ class _HomeState extends State<Home> {
             visible: isAdmin,
             child: _buildTile(
                 color: Colors.white,
-                text: 'Incident Report Admin',
-                widget: IncidentReportAdmin(),
-                icon: Icons.bar_chart_sharp),
+                text: "Citizen's Info",
+                widget: UsersInfo(),
+                icon: Icons.people),
           ),
           Visibility(
             visible: isAdmin,
             child: _buildTile(
                 color: Colors.white,
-                text: "Citizen's Info",
-                widget: UsersInfo(),
-                icon: Icons.people),
+                text: 'Incident Report Admin',
+                widget: IncidentReportAdmin(),
+                icon: Icons.bar_chart_sharp),
           ),
         ],
       ),
