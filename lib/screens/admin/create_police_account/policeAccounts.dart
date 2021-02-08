@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
+import 'package:SOSMAK/services/rankImages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -69,15 +70,31 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
   }
 
   _userCards(DocumentSnapshot doc) {
-    Police police = Police.getData(doc: doc);
+    Police police = Police.get(doc: doc);
+
     return InkWell(
       child: Card(
           elevation: 2,
           child: ListTile(
-            leading: Image.network(police.imageUrl),
-            title: Text("${police.firstName}, ${police.lastName}"),
-            subtitle: Text(police.email),
-          )),
+              leading: Image.network(police.imageUrl),
+              title: Text("${police.firstName}, ${police.lastName}"),
+              subtitle: Text(police.email),
+              trailing: Container(
+                width: size.width * 0.35,
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "${RankImage.show(police.policeRank)}",
+                        height: size.height * 0.06,
+                      ),
+                      Text(
+                        police.policeRank,
+                      )
+                    ]),
+              ))),
       onTap: () {
         showAlertDialog(police, doc);
       },
@@ -153,6 +170,13 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                 buildInfo('Email: ', police.email, false, doc),
                 buildInfo(
                     'Temporary Password: ', police.tempPassword, false, doc),
+                buildInfo('Age: ', police.age, false, doc),
+                buildInfo('Birthday: ', police.birthDate, false, doc),
+                buildInfo('BirthPlace: ', police.birthPlace, false, doc),
+                buildInfo('Height: ', police.height, false, doc),
+                buildInfo('Weight', police.weight, false, doc),
+                buildInfo('Blood Type: ', police.bloodType, false, doc),
+                buildInfo('Allergies: ', police.allergies, false, doc),
                 SizedBox(height: size.height * 0.03),
                 Text('Medical Status',
                     style: TextStyle(fontWeight: FontWeight.bold)),

@@ -1,13 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class UserModel {
-  String firstName = '';
-  String lastName = '';
-  String email = '';
-  String ref = '';
-  String address = '';
+  String firstName;
+  String lastName;
+  String email;
+  String ref;
+  String address;
   String role;
-  String currentIncidentRef = '';
+  String currentIncidentRef;
+  String birthDate;
+  String birthPlace;
+  String height, weight, age;
+  String bloodType;
+  String allergies;
+  String policeRank;
+  String stationAssigned;
   bool isHiv,
       isHeartDisease,
       isHighBlood,
@@ -17,17 +25,26 @@ class UserModel {
       isTpaTest,
       isVDRLTest;
 
-  String tempPassword = '';
+  String tempPassword;
+  final DateTime now = DateTime.now();
   UserModel.get(DocumentSnapshot doc) {
     try {
-      this.firstName = doc.data()['firstName'] ?? '';
-      this.lastName = doc.data()['lastName'] ?? '';
-      this.email = doc.data()['email'] ?? '';
+      this.firstName = doc.data()['firstName'];
+      this.lastName = doc.data()['lastName'];
+      this.email = doc.data()['email'];
       this.address = doc.data()['address'] ?? '';
+      this.birthDate = doc.data()['birthDate'];
+      this.birthPlace = doc.data()['birthPlace'] ?? '';
+      this.height = doc.data()['height'] ?? '';
+      this.weight = doc.data()['weight'] ?? '';
+      this.age = doc.data()['age'] ?? '';
+      this.bloodType = doc.data()['bloodType'] ?? '';
+      this.allergies = doc.data()['allergies'] ?? '';
+
       this.ref = doc.data()['ref'] ?? '';
       this.role = doc.data()['role'] ?? 'citizen';
-      this.isHiv = doc.data()['isHiv'] ?? '';
-      this.isTb = doc.data()['isTb'] ?? '';
+      this.isHiv = doc.data()['isHiv'] ?? false;
+      this.isTb = doc.data()['isTb'] ?? false;
       this.isHeartDisease = doc.data()['isHeartDisease'] ?? false;
       this.isHighBlood = doc.data()['isHighBlood'] ?? false;
       this.isMalaria = doc.data()['isMalaria'] ?? false;
@@ -35,15 +52,26 @@ class UserModel {
       this.isVDRLTest = doc.data()['isVDRL'] ?? false;
       this.isTpaTest = doc.data()['isTPA'] ?? false;
       this.currentIncidentRef = doc.data()['currentIncidentRef'];
+
+      this.policeRank = doc.data()['policeRank'];
+      this.stationAssigned = doc.data()['stationAssigned'];
     } catch (e) {}
   }
   UserModel();
   toMap() {
+    String formatted = DateFormat.yMMMd().format(now);
     return {
       'firstName': this.firstName,
       'lastName': this.lastName,
       'ref': this.ref,
       'email': this.email,
+      'birthDate': formatted,
+      'birthPlace': this.birthPlace,
+      'height': this.height,
+      'weight': this.weight,
+      'age': this.age,
+      'bloodType': this.bloodType,
+      'allergies': this.allergies,
       'role': this.role,
       'address': this.address,
       'imageUrl':
@@ -57,7 +85,7 @@ class UserModel {
       'isTb': isTb,
       'isTPA': isTpaTest,
       'isVDRL': isVDRLTest,
-      'currentIncidentRef': ''
+      'currentIncidentRef': '',
     };
   }
 }

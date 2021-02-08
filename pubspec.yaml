@@ -51,7 +51,8 @@ dependencies:
   multi_image_picker: ^4.7.14
   carousel_pro: ^1.0.0
   #path_provider: ^1.6.27
-  #dio: ^3.0.4
+  dio: ^3.0.4
+  intl: ^0.16.1
   # flutter_absolute_path: ^1.0.6
   
 dev_dependencies:
@@ -75,6 +76,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/ranks/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
