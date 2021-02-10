@@ -120,7 +120,7 @@ class _WantedListState extends State<WantedList> {
         contentPadding: EdgeInsets.all(12),
         content: Container(
           width: size.width * .7,
-          height: size.height * .68,
+          height: size.height * .8,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

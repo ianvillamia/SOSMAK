@@ -1,7 +1,5 @@
-import 'dart:ffi';
-
 import 'package:SOSMAK/models/police.dart';
-import 'package:SOSMAK/models/userModel.dart';
+
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:flutter/material.dart';

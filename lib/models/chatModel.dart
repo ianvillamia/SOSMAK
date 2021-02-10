@@ -6,13 +6,17 @@ class ChatModel {
   String senderRef;
   String imageUrl;
   List images;
+  var test;
+
   ChatModel.get(DocumentSnapshot doc) {
-    //  this.date = doc.data()['date'] ?? '';
+    //this.date = doc.data()['date'] ?? '';
     this.message = doc.data()['message'] ?? '';
     this.senderRef = doc.data()['senderRef'] ?? '';
     this.images = doc.data()['images'] ?? [];
 
     this.imageUrl = doc.data()['imageUrl'];
+    this.test = DateTime.parse(doc.data()['date'].toDate().toString());
+    //this.date = DateTime.fromMicrosecondsSinceEpoch(doc.data()['date']);
   }
   ChatModel();
   toMap() {

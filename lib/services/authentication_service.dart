@@ -16,8 +16,13 @@ class AuthenticationService {
     try {
       await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((value) {
+          .then((cred) async {
         //get user if
+        //update userstatus isOnline:true;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(cred.user.uid)
+            .update({'isOnline': true});
         isSuccessful = true;
       });
       return isSuccessful;
@@ -60,8 +65,13 @@ class AuthenticationService {
     }
   }
 
-  Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+  Future<void> signOut({@required String uid}) async {
+    await _firebaseAuth.signOut().then((value) async {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'isOnline': false});
+    });
   }
 
   Future<void> passwordReset({@required String email}) async {

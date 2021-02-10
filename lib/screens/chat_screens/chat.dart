@@ -1,18 +1,20 @@
 import 'package:SOSMAK/models/chatModel.dart';
-import 'package:SOSMAK/models/police.dart';
+
+import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/services/chatService.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class Chat extends StatefulWidget {
   final DocumentSnapshot doc;
-  final Police police;
+  final UserModel police;
   Chat({@required this.doc, @required this.police});
 
   @override
@@ -164,18 +166,21 @@ class _ChatState extends State<Chat> {
         alignment: alignment,
         child: Card(
           elevation: 5,
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(chat.message),
-                ),
-                chat.imageUrl != null
-                    ? _buildImages(chat.imageUrl.toString())
-                    : Container(),
-              ],
+          child: InkWell(
+            onTap: () {},
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(chat.message),
+                  ),
+                  chat.imageUrl != null
+                      ? _buildImages(chat.imageUrl.toString())
+                      : Container(),
+                ],
+              ),
             ),
           ),
         ),
@@ -185,17 +190,23 @@ class _ChatState extends State<Chat> {
         alignment: alignment,
         child: Card(
           elevation: 5,
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    chat.message,
+          child: InkWell(
+            onTap: () {
+              // alertdialog?
+              showAlertDialog(context, chat.test);
+            },
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(
+                      chat.message,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -247,8 +258,11 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  _buildTextFormField(
-      {TextEditingController controller, String label, bool isPassword}) {
+  _buildTextFormField({
+    TextEditingController controller,
+    String label,
+    bool isPassword,
+  }) {
     return TextFormField(
       onTap: () {
         Future.delayed(Duration(milliseconds: 200), () {
@@ -306,6 +320,25 @@ class _ChatState extends State<Chat> {
           ),
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+    );
+  }
+
+  showAlertDialog(BuildContext context, test) {
+    //format dateTime
+
+    var date = DateFormat.yMMMd().add_jm().format(test);
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Message sent last:'),
+      content: Text(date),
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

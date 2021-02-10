@@ -88,7 +88,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                     children: [
                       Image.asset(
                         "${RankImage.show(police.policeRank)}",
-                        height: size.height * 0.06,
+                        height: size.height * 0.05,
                       ),
                       Text(
                         police.policeRank,

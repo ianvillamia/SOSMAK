@@ -80,7 +80,9 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context.read<AuthenticationService>().signOut();
+                              context
+                                  .read<AuthenticationService>()
+                                  .signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ),
