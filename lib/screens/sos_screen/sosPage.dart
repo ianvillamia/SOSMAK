@@ -2,6 +2,10 @@ import 'package:SOSMAK/screens/sos_screen/sosNumbers.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'fireNumbers.dart';
+import 'hospitalNumbers.dart';
+import 'policeNumbers.dart';
+
 class SOSPage extends StatefulWidget {
   SOSPage({Key key}) : super(key: key);
 
@@ -53,26 +57,29 @@ class _SOSPageState extends State<SOSPage> {
           color: Colors.white,
           text: 'Police',
           image: 'assets/police-car.png',
-          onTap: () => _launchURL(number: '12345'),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PoliceNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Ambulance',
           image: 'assets/ambulance.png',
-          onTap: () => _launchURL(number: '12345'),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HospitalNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Fire Station',
           image: 'assets/fire-station.png',
-          onTap: () => _launchURL(number: '12345'),
+          onTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => FireNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Others',
           image: 'assets/more.png',
           onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SosNumbers())),
+              context, MaterialPageRoute(builder: (context) => OtherNumbers())),
         ),
       ],
     );

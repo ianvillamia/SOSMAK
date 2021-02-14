@@ -1,4 +1,5 @@
 import 'package:SOSMAK/models/police.dart';
+import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
 import 'package:SOSMAK/services/chatService.dart';
@@ -68,7 +69,8 @@ class _ChatListState extends State<ChatList> {
   }
 
   _buildCard(DocumentSnapshot doc) {
-    Police police = Police.get(doc: doc);
+    UserModel police = UserModel.get(doc);
+    // Police police = Police.get(doc: doc);
     if (_currentUser.currentUser.ref != police.ref) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 5),
@@ -94,6 +96,24 @@ class _ChatListState extends State<ChatList> {
           splashColor: Colors.blue,
           child: Row(
             children: [
+              police.isOnline
+                  ? ClipOval(
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.green,
+                      ),
+                    )
+                  : ClipOval(
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.grey,
+                      ),
+                    ),
+              SizedBox(
+                width: 20,
+              ),
               ClipOval(
                 child: Container(
                     height: 80,

@@ -3,23 +3,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class OtherNumbers extends StatefulWidget {
+class FireNumbers extends StatefulWidget {
   final DocumentSnapshot doc;
-  OtherNumbers({this.doc});
+  FireNumbers({this.doc});
   @override
-  _OtherNumbersState createState() => _OtherNumbersState();
+  _FireNumbersState createState() => _FireNumbersState();
 }
 
 Size size;
 
-class _OtherNumbersState extends State<OtherNumbers> {
-  @override
+class _FireNumbersState extends State<FireNumbers> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Emergency HOTLINE',
+          'Fire Emergency HOTLINE',
         ),
         leading: IconButton(
           icon: Icon(Icons.home),
@@ -52,7 +51,7 @@ class _OtherNumbersState extends State<OtherNumbers> {
                   child: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('emergencyNumbers')
-                          .where('category', isEqualTo: 'others')
+                          .where('category', isEqualTo: 'fire')
                           .snapshots(),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {

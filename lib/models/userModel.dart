@@ -16,14 +16,16 @@ class UserModel {
   String allergies;
   String policeRank;
   String stationAssigned;
-  bool isHiv,
-      isHeartDisease,
-      isHighBlood,
-      isLiverFunction,
-      isMalaria,
-      isTb,
-      isTpaTest,
-      isVDRLTest;
+  bool isHiv = false,
+      isHeartDisease = false,
+      isHighBlood = false,
+      isLiverFunction = false,
+      isMalaria = false,
+      isTb = false,
+      isTpaTest = false,
+      isVDRLTest = false;
+  bool isOnline = false;
+  String imageUrl = '';
 
   String tempPassword;
   final DateTime now = DateTime.now();
@@ -43,18 +45,20 @@ class UserModel {
 
       this.ref = doc.data()['ref'] ?? '';
       this.role = doc.data()['role'] ?? 'citizen';
-      this.isHiv = doc.data()['isHiv'] ?? false;
-      this.isTb = doc.data()['isTb'] ?? false;
-      this.isHeartDisease = doc.data()['isHeartDisease'] ?? false;
-      this.isHighBlood = doc.data()['isHighBlood'] ?? false;
-      this.isMalaria = doc.data()['isMalaria'] ?? false;
-      this.isLiverFunction = doc.data()['isLiverFunction'] ?? false;
-      this.isVDRLTest = doc.data()['isVDRL'] ?? false;
-      this.isTpaTest = doc.data()['isTPA'] ?? false;
+      this.isHiv = doc.data()['isHiv'] ?? isHiv;
+      this.isTb = doc.data()['isTb'] ?? isTb;
+      this.isHeartDisease = doc.data()['isHeartDisease'] ?? isHeartDisease;
+      this.isHighBlood = doc.data()['isHighBlood'] ?? isHighBlood;
+      this.isMalaria = doc.data()['isMalaria'] ?? isMalaria;
+      this.isLiverFunction = doc.data()['isLiverFunction'] ?? isLiverFunction;
+      this.isVDRLTest = doc.data()['isVDRL'] ?? isVDRLTest;
+      this.isTpaTest = doc.data()['isTPA'] ?? isTpaTest;
       this.currentIncidentRef = doc.data()['currentIncidentRef'];
 
       this.policeRank = doc.data()['policeRank'];
       this.stationAssigned = doc.data()['stationAssigned'];
+      this.isOnline = doc.data()['isOnline'] ?? isOnline;
+      this.imageUrl = doc.data()['imageUrl'] ?? imageUrl;
     } catch (e) {}
   }
   UserModel();
@@ -86,6 +90,7 @@ class UserModel {
       'isTPA': isTpaTest,
       'isVDRL': isVDRLTest,
       'currentIncidentRef': '',
+      'isOnline': isOnline
     };
   }
 }

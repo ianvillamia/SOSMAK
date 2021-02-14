@@ -80,7 +80,9 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context.read<AuthenticationService>().signOut();
+                              context
+                                  .read<AuthenticationService>()
+                                  .signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ),
@@ -110,7 +112,7 @@ class _HomeState extends State<Home> {
           _buildTile(
               color: Colors.white,
               text: 'Emergency HOTLINE',
-              widget: SosNumbers(),
+              widget: SOSPage(),
               icon: Icons.call),
           _buildTile(
               color: Colors.white,
