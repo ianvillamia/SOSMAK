@@ -76,7 +76,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
       child: Card(
           elevation: 2,
           child: ListTile(
-<<<<<<< HEAD
             leading: Image.network(police.imageUrl),
             title: Text("${police.firstName}, ${police.lastName}"),
             subtitle: Text(police.policeRank),
@@ -85,27 +84,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
               height: size.height * 0.06,
             ),
           )),
-=======
-              leading: Image.network(police.imageUrl),
-              title: Text("${police.firstName}, ${police.lastName}"),
-              subtitle: Text(police.email),
-              trailing: Container(
-                width: size.width * 0.35,
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "${RankImage.show(police.policeRank)}",
-                        height: size.height * 0.05,
-                      ),
-                      Text(
-                        police.policeRank,
-                      )
-                    ]),
-              ))),
->>>>>>> db661a36463f9455393a6976ebc66607b2f614e8
       onTap: () {
         showAlertDialog(police, doc);
       },
