@@ -61,7 +61,7 @@ class RankImage {
         return "assets/ranks/15.png";
         break;
 
-      case "Police Officer Ir":
+      case "Police Officer I":
         return "assets/ranks/16.png";
         break;
 

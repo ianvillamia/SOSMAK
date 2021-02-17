@@ -491,9 +491,9 @@ class _MapViewState extends State<MapView> {
 
   @override
   void dispose() {
+    super.dispose();
     // TODO: implement dispose
     _getCurrentLocation();
-    super.dispose();
   }
 
   Size size;
@@ -702,10 +702,6 @@ class _MapViewState extends State<MapView> {
             }));
   }
 
-  String buildPhotoURL(String photoReference) {
-    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8";
-  }
-
   _panel(ScrollController sc) {
     return MediaQuery.removePadding(
       context: context,
@@ -788,7 +784,6 @@ class _MapViewState extends State<MapView> {
                           // Text('${places[index].photos[}')
                         ],
                       ),
-                      trailing: Text("$placeDist"),
                     ),
                   ),
                 );

@@ -97,13 +97,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       age,
       height,
       weight;
-  getFirstName(fname) {
-    this.firstName = fname;
-  }
+  // getFirstName(fname) {
+  //   this.firstName = fname;
+  // }
 
-  getLastName(lname) {
-    this.lastName = lname;
-  }
+  // getLastName(lname) {
+  //   this.lastName = lname;
+  // }
 
   getAge(uAge) {
     this.age = uAge;
@@ -145,8 +145,8 @@ class _UpdateMedicalState extends State<UpdateMedical> {
     // ignore: todo
     // TODO: implement initState
     super.initState();
-    firstNameController.text = widget.user.firstName;
-    lastNameController.text = widget.user.lastName;
+    // firstNameController.text = widget.user.firstName;
+    // lastNameController.text = widget.user.lastName;
     birthdayController.text = widget.user.birthDate;
     birthPlaceController.text = widget.user.birthPlace;
     ageController.text = widget.user.age;
@@ -192,24 +192,24 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                         SizedBox(
                           height: size.height * .03,
                         ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: firstNameController,
-                                  label: 'First Name',
-                                  isNumber: false,
-                                  onChanged: (String firstName) =>
-                                      getFirstName(firstName)),
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: lastNameController,
-                                  label: 'Last Name',
-                                  isNumber: false,
-                                  onChanged: (String lastName) =>
-                                      getLastName(lastName)),
-                            ]),
+                        // Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       textFormFeld(
+                        //           width: size.width * 0.42,
+                        //           controller: firstNameController,
+                        //           label: 'First Name',
+                        //           isNumber: false,
+                        //           onChanged: (String firstName) =>
+                        //               getFirstName(firstName)),
+                        //       textFormFeld(
+                        //           width: size.width * 0.42,
+                        //           controller: lastNameController,
+                        //           label: 'Last Name',
+                        //           isNumber: false,
+                        //           onChanged: (String lastName) =>
+                        //               getLastName(lastName)),
+                        //     ]),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -281,8 +281,8 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                           child: Text('Next',
                               style: TextStyle(color: Colors.white)),
                           onPressed: () {
-                            widget.user.firstName = firstNameController.text;
-                            widget.user.lastName = lastNameController.text;
+                            // widget.user.firstName = firstNameController.text;
+                            // widget.user.lastName = lastNameController.text;
                             widget.user.birthDate = birthdayController.text;
                             widget.user.birthPlace = birthPlaceController.text;
                             widget.user.age = ageController.text;

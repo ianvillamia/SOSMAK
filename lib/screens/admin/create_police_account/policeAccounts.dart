@@ -78,7 +78,13 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           child: ListTile(
             leading: Image.network(police.imageUrl),
             title: Text("${police.firstName}, ${police.lastName}"),
-            subtitle: Text(police.policeRank),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(police.policeRank),
+                Text(police.stationAssigned),
+              ],
+            ),
             trailing: Image.asset(
               "${RankImage.show(police.policeRank)}",
               height: size.height * 0.06,
@@ -202,13 +208,14 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     );
   }
 
-  buildInfo(String name, String info, bool spaces, DocumentSnapshot doc) {
+  buildInfo(
+      String name, String medicalInfo, bool spaces, DocumentSnapshot doc) {
     return Row(
       mainAxisAlignment:
           spaces ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
       children: [
         Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(info)
+        Text(medicalInfo)
       ],
     );
   }

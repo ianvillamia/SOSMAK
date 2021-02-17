@@ -162,8 +162,8 @@ class _UpdateMedical2State extends State<UpdateMedical2> {
                                 .collection('users')
                                 .doc(firebaseUser.uid)
                                 .update({
-                              'firstName': widget.user.firstName,
-                              'lastName': widget.user.lastName,
+                              // 'firstName': widget.user.firstName,
+                              // 'lastName': widget.user.lastName,
                               'birthDate': widget.user.birthDate,
                               'birthPlace': widget.user.birthPlace,
                               'age': widget.user.age,

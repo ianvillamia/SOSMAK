@@ -329,7 +329,7 @@ class _ChatState extends State<Chat> {
     var date = DateFormat.yMMMd().add_jm().format(test);
 
     AlertDialog alert = AlertDialog(
-      title: Text('Message sent last:'),
+      title: Text('Message sent:'),
       content: Text(date),
     );
 

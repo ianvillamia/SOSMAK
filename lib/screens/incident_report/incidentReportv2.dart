@@ -147,7 +147,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                 Text('Please select an Incident'),
                 _dropDownButton(),
                 SizedBox(height: 10),
-                Text('Tell us what Happend'),
+                Text('Tell us what Happened'),
                 _buildTextFormField(
                     label: 'Description',
                     maxLines: 4,

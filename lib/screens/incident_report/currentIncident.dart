@@ -73,7 +73,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
         break;
       case 2:
         color = Colors.green;
-        status = 'Completed';
+        status = 'Solved';
         break;
     }
     return Padding(

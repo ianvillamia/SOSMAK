@@ -41,6 +41,12 @@ class _HomeState extends State<Home> {
     } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
       isCitizen = true;
     }
+    if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
+        userDetailsProvider.currentUser.policeRank ==
+            'Deputy Director General' ||
+        userDetailsProvider.currentUser.policeRank == 'Director') {
+      isAdmin = true;
+    }
   }
 
   @override
@@ -113,11 +119,13 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               text: 'Emergency HOTLINE',
               widget: SOSPage(),
+              isImageIcon: false,
               icon: Icons.call),
           _buildTile(
               color: Colors.white,
               text: 'Emergency Maps',
               icon: Icons.map,
+              isImageIcon: false,
               widget: MapView()),
           Visibility(
             visible: isAdmin == true ? false : true,
@@ -125,12 +133,14 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Medical Report',
                 widget: MedicalReport(),
+                isImageIcon: false,
                 icon: Icons.medical_services),
           ),
           _buildTile(
               color: Colors.white,
               text: 'Wanted List',
-              icon: Icons.ten_mp,
+              isImageIcon: true,
+              image: 'assets/wanted-icon.png',
               widget: WantedList()),
           Visibility(
             visible: isPolice,
@@ -138,6 +148,7 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               text: 'Officers Chat',
               icon: Icons.local_police,
+              isImageIcon: false,
               //widget: Chat()
               widget: ChatHome(),
             ),
@@ -147,6 +158,7 @@ class _HomeState extends State<Home> {
             child: _buildTile(
                 color: Colors.white,
                 text: 'Incident Report',
+                isImageIcon: false,
                 icon: Icons.warning_outlined,
                 widget: IncidentReportV2(
                   userRef: userDetailsProvider.currentUser.ref,
@@ -159,6 +171,7 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Create Police Account',
                 widget: CreatePoliceAccount(),
+                isImageIcon: false,
                 icon: Icons.verified_user),
           ),
           Visibility(
@@ -167,6 +180,7 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: "Citizen's Info",
                 widget: UsersInfo(),
+                isImageIcon: false,
                 icon: Icons.people),
           ),
           Visibility(
@@ -175,6 +189,7 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Incident Report Admin',
                 widget: IncidentReportAdmin(),
+                isImageIcon: false,
                 icon: Icons.bar_chart_sharp),
           ),
         ],
@@ -185,8 +200,10 @@ class _HomeState extends State<Home> {
   _buildTile(
       {@required Color color,
       @required String text,
-      @required IconData icon,
-      Widget widget}) {
+      IconData icon,
+      Widget widget,
+      bool isImageIcon,
+      String image}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -206,12 +223,14 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  icon,
-                  size: 45,
-                ),
+                isImageIcon
+                    ? Image.asset(image, width: 55)
+                    : Icon(
+                        icon,
+                        size: 45,
+                      ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Text(text),
               ],
