@@ -23,11 +23,8 @@ class MyApp extends StatelessWidget {
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
-        StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationService>().authStateChanges),
-        ChangeNotifierProvider<UserDetailsProvider>(
-            create: (_) => UserDetailsProvider()),
+        StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
+        ChangeNotifierProvider<UserDetailsProvider>(create: (_) => UserDetailsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -38,8 +35,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthenticationWrapper extends StatelessWidget {
+class AuthenticationWrapper extends StatefulWidget {
   const AuthenticationWrapper({Key key}) : super(key: key);
+
+  @override
+  _AuthenticationWrapperState createState() => _AuthenticationWrapperState();
+}
+
+class _AuthenticationWrapperState extends State<AuthenticationWrapper> with WidgetsBindingObserver {
+
+  @override
+  void initState() { 
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+      WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch(state){
+      case AppLifecycleState.paused:
+      break;
+      case AppLifecycleState.inactive:
+      break;
+      default:
+      break;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,3 +82,5 @@ class AuthenticationWrapper extends StatelessWidget {
     return Login();
   }
 }
+
+// life cycle handler

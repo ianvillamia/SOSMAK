@@ -1,14 +1,12 @@
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
-
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
-
 import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:SOSMAK/screens/profile/profile.dart';
 import 'package:SOSMAK/screens/user_info/usersInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
@@ -16,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './wantedList_screens/wantedList.dart';
 import 'admin/incidentReportsAdmin/incidentReportsAdmin.dart';
-import 'sos_screen/sosNumbers.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -42,8 +39,7 @@ class _HomeState extends State<Home> {
       isCitizen = true;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
-        userDetailsProvider.currentUser.policeRank ==
-            'Deputy Director General' ||
+        userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Director') {
       isAdmin = true;
     }
@@ -53,18 +49,14 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         width: size.width,
         height: size.height,
         child: StreamBuilder<DocumentSnapshot>(
           // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(firebaseUser.uid)
-              .snapshots(),
+          stream: FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
@@ -86,9 +78,7 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context
-                                  .read<AuthenticationService>()
-                                  .signOut(uid: firebaseUser.uid);
+                              context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ),
@@ -115,6 +105,12 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
       child: Wrap(
         children: [
+            _buildTile(
+              color: Colors.white,
+              text: 'Profile',
+              widget: Profile(),
+              isImageIcon: false,
+              icon: Icons.verified_user_sharp),
           _buildTile(
               color: Colors.white,
               text: 'Emergency HOTLINE',

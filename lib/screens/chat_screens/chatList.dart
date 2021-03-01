@@ -1,4 +1,3 @@
-import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';

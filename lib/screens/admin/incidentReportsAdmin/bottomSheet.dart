@@ -8,12 +8,10 @@ class IncidentReportBottomSheet extends StatefulWidget {
   final DocumentSnapshot doc;
   final IncidentModel incident;
   final BuildContext context;
-  IncidentReportBottomSheet(
-      {@required this.doc, @required this.incident, @required this.context});
+  IncidentReportBottomSheet({@required this.doc, @required this.incident, @required this.context});
 
   @override
-  _IncidentReportBottomSheetState createState() =>
-      _IncidentReportBottomSheetState();
+  _IncidentReportBottomSheetState createState() => _IncidentReportBottomSheetState();
 }
 
 class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
@@ -74,28 +72,22 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
                                     buildChip(text: widget.incident.incident),
                                   ],
                                 ),
-                                buildText(
-                                    title: 'Date: ', data: widget.incident.date)
+                                buildText(title: 'Date: ', data: widget.incident.date)
                               ],
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            buildText(
-                                title: 'Location: ',
-                                data: widget.incident.location),
+                            buildText(title: 'Location: ', data: widget.incident.location),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            buildText(title: 'Description: ', data: widget.incident.desc),
                             SizedBox(
                               height: 10,
                             ),
                             buildText(
-                                title: 'Description: ',
-                                data: widget.incident.desc),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            buildText(
-                                title: 'Image/s: ',
-                                data: '${widget.doc.data()['images'].length}'),
+                                title: 'Image/s: ', data: '${widget.doc.data()['images'].length}'),
                             getImages(doc: widget.doc),
                           ],
                         ),
@@ -189,8 +181,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
   }
 
   changeStatus(int status, DocumentSnapshot doc) {
-    CollectionReference incidentReport =
-        FirebaseFirestore.instance.collection('incidentReports');
+    CollectionReference incidentReport = FirebaseFirestore.instance.collection('incidentReports');
     return incidentReport.doc(doc.id).update({'status': status});
   }
 
@@ -200,13 +191,8 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.bold)),
-        Flexible(
-            child:
-                Text(data, style: TextStyle(color: Colors.white, fontSize: 17)))
+            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+        Flexible(child: Text(data, style: TextStyle(color: Colors.white, fontSize: 17)))
       ],
     );
   }
@@ -222,8 +208,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         color = Colors.grey;
     }
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)), color: color),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: color),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
@@ -239,28 +224,19 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
       return Padding(
         padding: const EdgeInsets.all(13.0),
         child: Text('Pending',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
       );
     } else if (widget.incident.status == 1) {
       return Padding(
         padding: const EdgeInsets.all(13.0),
         child: Text('In Progress',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
       );
     } else if (widget.incident.status == 2) {
       return Padding(
         padding: const EdgeInsets.all(13.0),
         child: Text('Solved',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
       );
     }
   }
@@ -305,8 +281,7 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
+                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
                 content: Container(
                     width: size.width * 0.9,
                     height: size.height * 0.5,
@@ -319,6 +294,8 @@ class _IncidentReportBottomSheetState extends State<IncidentReportBottomSheet> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
-        pageBuilder: (context, animation1, animation2) {});
+        pageBuilder: (context, animation1, animation2) {
+          return Container();
+        });
   }
 }
