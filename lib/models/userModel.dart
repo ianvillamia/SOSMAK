@@ -16,14 +16,6 @@ class UserModel {
   String allergies;
   String policeRank;
   String stationAssigned;
-  bool isHiv = false,
-      isHeartDisease = false,
-      isHighBlood = false,
-      isLiverFunction = false,
-      isMalaria = false,
-      isTb = false,
-      isTpaTest = false,
-      isVDRLTest = false;
   bool isOnline = false;
   String imageUrl = '';
 
@@ -42,19 +34,9 @@ class UserModel {
       this.age = doc.data()['age'] ?? '';
       this.bloodType = doc.data()['bloodType'] ?? '';
       this.allergies = doc.data()['allergies'] ?? '';
-
       this.ref = doc.data()['ref'] ?? '';
       this.role = doc.data()['role'] ?? 'citizen';
-      this.isHiv = doc.data()['isHiv'] ?? isHiv;
-      this.isTb = doc.data()['isTb'] ?? isTb;
-      this.isHeartDisease = doc.data()['isHeartDisease'] ?? isHeartDisease;
-      this.isHighBlood = doc.data()['isHighBlood'] ?? isHighBlood;
-      this.isMalaria = doc.data()['isMalaria'] ?? isMalaria;
-      this.isLiverFunction = doc.data()['isLiverFunction'] ?? isLiverFunction;
-      this.isVDRLTest = doc.data()['isVDRL'] ?? isVDRLTest;
-      this.isTpaTest = doc.data()['isTPA'] ?? isTpaTest;
       this.currentIncidentRef = doc.data()['currentIncidentRef'];
-
       this.policeRank = doc.data()['policeRank'];
       this.stationAssigned = doc.data()['stationAssigned'];
       this.isOnline = doc.data()['isOnline'] ?? isOnline;
@@ -80,15 +62,7 @@ class UserModel {
       'address': this.address,
       'imageUrl':
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
-      'isHiv': isHiv,
       'tempPassword': this.tempPassword,
-      'isHeartDisease': isHeartDisease,
-      'isHighBlood': isHighBlood,
-      'isLiverFunction': isLiverFunction,
-      'isMalaria': isMalaria,
-      'isTb': isTb,
-      'isTPA': isTpaTest,
-      'isVDRL': isVDRLTest,
       'currentIncidentRef': '',
       'isOnline': isOnline
     };

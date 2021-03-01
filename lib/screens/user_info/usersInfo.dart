@@ -92,54 +92,6 @@ class _UsersInfoState extends State<UsersInfo> {
   }
 
   showAlertDialog(UserModel user, DocumentSnapshot doc) {
-    String result1,
-        result2,
-        result3,
-        result4,
-        result5,
-        result6,
-        result7,
-        result8;
-    if (doc.data()['isHiv'] == true) {
-      result1 = 'Positive';
-    } else {
-      result1 = 'Negative';
-    }
-    if (doc.data()['isTb'] == true) {
-      result2 = 'Positive';
-    } else {
-      result2 = 'Negative';
-    }
-    if (doc.data()['isHeartDisease'] == true) {
-      result3 = 'Positive';
-    } else {
-      result3 = 'Negative';
-    }
-    if (doc.data()['isHighBlood'] == true) {
-      result4 = 'Positive';
-    } else {
-      result4 = 'Negative';
-    }
-    if (doc.data()['isMalaria'] == true) {
-      result5 = 'Positive';
-    } else {
-      result5 = 'Negative';
-    }
-    if (doc.data()['isLiverFunction'] == true) {
-      result6 = 'Positive';
-    } else {
-      result6 = 'Negative';
-    }
-    if (doc.data()['isVDRL'] == true) {
-      result7 = 'Positive';
-    } else {
-      result7 = 'Negative';
-    }
-    if (doc.data()['isTPA'] == true) {
-      result8 = 'Positive';
-    } else {
-      result8 = 'Negative';
-    }
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
@@ -165,26 +117,7 @@ class _UsersInfoState extends State<UsersInfo> {
                 buildInfo('Height: ', user.height, false),
                 buildInfo('Weight', user.weight, false),
                 buildInfo('Blood Type: ', user.bloodType, false),
-                buildInfo('Allergies: ', user.allergies, false),
                 SizedBox(height: size.height * 0.03),
-                Text('Medical Status',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: size.height * 0.03),
-                buildInfo('HIV Test: ', result1, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Tuberculosis Test: ', result2, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Heart Disease: ', result3, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('High Blood: ', result4, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Malaria: ', result5, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Liver Function: ', result6, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('VDRL Test: ', result7, true),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('TPA Test: ', result8, true),
               ],
             ),
           ),

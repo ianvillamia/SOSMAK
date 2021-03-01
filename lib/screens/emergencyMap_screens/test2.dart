@@ -12,11 +12,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as gCoding;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as gPlaces;
+import 'package:location/location.dart' as loc;
 
 import 'dart:math' show cos, sqrt, asin;
 
 import 'package:search_map_place/search_map_place.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'data/placeModel.dart';
+import 'Widgets/detailPage.dart';
 
 class MapView extends StatefulWidget {
   @override
@@ -75,6 +79,9 @@ class _MapViewState extends State<MapView> {
 
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
   GoogleMapController mapController;
+  loc.Location location = loc.Location();
+  bool _serviceEnabled;
+  loc.LocationData _locationData;
 
   Position _currentPosition;
   String _currentAddress;
@@ -85,10 +92,11 @@ class _MapViewState extends State<MapView> {
   final startAddressFocusNode = FocusNode();
   final desrinationAddressFocusNode = FocusNode();
 
-  gPlaces.GoogleMapsPlaces _places =
-      gPlaces.GoogleMapsPlaces(apiKey: 'AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8');
+  gPlaces.GoogleMapsPlaces _places = gPlaces.GoogleMapsPlaces(
+      apiKey: 'AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8');
 
   gPlaces.PlaceDetails place;
+  List<PlaceDetail> placeDetails;
   String _startAddress = '';
   String _destinationAddress = '';
   String _placeDistance;
@@ -113,7 +121,10 @@ class _MapViewState extends State<MapView> {
 
   static double latitude = 40.7484405;
   static double longitude = -73.9878531;
-  static const String baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+  static const String baseUrl =
+      "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+  final String detailUrl =
+      "https://maps.googleapis.com/maps/api/place/details/json?key=$_API_KEY&placeid=";
 
   List<Marker> placesMarkers = <Marker>[];
   List<gPlaces.PlacesSearchResult> placeSearch = [];
@@ -154,8 +165,28 @@ class _MapViewState extends State<MapView> {
     });
   }
 
+  void _showPlacesDetails(String name, vicinity) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showModalBottomSheet(
+          barrierColor: Colors.black.withAlpha(1),
+          backgroundColor: Colors.white,
+          context: context,
+          elevation: 0,
+          builder: (context) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+              child: PlacesDetails(
+                  context: context, name: name, vicinity: vicinity),
+            );
+          });
+
+      setState(() {});
+    });
+  }
+
   void _setStyle(GoogleMapController controller) async {
-    String value = await DefaultAssetBundle.of(context).loadString('assets/maps_style.json');
+    String value = await DefaultAssetBundle.of(context)
+        .loadString('assets/maps_style.json');
     controller.setMapStyle(value);
   }
 
@@ -166,10 +197,15 @@ class _MapViewState extends State<MapView> {
       if (polylines.isNotEmpty) polylines.clear();
       if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
     });
+
     String url =
-        '$baseUrl?key=$_API_KEY&location=${_currentPosition.latitude},${_currentPosition.longitude}&radius=500&keyword=$keyword';
+        '$baseUrl?key=$_API_KEY&location=${_currentPosition.latitude},${_currentPosition.longitude}&radius=2000&keyword=$keyword';
     print(url);
     final response = await http.get(url);
+
+    // var responses = await http
+    //     .get(detailUrl + place_id, headers: {"Accept": "application/json"});
+    // var result = json.decode(responses.body)["result"];
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
       target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
@@ -179,6 +215,7 @@ class _MapViewState extends State<MapView> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _handleResponse(data);
+      getPlaces(data);
     } else {
       throw Exception('An error occurred getting places nearby');
     }
@@ -187,6 +224,44 @@ class _MapViewState extends State<MapView> {
     setState(() {
       searching = false;
     });
+  }
+
+  Future getPlaceID(String id) async {
+    var response =
+        await http.get(detailUrl + id, headers: {"Accept": "application/json"});
+    var result = json.decode(response.body)["result"];
+
+    List<String> weekdays = [];
+    if (result["opening_hours"] != null)
+      weekdays = result["opening_hours"]["weekday_text"];
+    return new PlaceDetail(
+        result["place_id"],
+        result["name"],
+        result["icon"],
+        result["rating"].toString(),
+        result["vicinity"],
+        result["formatted_address"],
+        result["international_phone_number"],
+        weekdays);
+  }
+
+  void getPlaces(data) {
+    if (data['status'] == "REQUEST_DENIED") {
+      setState(() {
+        error = Error.fromJson(data);
+      });
+      // success
+    } else if (data['status'] == "OK") {
+      setState(() {
+        places = PlaceResponse.parseResults(data['results']);
+        print('XXXXXXX ${placeDetails.length}');
+        for (int i = 0; i < places.length; i++) {
+          getPlaceID(places[i].id);
+        }
+      });
+    } else {
+      print(data);
+    }
   }
 
   void _handleResponse(data) {
@@ -199,13 +274,16 @@ class _MapViewState extends State<MapView> {
     } else if (data['status'] == "OK") {
       setState(() {
         places = PlaceResponse.parseResults(data['results']);
+
         for (int i = 0; i < places.length; i++) {
           items = places.length;
           placesMarkers.add(
             Marker(
               markerId: MarkerId(places[i].placeId),
-              position: LatLng(places[i].geometry.location.lat, places[i].geometry.location.long),
-              infoWindow: InfoWindow(title: places[i].name, snippet: places[i].vicinity),
+              position: LatLng(places[i].geometry.location.lat,
+                  places[i].geometry.location.long),
+              infoWindow: InfoWindow(
+                  title: places[i].name, snippet: places[i].vicinity),
               onTap: () {},
             ),
           );
@@ -291,7 +369,8 @@ class _MapViewState extends State<MapView> {
       Placemark place = p[0];
 
       setState(() {
-        _currentAddress = "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
+        _currentAddress =
+            "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
         startAddressController.text = _currentAddress;
         _startAddress = _currentAddress;
       });
@@ -305,15 +384,17 @@ class _MapViewState extends State<MapView> {
   double _coordinateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a =
-        0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses
-      List<gCoding.Location> startPlacemark = await gCoding.locationFromAddress(_startAddress);
+      List<gCoding.Location> startPlacemark =
+          await gCoding.locationFromAddress(_startAddress);
       List<gCoding.Location> destinationPlacemark =
           await gCoding.locationFromAddress(_destinationAddress);
 
@@ -322,9 +403,12 @@ class _MapViewState extends State<MapView> {
         // instead of the address if the start position is user's
         // current position, as it results in better accuracy.
         Position startCoordinates = _startAddress == _currentAddress
-            ? Position(latitude: _currentPosition.latitude, longitude: _currentPosition.longitude)
+            ? Position(
+                latitude: _currentPosition.latitude,
+                longitude: _currentPosition.longitude)
             : Position(
-                latitude: startPlacemark[0].latitude, longitude: startPlacemark[0].longitude);
+                latitude: startPlacemark[0].latitude,
+                longitude: startPlacemark[0].longitude);
         Position destinationCoordinates = Position(
             latitude: destinationPlacemark[0].latitude,
             longitude: destinationPlacemark[0].longitude);
@@ -369,18 +453,22 @@ class _MapViewState extends State<MapView> {
 
         // Calculating to check that the position relative
         // to the frame, and pan & zoom the camera accordingly.
-        double miny = (startCoordinates.latitude <= destinationCoordinates.latitude)
-            ? startCoordinates.latitude
-            : destinationCoordinates.latitude;
-        double minx = (startCoordinates.longitude <= destinationCoordinates.longitude)
-            ? startCoordinates.longitude
-            : destinationCoordinates.longitude;
-        double maxy = (startCoordinates.latitude <= destinationCoordinates.latitude)
-            ? destinationCoordinates.latitude
-            : startCoordinates.latitude;
-        double maxx = (startCoordinates.longitude <= destinationCoordinates.longitude)
-            ? destinationCoordinates.longitude
-            : startCoordinates.longitude;
+        double miny =
+            (startCoordinates.latitude <= destinationCoordinates.latitude)
+                ? startCoordinates.latitude
+                : destinationCoordinates.latitude;
+        double minx =
+            (startCoordinates.longitude <= destinationCoordinates.longitude)
+                ? startCoordinates.longitude
+                : destinationCoordinates.longitude;
+        double maxy =
+            (startCoordinates.latitude <= destinationCoordinates.latitude)
+                ? destinationCoordinates.latitude
+                : startCoordinates.latitude;
+        double maxx =
+            (startCoordinates.longitude <= destinationCoordinates.longitude)
+                ? destinationCoordinates.longitude
+                : startCoordinates.longitude;
 
         _southwestCoordinates = Position(latitude: miny, longitude: minx);
         _northeastCoordinates = Position(latitude: maxy, longitude: maxx);
@@ -469,6 +557,7 @@ class _MapViewState extends State<MapView> {
   @override
   void initState() {
     super.initState();
+    //checkPlaces();
     _getCurrentLocation();
     _fabHeight = _initFabHeight;
   }
@@ -500,7 +589,22 @@ class _MapViewState extends State<MapView> {
             // etto yung my location
             FloatingActionButton(
               heroTag: "mylocation",
-              onPressed: () {
+              onPressed: () async {
+                _serviceEnabled = await location.serviceEnabled();
+                if (!_serviceEnabled) {
+                  _serviceEnabled = await location.requestService();
+                  mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(
+                          _currentPosition.latitude,
+                          _currentPosition.longitude,
+                        ),
+                        zoom: 18.0,
+                      ),
+                    ),
+                  );
+                }
                 mapController.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
@@ -616,10 +720,11 @@ class _MapViewState extends State<MapView> {
                       apiKey: 'AIzaSyCZjrzw-ltJyYGJqNLFLwuGzxuZSSX6ig8',
                       onSelected: (Place place) async {
                         Geolocation geolocation = await place.geolocation;
-                        mapController
-                            .animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-                        mapController
-                            .animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+                        mapController.animateCamera(
+                            CameraUpdate.newLatLng(geolocation.coordinates));
+                        mapController.animateCamera(
+                            CameraUpdate.newLatLngBounds(
+                                geolocation.bounds, 0));
                       },
                     ),
                     Row(
@@ -629,8 +734,9 @@ class _MapViewState extends State<MapView> {
                           color: Colors.white,
                           child: Text('Hospital'),
                           onPressed: () async {
-                            keyword = 'Emergency Hospital';
-                            searchNearby(_currentPosition.latitude, _currentPosition.longitude);
+                            keyword = 'Hospitals';
+                            searchNearby(_currentPosition.latitude,
+                                _currentPosition.longitude);
                             btnCTR = 0;
                             _showPlacesPanel();
                           },
@@ -640,7 +746,8 @@ class _MapViewState extends State<MapView> {
                           child: Text('Police Station'),
                           onPressed: () {
                             keyword = 'Police Station';
-                            searchNearby(_currentPosition.latitude, _currentPosition.longitude);
+                            searchNearby(_currentPosition.latitude,
+                                _currentPosition.longitude);
 
                             btnCTR = 0;
                             _showPlacesPanel();
@@ -650,8 +757,9 @@ class _MapViewState extends State<MapView> {
                           color: Colors.white,
                           child: Text('Fire Station'),
                           onPressed: () {
-                            keyword = 'Fire-Station';
-                            searchNearby(_currentPosition.latitude, _currentPosition.longitude);
+                            keyword = 'Fire Station';
+                            searchNearby(_currentPosition.latitude,
+                                _currentPosition.longitude);
 
                             btnCTR = 0;
                             _showPlacesPanel();
@@ -677,7 +785,8 @@ class _MapViewState extends State<MapView> {
         minHeight: _panelHeightClosed,
         panelBuilder: (sc) => _panel(sc),
         onPanelSlide: (double pos) => setState(() {
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                  _initFabHeight;
             }));
   }
 
@@ -698,7 +807,8 @@ class _MapViewState extends State<MapView> {
                 width: 30,
                 height: 5,
                 decoration: BoxDecoration(
-                    color: Colors.grey[300], borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))),
               ),
             ],
           ),
@@ -727,39 +837,59 @@ class _MapViewState extends State<MapView> {
               padding: EdgeInsets.fromLTRB(10, 13, 10, 13),
               itemCount: items,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      btnCTR++;
-                    });
-                    if (btnCTR <= 1) {
-                      String hospital = places[index].name;
-                      //geocoding reverse
-                      var addresses = await Geocoder.local.findAddressesFromQuery(hospital);
-                      var first = addresses.first;
-                      debugPrint("${first.featureName} : ${first.coordinates}");
-                      Position posit = Position(
-                          latitude: first.coordinates.latitude,
-                          longitude: first.coordinates.longitude);
+                return Card(
+                  child: ListTile(
+                    title: Text('${places[index].name}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${places[index].vicinity}'),
+                        // Text('General Rating: ${places[index].rating}'),
+                        // Text('${places[index].photos[}')
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            setState(() {
+                              btnCTR++;
+                            });
+                            if (btnCTR <= 1) {
+                              String hospital = places[index].name;
+                              //geocoding reverse
+                              var addresses = await Geocoder.local
+                                  .findAddressesFromQuery(hospital);
+                              var first = addresses.first;
+                              debugPrint(
+                                  "DEBUG PRINT ${first.featureName} : ${first.coordinates}");
+                              Position posit = Position(
+                                  latitude: first.coordinates.latitude,
+                                  longitude: first.coordinates.longitude);
 
-                      await getHospitals(posit);
-                      getHospitals(posit);
+                              await getHospitals(posit);
+                              getHospitals(posit);
 
-                      Navigator.pop(context);
-                    } else {}
-                  },
-                  child: Card(
-                    child: ListTile(
-                      title: Text('${places[index].name}'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${places[index].vicinity}'),
-                          Text('User Ratings: ${places[index].userRatingsTotal}'),
-                          Text('General Rating: ${places[index].rating}'),
-                          // Text('${places[index].photos[}')
-                        ],
-                      ),
+                              Navigator.pop(context);
+                            }
+                          },
+                          icon: Icon(
+                            Icons.location_on_outlined,
+                            color: Colors.black,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _showPlacesDetails(placeDetails[index].name,
+                                placeDetails[index].vicinity);
+                          },
+                          icon: Icon(
+                            Icons.info_outline,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -842,14 +972,16 @@ class _MapViewState extends State<MapView> {
                     ),
                     SizedBox(height: 5),
                     RaisedButton(
-                      onPressed: (_startAddress != '' && _destinationAddress != '')
+                      onPressed: (_startAddress != '' &&
+                              _destinationAddress != '')
                           ? () async {
                               startAddressFocusNode.unfocus();
                               desrinationAddressFocusNode.unfocus();
                               setState(() {
                                 if (markers.isNotEmpty) markers.clear();
                                 if (polylines.isNotEmpty) polylines.clear();
-                                if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
+                                if (polylineCoordinates.isNotEmpty)
+                                  polylineCoordinates.clear();
                                 _placeDistance = null;
                               });
 
@@ -857,13 +989,15 @@ class _MapViewState extends State<MapView> {
                                 if (isCalculated) {
                                   _scaffoldKey.currentState.showSnackBar(
                                     SnackBar(
-                                      content: Text('Distance Calculated Sucessfully'),
+                                      content: Text(
+                                          'Distance Calculated Sucessfully'),
                                     ),
                                   );
                                 } else {
                                   _scaffoldKey.currentState.showSnackBar(
                                     SnackBar(
-                                      content: Text('Error Calculating Distance'),
+                                      content:
+                                          Text('Error Calculating Distance'),
                                     ),
                                   );
                                 }

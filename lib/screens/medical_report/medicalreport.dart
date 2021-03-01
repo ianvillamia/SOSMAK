@@ -35,7 +35,7 @@ class _MedicalReportState extends State<MedicalReport> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Medical Record'),
+        title: Text('My Profile'),
         leading: IconButton(
           icon: Icon(Icons.home),
           onPressed: () {
@@ -69,54 +69,7 @@ class _MedicalReportState extends State<MedicalReport> {
 
   _buildMedicalReport(DocumentSnapshot doc) {
     UserModel user = UserModel.get(doc);
-    String result1,
-        result2,
-        result3,
-        result4,
-        result5,
-        result6,
-        result7,
-        result8;
-    if (user.isHiv == true) {
-      result1 = 'Positive';
-    } else {
-      result1 = 'Negative';
-    }
-    if (user.isTb == true) {
-      result2 = 'Positive';
-    } else {
-      result2 = 'Negative';
-    }
-    if (user.isHeartDisease == true) {
-      result3 = 'Positive';
-    } else {
-      result3 = 'Negative';
-    }
-    if (user.isHighBlood == true) {
-      result4 = 'Positive';
-    } else {
-      result4 = 'Negative';
-    }
-    if (user.isMalaria == true) {
-      result5 = 'Positive';
-    } else {
-      result5 = 'Negative';
-    }
-    if (user.isLiverFunction == true) {
-      result6 = 'Positive';
-    } else {
-      result6 = 'Negative';
-    }
-    if (user.isVDRLTest == true) {
-      result7 = 'Positive';
-    } else {
-      result7 = 'Negative';
-    }
-    if (user.isTpaTest == true) {
-      result8 = 'Positive';
-    } else {
-      result8 = 'Negative';
-    }
+
     return Container(
       width: size.width,
       height: size.height,
@@ -148,15 +101,6 @@ class _MedicalReportState extends State<MedicalReport> {
                 title2: 'Allergies: ',
                 data2: user.allergies,
                 doc: doc),
-            SizedBox(height: size.height * 0.03),
-            _buildRow(title: 'HIV TEST', result: result1),
-            _buildRow(title: 'Tuberculosis TEST', result: result2),
-            _buildRow(title: 'Heart Disease', result: result3),
-            _buildRow(title: 'High Blood', result: result4),
-            _buildRow(title: 'Malaria', result: result5),
-            _buildRow(title: 'Liver Function', result: result6),
-            _buildRow(title: 'VRDL TEST', result: result7),
-            _buildRow(title: 'TPA TEST', result: result8),
             SizedBox(height: size.height * 0.05),
             RaisedButton(
                 color: Colors.blue[400],
@@ -191,8 +135,8 @@ class _MedicalReportState extends State<MedicalReport> {
           Row(
             children: [
               Text(title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(data, style: TextStyle(fontSize: 16)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              Text(data, style: TextStyle(fontSize: 20)),
             ],
           ),
           Container(
@@ -203,8 +147,8 @@ class _MedicalReportState extends State<MedicalReport> {
               children: [
                 Text(title2,
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Flexible(child: Text(data2, style: TextStyle(fontSize: 16))),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Flexible(child: Text(data2, style: TextStyle(fontSize: 20))),
               ],
             ),
           ),

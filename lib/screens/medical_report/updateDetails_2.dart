@@ -28,14 +28,6 @@ class _UpdateMedical2State extends State<UpdateMedical2> {
   int counter = 0;
   setData(DocumentSnapshot doc) {
     UserModel user = UserModel.get(doc);
-    isHiv = user.isHiv;
-    isTb = user.isTb;
-    isHeartDisease = user.isHeartDisease;
-    isHighBlood = user.isHighBlood;
-    isMalaria = user.isMalaria;
-    isLiverFunction = user.isLiverFunction;
-    isVDRLTest = user.isVDRLTest;
-    isTpaTest = user.isTpaTest;
   }
 
   @override
@@ -170,15 +162,6 @@ class _UpdateMedical2State extends State<UpdateMedical2> {
                               'height': widget.user.height,
                               'weight': widget.user.weight,
                               'bloodType': widget.user.bloodType,
-                              'allergies': widget.user.allergies,
-                              'isHiv': isHiv,
-                              'isHeartDisease': isHeartDisease,
-                              'isHighBlood': isHighBlood,
-                              'isLiverFunction': isLiverFunction,
-                              'isMalaria': isMalaria,
-                              'isTb': isTb,
-                              'isTPA': isTpaTest,
-                              'isVDRL': isVDRLTest
                             }).then((value) {
                               Navigator.pop(context);
                               Navigator.pop(context);

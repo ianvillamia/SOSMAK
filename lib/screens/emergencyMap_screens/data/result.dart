@@ -47,6 +47,6 @@ class Result {
         types: List<String>.from(json['types']),
         userRatingsTotal: json['user_ratings_total'],
         vicinity: json['vicinity'],
-        number: json['formattedPhoneNumber']);
+        number: json['formatted_phone_number']);
   }
 }

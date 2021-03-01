@@ -39,7 +39,8 @@ class _HomeState extends State<Home> {
       isCitizen = true;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
-        userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
+        userDetailsProvider.currentUser.policeRank ==
+            'Deputy Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Director') {
       isAdmin = true;
     }
@@ -49,14 +50,18 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
-    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         width: size.width,
         height: size.height,
         child: StreamBuilder<DocumentSnapshot>(
           // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
-          stream: FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(firebaseUser.uid)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
@@ -78,7 +83,9 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
+                              context
+                                  .read<AuthenticationService>()
+                                  .signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ),
@@ -105,7 +112,7 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
       child: Wrap(
         children: [
-            _buildTile(
+          _buildTile(
               color: Colors.white,
               text: 'Profile',
               widget: Profile(),
@@ -127,10 +134,10 @@ class _HomeState extends State<Home> {
             visible: isAdmin == true ? false : true,
             child: _buildTile(
                 color: Colors.white,
-                text: 'Medical Report',
+                text: 'Profile',
                 widget: MedicalReport(),
                 isImageIcon: false,
-                icon: Icons.medical_services),
+                icon: Icons.person),
           ),
           _buildTile(
               color: Colors.white,
@@ -223,7 +230,7 @@ class _HomeState extends State<Home> {
                     ? Image.asset(image, width: 55)
                     : Icon(
                         icon,
-                        size: 45,
+                        size: 50,
                       ),
                 SizedBox(
                   height: 5,

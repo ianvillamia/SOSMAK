@@ -23,28 +23,11 @@ class AlwaysDisabledFocusNode extends FocusNode {
 
 class _UpdateMedicalState extends State<UpdateMedical> {
   Size size;
-  bool isHiv;
-  bool isTb;
-  bool isHeartDisease;
-  bool isHighBlood;
-  bool isMalaria;
-  bool isLiverFunction;
-  bool isVDRLTest;
-  bool isTpaTest;
   User firebaseUser;
   int counter = 0;
-  setData(DocumentSnapshot doc) {
-    UserModel user = UserModel.get(doc);
-
-    isHiv = user.isHiv;
-    isTb = user.isTb;
-    isHeartDisease = user.isHeartDisease;
-    isHighBlood = user.isHighBlood;
-    isMalaria = user.isMalaria;
-    isLiverFunction = user.isLiverFunction;
-    isVDRLTest = user.isVDRLTest;
-    isTpaTest = user.isTpaTest;
-  }
+  // setData(DocumentSnapshot doc) {
+  //   UserModel user = UserModel.get(doc);
+  // }
 
   DateTime selectedDate = DateTime.now();
   TextEditingController firstNameController = TextEditingController(),
@@ -153,7 +136,6 @@ class _UpdateMedicalState extends State<UpdateMedical> {
     heightController.text = widget.user.height;
     weightController.text = widget.user.weight;
     bloodTypeController.text = widget.user.bloodType;
-    allergiesController.text = widget.user.allergies;
     print(counter);
   }
 
@@ -179,10 +161,6 @@ class _UpdateMedicalState extends State<UpdateMedical> {
             future: AuthenticationService.getCurrentUser(firebaseUser.uid),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (counter == 0) {
-                  setData(snapshot.data);
-                  counter++;
-                }
                 // setData(snapshot.data);
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * .05),
@@ -278,9 +256,9 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                         SizedBox(height: size.height * 0.1),
                         RaisedButton(
                           color: Colors.blue[400],
-                          child: Text('Next',
+                          child: Text('Update',
                               style: TextStyle(color: Colors.white)),
-                          onPressed: () {
+                          onPressed: () async {
                             // widget.user.firstName = firstNameController.text;
                             // widget.user.lastName = lastNameController.text;
                             widget.user.birthDate = birthdayController.text;
@@ -291,11 +269,25 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                             widget.user.bloodType = bloodTypeController.text;
                             widget.user.allergies = allergiesController.text;
 
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UpdateMedical2(user: widget.user)));
+                            //update here
+                            // print(_user.currentUser.ref);
+
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(firebaseUser.uid)
+                                .update({
+                              // 'firstName': widget.user.firstName,
+                              // 'lastName': widget.user.lastName,
+                              'birthDate': widget.user.birthDate,
+                              'birthPlace': widget.user.birthPlace,
+                              'age': widget.user.age,
+                              'height': widget.user.height,
+                              'weight': widget.user.weight,
+                              'bloodType': widget.user.bloodType,
+                              'allergies': widget.user.allergies
+                            }).then((value) {
+                              Navigator.pop(context);
+                            });
                           },
                         )
                       ],
