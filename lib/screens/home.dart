@@ -1,4 +1,6 @@
+import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
+import 'package:SOSMAK/screens/admin/approve_account/approveAccount.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
@@ -65,33 +67,43 @@ class _HomeState extends State<Home> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
+                UserModel user = UserModel.get(snapshot.data);
+
                 currentIncident = snapshot.data.data()['currentIncidentRef'];
                 //  print(snapshot.data.data()['currentIncidentRef']);
                 //set thing?
                 userDetailsProvider.setCurrentUser(snapshot.data);
                 setViews();
-                return SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // setViews(),
-                      _buildTiles(),
-                      // _buildButtons();
-                      Align(
-                        alignment: Alignment.center,
-                        child: MaterialButton(
-                            color: Colors.redAccent,
-                            textColor: Colors.white,
-                            onPressed: () {
-                              context
-                                  .read<AuthenticationService>()
-                                  .signOut(uid: firebaseUser.uid);
-                            },
-                            child: Text('Logout')),
-                      ),
-                    ],
-                  ),
-                );
+                if (user.isApproved == false) {
+                  print('not yet approved');
+                 return Center(child: Padding(
+                   padding: EdgeInsets.symmetric(horizontal: size.width*.2),
+                   child: Text('Not yet Approved wait for admin to verify your account',textAlign: TextAlign.center,),
+                 ));
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // setViews(),
+                        _buildTiles(),
+                        // _buildButtons();
+                        Align(
+                          alignment: Alignment.center,
+                          child: MaterialButton(
+                              color: Colors.redAccent,
+                              textColor: Colors.white,
+                              onPressed: () {
+                                context
+                                    .read<AuthenticationService>()
+                                    .signOut(uid: firebaseUser.uid);
+                              },
+                              child: Text('Logout')),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }
             } else {
               return Center(
@@ -176,6 +188,15 @@ class _HomeState extends State<Home> {
                 widget: CreatePoliceAccount(),
                 isImageIcon: false,
                 icon: Icons.verified_user),
+          ),
+             Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+                color: Colors.white,
+                text: 'Approve account',
+                widget: ApproveAccount(),
+                isImageIcon: false,
+                icon: Icons.supervised_user_circle_rounded),
           ),
           Visibility(
             visible: isAdmin,

@@ -18,6 +18,8 @@ class UserModel {
   String stationAssigned;
   bool isOnline = false;
   String imageUrl = '';
+  bool isApproved =false;
+  String idURL ='';
 
   String tempPassword;
   final DateTime now = DateTime.now();
@@ -41,6 +43,8 @@ class UserModel {
       this.stationAssigned = doc.data()['stationAssigned'];
       this.isOnline = doc.data()['isOnline'] ?? isOnline;
       this.imageUrl = doc.data()['imageUrl'] ?? imageUrl;
+      this.isApproved = doc.data()['isApproved']??isApproved;
+      this.idURL = doc.data()['idURL']??this.idURL;
     } catch (e) {}
   }
   UserModel();
@@ -60,11 +64,12 @@ class UserModel {
       'allergies': this.allergies,
       'role': this.role,
       'address': this.address,
-      'imageUrl':
-          'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
+      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/icons8-user-male-256.png?alt=media&token=43904dc7-93c7-44f2-a6ad-59438f1759b5',
       'tempPassword': this.tempPassword,
+      'idURL':this.idURL,
       'currentIncidentRef': '',
-      'isOnline': isOnline
+      'isOnline': this.isOnline,
+      'isApproved':this.isApproved
     };
   }
 }
