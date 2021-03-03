@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './firestore_service.dart';
 import '../models/userModel.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io';
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
   AuthenticationService(this._firebaseAuth);
@@ -48,21 +49,39 @@ class AuthenticationService {
   Future signUp(
       {@required String email,
       @required String password,
+      @required File file,
       @required UserModel user}) async {
     try {
       var isSuccessful;
-      await _firebaseAuth
+
+        uploadFile(file).then((value) async {
+          String downUrl = await value.ref.getDownloadURL();
+          user.idURL = downUrl;
+       await _firebaseAuth
           .createUserWithEmailAndPassword(
               email: email.trim(), password: password.trim())
           .then((doc) async {
         isSuccessful = true;
         await _userService.addUserToCollection(user: user, uid: doc.user.uid);
       });
+        });
+
+     
       return isSuccessful;
     } on FirebaseAuthException catch (e) {
       print(e);
       return e;
     }
+  }
+
+    Future uploadFile(File file) async {
+    // File file = File(filePath);
+    DateTime date = DateTime.now();
+    String fileName = date.toString();
+
+    return await firebase_storage.FirebaseStorage.instance
+        .ref('uploads/$fileName.png')
+        .putFile(file);
   }
 
   Future<void> signOut({@required String uid}) async {

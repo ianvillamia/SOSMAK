@@ -76,10 +76,25 @@ class _HomeState extends State<Home> {
                 setViews();
                 if (user.isApproved == false) {
                   print('not yet approved');
-                 return Center(child: Padding(
+                 return Padding(
                    padding: EdgeInsets.symmetric(horizontal: size.width*.2),
-                   child: Text('Not yet Approved wait for admin to verify your account',textAlign: TextAlign.center,),
-                 ));
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       Text('Not yet approved wait for admin to verify your account',textAlign: TextAlign.center,style: TextStyle(fontSize: 20),),
+                       SizedBox(height: size.height*.03,),
+                        MaterialButton(
+                              color: Colors.redAccent,
+                              textColor: Colors.white,
+                              onPressed: () {
+                                context
+                                    .read<AuthenticationService>()
+                                    .signOut(uid: firebaseUser.uid);
+                              },
+                              child: Text('Logout')),
+                     ],
+                   ),
+                 );
                 } else {
                   return SingleChildScrollView(
                     child: Column(

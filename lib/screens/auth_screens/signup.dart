@@ -5,6 +5,8 @@ import 'package:SOSMAK/services/errors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class Signup extends StatefulWidget {
   Signup({Key key}) : super(key: key);
@@ -21,7 +23,8 @@ class _SignupState extends State<Signup> {
       lastNameController = TextEditingController();
   Size size;
   final _formKey = GlobalKey<FormState>();
-
+  File _image;
+  final picker = ImagePicker();
   bool _isHidden = true;
 
   void _toggleVisibility() {
@@ -72,6 +75,29 @@ class _SignupState extends State<Signup> {
                     caps: false, controller: emailContoller, label: 'Email'),
                 _buildPasswordField(
                     controller: passwordController, label: 'Password'),
+           Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'ID',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Center(
+                                  child: Container(
+                    height: size.height * .2,
+                    width: size.width*.8,
+                    color: Colors.grey,
+                    child: _image ==null?Center(
+                      child: MaterialButton(
+                        onPressed: () {
+                          getImage();
+                        },
+                        child: Text('Upload ID'),
+                      ),
+                    ):Image.file(_image,fit: BoxFit.cover,),
+                  ),
+                ),
+                  SizedBox(height: 15),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -87,6 +113,7 @@ class _SignupState extends State<Signup> {
                               'Already Got an Account? Click here to login'))),
                 ),
                 SizedBox(height: 15),
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -106,9 +133,11 @@ class _SignupState extends State<Signup> {
                           user.email = emailContoller.text;
                           user.address = addressController.text;
                           user.role = 'citizen';
+                          //upload mo muna ?
                           context
                               .read<AuthenticationService>()
                               .signUp(
+                                file: _image,
                                   email: emailContoller.text.trim(),
                                   password: passwordController.text.trim(),
                                   user: user)
@@ -164,6 +193,21 @@ class _SignupState extends State<Signup> {
                 OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
       ),
     );
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+
+        debugPrint('hey');
+        print(_image);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
   _buildPasswordField({TextEditingController controller, String label}) {
