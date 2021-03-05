@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 
 class Alerts {
   static showAlertDialog(BuildContext context, {String title, String content}) {
-    // set up the button
-
-    // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: title != null ? Text(title) : Container(),
-      content: content != null ? Text(content) : Container(),
+      title: title != "" ? Text(title) : Container(),
+      content: content != "" ? Text(content) : Container(),
+      actions: [
+        FlatButton(
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
-
     // show the dialog
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return alert;
       },
     );

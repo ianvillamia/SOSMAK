@@ -1,0 +1,31 @@
+
+                    // if (_formKey.currentState.validate()) {
+                    //   IncidentModel incident = IncidentModel();
+                    //   incident.location = locationController.text;
+                    //   incident.date =
+                    //       '${dateController.text}, ${timeController.text}';
+                    //   incident.incident = _selectedIncident.name;
+                    //   incident.desc = descController.text;
+
+                    //   UserService()
+                    //       .addIncidentReport(incident: incident, file: image)
+                    //       .then((value) {
+                    //     setState(() {
+                    //       reset();
+                    //     });
+
+                    //     _scaffoldKey.currentState.showSnackBar(
+                    //       SnackBar(
+                    //         content: Text('Incident Reported Successfully'),
+                    //       ),
+                    //     );
+                    //     // if (value == true) {
+                    //     //   Alerts.showAlertDialog(context,
+                    //     //       title: 'Created Successfully');
+                    //     // } else {
+                    //     //   //problem error
+                    //     //   Alerts.showAlertDialog(context,
+                    //     //       title: 'Problem with Create');
+                    //     // }
+                    //   });
+                    // }

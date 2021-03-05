@@ -20,6 +20,7 @@ class _CreateWantedState extends State<CreateWanted> {
   final picker = ImagePicker();
   Size size;
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -52,10 +53,15 @@ class _CreateWantedState extends State<CreateWanted> {
                   label: 'Last Known Address',
                 ),
                 textFormFeld(
+                  width: size.width,
+                  controller: criminalNumberController,
+                  label: 'Criminal Case Number',
+                ),
+                textFormFeld(
                     width: size.width,
                     controller: null,
                     enable: false,
-                    label: '887-1798',
+                    label: 'Hotline',
                     initialValue: '887-1798'),
                 textFormFeld(
                   width: size.width,
@@ -88,14 +94,16 @@ class _CreateWantedState extends State<CreateWanted> {
                           //reset controllers
                           reset();
                           Navigator.pop(context);
-                          // if (value == true) {
-                          //   Alerts.showAlertDialog(context,
-                          //       title: 'Created Successfully');
-                          // } else {
-                          //   //problem error
-                          //   Alerts.showAlertDialog(context,
-                          //       title: 'Problem with Create');
-                          // }
+                          if (value == true) {
+                            showAlertDialog(
+                                title: 'Success!',
+                                content: "Wanted Person Added.");
+                          } else {
+                            //problem error
+                            showAlertDialog(
+                                title: 'Error',
+                                content: "Please check your input.");
+                          }
                         });
                       }
                     })
@@ -104,6 +112,27 @@ class _CreateWantedState extends State<CreateWanted> {
           ),
         ),
       ),
+    );
+  }
+
+  showAlertDialog({String title, String content}) {
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: title != "" ? Text(title) : Container(),
+          content: content != "" ? Text(content) : Container(),
+          actions: [
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

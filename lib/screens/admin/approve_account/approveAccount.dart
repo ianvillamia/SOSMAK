@@ -25,12 +25,12 @@ class _ApproveAccountState extends State<ApproveAccount> {
         height: size.height,
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * .1, vertical: size.height * .1),
+              horizontal: size.width * .05, vertical: size.height * .03),
           child: StreamBuilder<QuerySnapshot>(
             // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
             stream: FirebaseFirestore.instance
                 .collection('users')
-                .where('isApproved',isEqualTo: false)
+                .where('isApproved', isEqualTo: false)
                 //.where('role', isNotEqualTo: 'admin').
                 .snapshots(),
             builder: (context, snapshot) {
@@ -58,21 +58,23 @@ class _ApproveAccountState extends State<ApproveAccount> {
 
   _buildUserCard(DocumentSnapshot doc) {
     UserModel user = UserModel.get(doc);
-    return Card(
-      elevation: 5,
-      child: Container(
-        width: size.width,
-        height: size.height * .05,
-        child: InkWell(
-          onTap: () {
-            showAlertDialog(context, user);
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(user.ref.toUpperCase(),style: TextStyle(fontSize: 15),)],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Card(
+          elevation: 2,
+          child: InkWell(
+            onTap: () {
+              showAlertDialog(context, user);
+            },
+            child: ListTile(
+              leading: Icon(Icons.person),
+              title: Text("${user.firstName} ${user.lastName}"),
+              subtitle: Text(user.email),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -89,25 +91,36 @@ class _ApproveAccountState extends State<ApproveAccount> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  height: size.height*.2,
+                  height: size.height * .2,
                   width: size.width,
                   child: FadeInImage(
-                    fit: BoxFit.contain,
+                      fit: BoxFit.contain,
                       placeholder: AssetImage('assets/user.png'),
                       image: NetworkImage(user.idURL)),
                 ),
-                SizedBox(height: 10,),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Name: '+user.firstName + " "+ user.lastName,style: TextStyle(fontWeight: FontWeight.bold),)),
-                      Align(
-                              alignment: Alignment.centerLeft,
-                        child: Text('Email:'+user.email,style: TextStyle(fontWeight: FontWeight.bold),)),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Name: ' + user.firstName + " " + user.lastName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Email:' + user.email,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
                 MaterialButton(
                   elevation: 5,
-                  onPressed: ()async{
-                    await FirebaseFirestore.instance.collection('users').doc(user.ref).update({'isApproved':true}).then((value){
-                              Navigator.of(context, rootNavigator: true).pop('dialog');
+                  onPressed: () async {
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.ref)
+                        .update({'isApproved': true}).then((value) {
+                      Navigator.of(context, rootNavigator: true).pop('dialog');
                     });
                   },
                   child: Text(

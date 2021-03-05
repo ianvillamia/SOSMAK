@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
 
 class Signup extends StatefulWidget {
   Signup({Key key}) : super(key: key);
@@ -75,33 +76,37 @@ class _SignupState extends State<Signup> {
                     caps: false, controller: emailContoller, label: 'Email'),
                 _buildPasswordField(
                     controller: passwordController, label: 'Password'),
-           Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Text(
-                    'ID',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                SizedBox(height: 15),
                 Center(
-                                  child: Container(
-                    height: size.height * .2,
-                    width: size.width*.8,
-                    color: Colors.grey,
-                    child: _image ==null?Center(
-                      child: MaterialButton(
-                        onPressed: () {
-                          getImage();
-                        },
-                        child: Text('Upload ID'),
+                  child: DottedBorder(
+                    dashPattern: [9, 5],
+                    child: Container(
+                      height: size.height * .2,
+                      width: size.width * .8,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
                       ),
-                    ):Image.file(_image,fit: BoxFit.cover,),
+                      child: _image == null
+                          ? Center(
+                              child: MaterialButton(
+                                onPressed: () {
+                                  getImage();
+                                },
+                                child: Text('Upload Valid ID'),
+                              ),
+                            )
+                          : Image.file(
+                              _image,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                 ),
-                  SizedBox(height: 15),
+                SizedBox(height: 15),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                      padding: EdgeInsets.only(left: 25),
+                      padding: EdgeInsets.only(left: 35),
                       child: GestureDetector(
                           onTap: () {
                             Navigator.push(context,
@@ -113,7 +118,6 @@ class _SignupState extends State<Signup> {
                               'Already Got an Account? Click here to login'))),
                 ),
                 SizedBox(height: 15),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -137,16 +141,16 @@ class _SignupState extends State<Signup> {
                           context
                               .read<AuthenticationService>()
                               .signUp(
-                                file: _image,
+                                  file: _image,
                                   email: emailContoller.text.trim(),
                                   password: passwordController.text.trim(),
                                   user: user)
                               .then((value) {
+                            showNotApproveAlertDialog();
                             if (value == true) {
-                              Navigator.of(context)
-                                  .popUntil((route) => route.isFirst);
+                              Navigator.of(context).pop();
                             } else {
-                              showAlertDialog(context, value);
+                              showAlertDialog(value);
                             }
                           });
                         }
@@ -173,7 +177,7 @@ class _SignupState extends State<Signup> {
     bool caps = true,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: TextFormField(
         textCapitalization:
             caps ? TextCapitalization.words : TextCapitalization.none,
@@ -187,6 +191,7 @@ class _SignupState extends State<Signup> {
         maxLines: maxLines ?? 1,
         obscureText: isPassword ?? false,
         decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(10),
             alignLabelWithHint: true,
             labelText: label,
             border:
@@ -212,7 +217,7 @@ class _SignupState extends State<Signup> {
 
   _buildPasswordField({TextEditingController controller, String label}) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: TextFormField(
         validator: (value) {
           if (value.isEmpty) {
@@ -223,6 +228,7 @@ class _SignupState extends State<Signup> {
         controller: controller,
         obscureText: _isHidden,
         decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(10),
             labelText: label,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
             suffixIcon: IconButton(
@@ -234,7 +240,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  showAlertDialog(BuildContext context, FirebaseAuthException problem) {
+  showAlertDialog(FirebaseAuthException problem) {
     print(problem.message);
     showDialog(
       context: context,
@@ -242,6 +248,26 @@ class _SignupState extends State<Signup> {
         return AlertDialog(
           title: Text("Something went wrong"),
           content: Text("${Errors.show(problem.code)}"),
+        );
+      },
+    );
+  }
+
+  showNotApproveAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Successfully Created an Account!"),
+          actions: [
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
         );
       },
     );
