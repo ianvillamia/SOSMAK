@@ -5,13 +5,11 @@ class PlaceDetail {
   String rating;
   String vicinity;
 
-  String formatted_address;
-  String international_phone_number;
-  List<String> weekday_text;
+  String formattedAddress;
+  String internationalPhoneNumber;
+  List<String> weekdaytext;
   String url;
 
   PlaceDetail(this.id, this.name, this.icon, this.rating, this.vicinity,
-      [this.formatted_address,
-      this.international_phone_number,
-      this.weekday_text]);
+      [this.formattedAddress, this.internationalPhoneNumber, this.weekdaytext]);
 }

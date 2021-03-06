@@ -180,7 +180,16 @@ class _CreateWantedState extends State<CreateWanted> {
     return Stack(children: [
       _image == null
           ? CircleAvatar(
-              radius: 70, child: Image.asset('assets/police-img.png'))
+              backgroundColor: Colors.red[400],
+              radius: 70,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70),
+                  child: Image.asset(
+                    'assets/mugshot-criminal.jpg',
+                    fit: BoxFit.cover,
+                    width: 120,
+                    height: 120,
+                  )))
           : ClipOval(
               child: Container(
                 width: 150,

@@ -81,25 +81,40 @@ class _SignupState extends State<Signup> {
                   child: DottedBorder(
                     dashPattern: [9, 5],
                     child: Container(
-                      height: size.height * .2,
-                      width: size.width * .8,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                      ),
-                      child: _image == null
-                          ? Center(
-                              child: MaterialButton(
-                                onPressed: () {
-                                  getImage();
-                                },
-                                child: Text('Upload Valid ID'),
-                              ),
-                            )
-                          : Image.file(
-                              _image,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
+                        height: size.height * .2,
+                        width: size.width * .8,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                        ),
+                        child: _image == null
+                            ? Center(
+                                child: MaterialButton(
+                                  onPressed: () {
+                                    getImage();
+                                  },
+                                  child: Text('Upload Valid ID'),
+                                ),
+                              )
+                            : Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  Container(
+                                    height: size.height * .2,
+                                    width: size.width * .8,
+                                    child: Image.file(
+                                      _image,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  MaterialButton(
+                                    color: Color.fromRGBO(197, 213, 240, 0.5),
+                                    onPressed: () {
+                                      getImage();
+                                    },
+                                    child: Text('Upload Valid ID'),
+                                  ),
+                                ],
+                              )),
                   ),
                 ),
                 SizedBox(height: 15),
@@ -201,7 +216,7 @@ class _SignupState extends State<Signup> {
   }
 
   Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
 
     setState(() {
       if (pickedFile != null) {

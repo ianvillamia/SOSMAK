@@ -135,8 +135,8 @@ class _MedicalReportState extends State<MedicalReport> {
           Row(
             children: [
               Text(title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              Text(data, style: TextStyle(fontSize: 20)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(data, style: TextStyle(fontSize: 18)),
             ],
           ),
           Container(
@@ -147,8 +147,8 @@ class _MedicalReportState extends State<MedicalReport> {
               children: [
                 Text(title2,
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                Flexible(child: Text(data2, style: TextStyle(fontSize: 20))),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Flexible(child: Text(data2, style: TextStyle(fontSize: 18))),
               ],
             ),
           ),

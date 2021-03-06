@@ -26,9 +26,9 @@ class LocationService {
     return places;
   }
 
-  Future getPlace(String place_id) async {
-    var response = await http
-        .get(detailUrl + place_id, headers: {"Accept": "application/json"});
+  Future getPlace(String id) async {
+    var response =
+        await http.get(detailUrl + id, headers: {"Accept": "application/json"});
     var result = json.decode(response.body)["result"];
 
     List<String> weekdays = [];

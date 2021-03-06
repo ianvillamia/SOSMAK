@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 import './wantedList_screens/wantedList.dart';
 import 'admin/incidentReportsAdmin/incidentReportsAdmin.dart';
 
+import 'package:location/location.dart' as loc;
+
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
 
@@ -32,6 +34,10 @@ class _HomeState extends State<Home> {
   String currentIncident;
   UserDetailsProvider userDetailsProvider;
 
+  loc.Location location = loc.Location();
+  bool _serviceEnabled;
+  loc.LocationData _locationData;
+
   setViews() {
     if (userDetailsProvider.currentUser.role == 'police' ?? '') {
       isPolice = true;
@@ -46,6 +52,21 @@ class _HomeState extends State<Home> {
         userDetailsProvider.currentUser.policeRank == 'Director') {
       isAdmin = true;
     }
+  }
+
+  checkerGPS() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      return showGPSAlertDialog();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    checkerGPS();
+    super.initState();
   }
 
   @override
@@ -76,25 +97,31 @@ class _HomeState extends State<Home> {
                 setViews();
                 if (user.isApproved == false) {
                   print('not yet approved');
-                 return Padding(
-                   padding: EdgeInsets.symmetric(horizontal: size.width*.2),
-                   child: Column(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Text('Not yet approved wait for admin to verify your account',textAlign: TextAlign.center,style: TextStyle(fontSize: 20),),
-                       SizedBox(height: size.height*.03,),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * .2),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Not yet approved wait for admin to verify your account',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(
+                          height: size.height * .03,
+                        ),
                         MaterialButton(
-                              color: Colors.redAccent,
-                              textColor: Colors.white,
-                              onPressed: () {
-                                context
-                                    .read<AuthenticationService>()
-                                    .signOut(uid: firebaseUser.uid);
-                              },
-                              child: Text('Logout')),
-                     ],
-                   ),
-                 );
+                            color: Colors.redAccent,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              context
+                                  .read<AuthenticationService>()
+                                  .signOut(uid: firebaseUser.uid);
+                            },
+                            child: Text('Logout')),
+                      ],
+                    ),
+                  );
                 } else {
                   return SingleChildScrollView(
                     child: Column(
@@ -139,12 +166,6 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
       child: Wrap(
         children: [
-          _buildTile(
-              color: Colors.white,
-              text: 'Profile',
-              widget: Profile(),
-              isImageIcon: false,
-              icon: Icons.verified_user_sharp),
           _buildTile(
               color: Colors.white,
               text: 'Emergency HOTLINE',
@@ -204,7 +225,7 @@ class _HomeState extends State<Home> {
                 isImageIcon: false,
                 icon: Icons.verified_user),
           ),
-             Visibility(
+          Visibility(
             visible: isAdmin,
             child: _buildTile(
                 color: Colors.white,
@@ -277,6 +298,38 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+
+  showGPSAlertDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            'Reminder!',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content:
+              Text('Please open your GPS/Location to use our Map Feature.'),
+          actions: [
+            FlatButton(
+              child: Text("Click to turn on"),
+              onPressed: () async {
+                Navigator.pop(context);
+                _serviceEnabled = await location.serviceEnabled();
+                if (!_serviceEnabled) {
+                  _serviceEnabled = await location.requestService();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

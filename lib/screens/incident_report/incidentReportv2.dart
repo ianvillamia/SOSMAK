@@ -3,7 +3,10 @@ import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:location/location.dart' as loc;
 
 class IncidentReportV2 extends StatefulWidget {
   final String userRef;
@@ -28,12 +31,16 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   bool isButtonDisabled = true;
   bool newIncident = false;
   bool showFab = false;
-  //controllers
+  bool isIcon = false;
+
+  loc.Location location = loc.Location();
+  bool _serviceEnabled;
+  loc.LocationData _locationData;
 
   @override
   void initState() {
     super.initState();
-
+    _getCurrentLocation();
     //get current user\
     currentIncidentRef = widget.currentIncidentDoc;
     if (widget.currentIncidentDoc == '' || widget.currentIncidentDoc == null) {
@@ -71,8 +78,41 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     check();
   }
 
+  final Geolocator _geolocator = Geolocator();
+  Position _currentPosition;
+  String _location;
+  String _addressLine;
+  bool done = false;
+
+  Future<void> _getLocation(Position position) async {
+    debugPrint('location: ${position.latitude}');
+    final coordinates = new Coordinates(position.latitude, position.longitude);
+    List<Address> addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    Address first = addresses.first;
+    _location = "${first.featureName}";
+    _addressLine = " ${first.addressLine}";
+    setState(() {
+      done = true;
+    });
+  }
+
+  void _getCurrentLocation() {
+    _geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      _getLocation(position);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    locationController = new TextEditingController(
+        text: done == false
+            ? "Click the icon to My Current Location"
+            : "$_addressLine");
     size = MediaQuery.of(context).size;
     //  print(currentIncident);
     return Scaffold(
@@ -142,16 +182,21 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                 ),
                 SizedBox(height: 20),
                 _buildTextFormField(
-                    label: 'Location', controller: locationController),
+                  label: 'Location',
+                  controller: locationController,
+                  isIcon: true,
+                ),
                 SizedBox(height: 10),
                 Text('Please select an Incident'),
                 _dropDownButton(),
                 SizedBox(height: 10),
                 Text('Tell us what Happened'),
                 _buildTextFormField(
-                    label: 'Description',
-                    maxLines: 4,
-                    controller: descriptionController),
+                  label: 'Description',
+                  maxLines: 4,
+                  controller: descriptionController,
+                  isIcon: false,
+                ),
                 SizedBox(
                   height: 5,
                 ),
@@ -163,7 +208,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: _submitButton(),
-                )
+                ),
               ],
             ),
           ),
@@ -175,7 +220,8 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   _buildTextFormField(
       {@required String label,
       TextEditingController controller,
-      int maxLines}) {
+      int maxLines,
+      bool isIcon}) {
     return Container(
       width: size.width,
       child: TextFormField(
@@ -189,6 +235,16 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
           maxLines: maxLines ?? 1,
           controller: controller,
           decoration: InputDecoration(
+              suffixIcon: IconButton(
+                onPressed: () async {
+                  _serviceEnabled = await location.serviceEnabled();
+                  if (!_serviceEnabled) {
+                    _serviceEnabled = await location.requestService();
+                  }
+                  _getCurrentLocation();
+                },
+                icon: isIcon ? Icon(Icons.location_on_outlined) : Container(),
+              ),
               alignLabelWithHint: true,
               labelText: label,
               border: OutlineInputBorder())),
@@ -198,7 +254,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   _dropDownButton() {
     return Container(
       width: size.width,
-      height: size.height * 0.085,
+      height: size.height * 0.075,
       child: DropdownButton<String>(
         isExpanded: true,
         value: dropdownValue,
@@ -314,7 +370,13 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         elevation: 5,
         onPressed: () async {
           // validate
-          if (_formKey.currentState.validate()) {
+          if (locationController.text ==
+              "Click the icon to My Current Location") {
+            showNoLocation();
+          }
+          if (_formKey.currentState.validate() &&
+              locationController.text !=
+                  "Click the icon to My Current Location") {
             //print
             IncidentModel incident = IncidentModel();
             DateTime currentDate = DateTime.now();
@@ -358,6 +420,55 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         ),
         color: Colors.redAccent,
       ),
+    );
+  }
+
+  showNoLocation() {
+    AlertDialog alert = AlertDialog(
+      title: Text("Error"),
+      content: Row(
+        children: [
+          RichText(
+            text: TextSpan(
+              text: 'Click the',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w300,
+                color: Colors.black,
+                height: 1.5,
+              ),
+            ),
+          ),
+          Icon(Icons.location_on_outlined),
+          RichText(
+            text: TextSpan(
+              text: 'to get My Current Location',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w300,
+                color: Colors.black,
+                height: 1.5,
+              ),
+            ),
+          )
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

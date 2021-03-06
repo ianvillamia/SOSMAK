@@ -215,7 +215,7 @@ class _MapViewState extends State<MapView> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _handleResponse(data);
-      getPlaces(data);
+      //getPlaces(data);
     } else {
       throw Exception('An error occurred getting places nearby');
     }
@@ -226,43 +226,43 @@ class _MapViewState extends State<MapView> {
     });
   }
 
-  Future getPlaceID(String id) async {
-    var response =
-        await http.get(detailUrl + id, headers: {"Accept": "application/json"});
-    var result = json.decode(response.body)["result"];
+  // Future getPlaceID(String id) async {
+  //   var response =
+  //       await http.get(detailUrl + id, headers: {"Accept": "application/json"});
+  //   var result = json.decode(response.body)["result"];
 
-    List<String> weekdays = [];
-    if (result["opening_hours"] != null)
-      weekdays = result["opening_hours"]["weekday_text"];
-    return new PlaceDetail(
-        result["place_id"],
-        result["name"],
-        result["icon"],
-        result["rating"].toString(),
-        result["vicinity"],
-        result["formatted_address"],
-        result["international_phone_number"],
-        weekdays);
-  }
+  //   List<String> weekdays = [];
+  //   if (result["opening_hours"] != null)
+  //     weekdays = result["opening_hours"]["weekday_text"];
+  //   return new PlaceDetail(
+  //       result["place_id"],
+  //       result["name"],
+  //       result["icon"],
+  //       result["rating"].toString(),
+  //       result["vicinity"],
+  //       result["formatted_address"],
+  //       result["international_phone_number"],
+  //       weekdays);
+  // }
 
-  void getPlaces(data) {
-    if (data['status'] == "REQUEST_DENIED") {
-      setState(() {
-        error = Error.fromJson(data);
-      });
-      // success
-    } else if (data['status'] == "OK") {
-      setState(() {
-        places = PlaceResponse.parseResults(data['results']);
-        print('XXXXXXX ${placeDetails.length}');
-        for (int i = 0; i < places.length; i++) {
-          getPlaceID(places[i].id);
-        }
-      });
-    } else {
-      print(data);
-    }
-  }
+  // void getPlaces(data) {
+  //   if (data['status'] == "REQUEST_DENIED") {
+  //     setState(() {
+  //       error = Error.fromJson(data);
+  //     });
+  //   } else if (data['status'] == "OK") {
+  //     setState(() {
+  //       places = PlaceResponse.parseResults(data['results']);
+
+  //       print('XXXXXXX ${placeDetails.length}');
+  //       for (int i = 0; i < placeDetails.length; i++) {
+  //         getPlaceID(placeDetails[i].id);
+  //       }
+  //     });
+  //   } else {
+  //     print(data);
+  //   }
+  // }
 
   void _handleResponse(data) {
     // bad api key or otherwise
@@ -295,7 +295,7 @@ class _MapViewState extends State<MapView> {
   }
 
   int btnCTR = 0;
-  getHospitals(Position pos) async {
+  getNearbyPlaces(Position pos) async {
     setState(() {
       placesMarkers.clear();
     });
@@ -554,10 +554,18 @@ class _MapViewState extends State<MapView> {
     polylines[id] = polyline;
   }
 
+  checkGPS() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     //checkPlaces();
+    checkGPS();
     _getCurrentLocation();
     _fabHeight = _initFabHeight;
   }
@@ -651,7 +659,7 @@ class _MapViewState extends State<MapView> {
               mapType: MapType.normal,
               zoomGesturesEnabled: true,
               zoomControlsEnabled: false,
-              polylines: Set<Polyline>.of(polylines.values),
+              polylines: Set<Polyline>.from(polylines.values),
               onMapCreated: (GoogleMapController controller) {
                 _setStyle(controller);
                 _controller.complete(controller);
@@ -837,59 +845,41 @@ class _MapViewState extends State<MapView> {
               padding: EdgeInsets.fromLTRB(10, 13, 10, 13),
               itemCount: items,
               itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text('${places[index].name}'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${places[index].vicinity}'),
-                        // Text('General Rating: ${places[index].rating}'),
-                        // Text('${places[index].photos[}')
-                      ],
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () async {
-                            setState(() {
-                              btnCTR++;
-                            });
-                            if (btnCTR <= 1) {
-                              String hospital = places[index].name;
-                              //geocoding reverse
-                              var addresses = await Geocoder.local
-                                  .findAddressesFromQuery(hospital);
-                              var first = addresses.first;
-                              debugPrint(
-                                  "DEBUG PRINT ${first.featureName} : ${first.coordinates}");
-                              Position posit = Position(
-                                  latitude: first.coordinates.latitude,
-                                  longitude: first.coordinates.longitude);
+                return GestureDetector(
+                  onTap: () async {
+                    print("CLICKEDCLICKEDCLICKED");
+                    setState(() {
+                      btnCTR++;
+                    });
+                    if (btnCTR <= 1) {
+                      String hospital = places[index].name;
+                      //geocoding reverse
+                      var addresses =
+                          await Geocoder.local.findAddressesFromQuery(hospital);
+                      var first = addresses.first;
+                      debugPrint(
+                          "DEBUG PRINT ${first.featureName} : ${first.coordinates}");
+                      Position posit = Position(
+                          latitude: first.coordinates.latitude,
+                          longitude: first.coordinates.longitude);
 
-                              await getHospitals(posit);
-                              getHospitals(posit);
+                      await getNearbyPlaces(posit);
+                      await getNearbyPlaces(posit);
 
-                              Navigator.pop(context);
-                            }
-                          },
-                          icon: Icon(
-                            Icons.location_on_outlined,
-                            color: Colors.black,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _showPlacesDetails(placeDetails[index].name,
-                                placeDetails[index].vicinity);
-                          },
-                          icon: Icon(
-                            Icons.info_outline,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Card(
+                    child: ListTile(
+                      title: Text('${places[index].name}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${places[index].vicinity}'),
+                          //Text('General Rating: '),
+                          // Text('${places[index].photos[}')
+                        ],
+                      ),
                     ),
                   ),
                 );

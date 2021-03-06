@@ -16,6 +16,7 @@ class Police {
   String stationAssigned = '';
   String tempPassword = '';
   String ref;
+  bool isApproved = true;
 
   final DateTime now = DateTime.now();
 
@@ -36,6 +37,7 @@ class Police {
     this.tempPassword = doc.data()['tempPassword'] ?? '';
     this.imageUrl = doc.data()['imageUrl'] ?? '';
     this.ref = doc.data()['ref'] ?? '';
+    this.isApproved = doc.data()['isApproved'] ?? isApproved;
   }
   Police();
   toMap() {
@@ -58,6 +60,7 @@ class Police {
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
       'policeRank': this.policeRank,
       'stationAssigned': this.stationAssigned,
+      'isApproved': this.isApproved
     };
   }
 }
