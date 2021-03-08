@@ -112,7 +112,7 @@ class _UsersInfoState extends State<UsersInfo> {
                 buildInfo('Email: ', user.email, false),
                 buildInfo('Address: ', user.address, false),
                 buildInfo('Age: ', user.age, false),
-                buildInfo('Birthday: ', user.birthDate, false),
+                buildInfo('Birthdate: ', user.birthDate, false),
                 buildInfo('BirthPlace: ', user.birthPlace, false),
                 buildInfo('Height: ', user.height, false),
                 buildInfo('Weight', user.weight, false),

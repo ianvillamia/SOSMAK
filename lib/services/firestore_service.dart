@@ -217,4 +217,14 @@ class UserService {
         .then((value) => print("Incident Updated"))
         .catchError((error) => print("Failed to update incident: $error"));
   }
+
+  Future<void> deleteWanted(
+    DocumentSnapshot doc,
+  ) {
+    return wantedList
+        .doc(doc.id)
+        .delete()
+        .then((value) => print("Wanted Deleted"))
+        .catchError((error) => print("Failed to delete wanted: $error"));
+  }
 }

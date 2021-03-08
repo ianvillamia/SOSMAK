@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
+import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -86,29 +87,50 @@ class _WantedListState extends State<WantedList> {
   _wantedCard(doc) {
     Wanted wanted = Wanted.getData(doc: doc);
 
-    return Card(
-      elevation: 5,
-      child: InkWell(
-        onTap: () {
-          //SHOW POPUP
-          if (wanted.imageUrl != null) {
-            showAlertDialog(context, wanted: wanted);
-          }
-        },
-        child: Container(
-          width: size.width * .4,
-          height: size.height * .35,
-          // child: Container(
-          //   child: wanted.imageUrl != null
-          //       ? Image.network(wanted.imageUrl)
-          //       : Container(),
-          // ),
-          child: WantedPoster(
-            isMini: true,
-            wanted: wanted,
+    return Stack(
+      children: [
+        Card(
+          elevation: 5,
+          child: InkWell(
+            onTap: () {
+              //SHOW POPUP
+              if (wanted.imageUrl != null) {
+                showAlertDialog(context, wanted: wanted);
+              }
+            },
+            child: Container(
+              width: size.width * .4,
+              height: size.height * .35,
+              child: WantedPoster(
+                isMini: true,
+                wanted: wanted,
+              ),
+            ),
           ),
         ),
-      ),
+        Positioned(
+            top: 0,
+            right: 0,
+            child: ClipOval(
+              child: Material(
+                color: Colors.red,
+                child: InkWell(
+                  splashColor: Colors.grey[100],
+                  child: SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Colors.white,
+                      )),
+                  onTap: () {
+                    UserService().deleteWanted(doc);
+                  },
+                ),
+              ),
+            ))
+      ],
     );
   }
 

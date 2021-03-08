@@ -76,6 +76,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
       child: Card(
           elevation: 2,
           child: ListTile(
+            contentPadding: const EdgeInsets.all(8.0),
             leading: Image.network(police.imageUrl),
             title: Text("${police.firstName}, ${police.lastName}"),
             subtitle: Column(
@@ -97,54 +98,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
   }
 
   showAlertDialog(Police police, DocumentSnapshot doc) {
-    String result1,
-        result2,
-        result3,
-        result4,
-        result5,
-        result6,
-        result7,
-        result8;
-    if (doc.data()['isHiv'] == true) {
-      result1 = 'Positive';
-    } else {
-      result1 = 'Negative';
-    }
-    if (doc.data()['isTb'] == true) {
-      result2 = 'Positive';
-    } else {
-      result2 = 'Negative';
-    }
-    if (doc.data()['isHeartDisease'] == true) {
-      result3 = 'Positive';
-    } else {
-      result3 = 'Negative';
-    }
-    if (doc.data()['isHighBlood'] == true) {
-      result4 = 'Positive';
-    } else {
-      result4 = 'Negative';
-    }
-    if (doc.data()['isMalaria'] == true) {
-      result5 = 'Positive';
-    } else {
-      result5 = 'Negative';
-    }
-    if (doc.data()['isLiverFunction'] == true) {
-      result6 = 'Positive';
-    } else {
-      result6 = 'Negative';
-    }
-    if (doc.data()['isVDRL'] == true) {
-      result7 = 'Positive';
-    } else {
-      result7 = 'Negative';
-    }
-    if (doc.data()['isTPA'] == true) {
-      result8 = 'Positive';
-    } else {
-      result8 = 'Negative';
-    }
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
@@ -154,7 +107,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     AlertDialog alert = AlertDialog(
       title: Image.network(police.imageUrl, width: 100, height: 100),
       content: Container(
-        height: size.height * .5,
+        height: size.height * .4,
         width: size.width * .7,
         child: Scrollbar(
           child: SingleChildScrollView(
@@ -173,24 +126,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                 buildInfo('Blood Type: ', police.bloodType, false, doc),
                 buildInfo('Allergies: ', police.allergies, false, doc),
                 SizedBox(height: size.height * 0.03),
-                Text('Medical Status',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: size.height * 0.03),
-                buildInfo('HIV Test: ', result1, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Tuberculosis Test: ', result2, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Heart Disease: ', result3, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('High Blood: ', result4, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Malaria: ', result5, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('Liver Function: ', result6, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('VDRL Test: ', result7, true, doc),
-                SizedBox(height: size.height * 0.01),
-                buildInfo('TPA Test: ', result8, true, doc),
               ],
             ),
           ),
@@ -210,13 +145,16 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
 
   buildInfo(
       String name, String medicalInfo, bool spaces, DocumentSnapshot doc) {
-    return Row(
-      mainAxisAlignment:
-          spaces ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
-      children: [
-        Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(medicalInfo)
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Row(
+        mainAxisAlignment:
+            spaces ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+        children: [
+          Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(medicalInfo)
+        ],
+      ),
     );
   }
 }
