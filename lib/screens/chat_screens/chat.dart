@@ -297,8 +297,10 @@ class _ChatState extends State<Chat> {
 
                     if (widget.doc.data()['users'][0] == firebaseUser.uid) {
                       isUser1 = true;
+                      print('user1');
                     } else {
                       isUser1 = false;
+                        print('user2');
                     }
                     ChatService()
                         .sendMessage(isUser1: isUser1, chatModel: chat, chatID: widget.doc.id, image: _image)

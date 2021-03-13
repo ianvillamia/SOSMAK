@@ -32,7 +32,8 @@ class ChatService {
         conversation = snapshot.docs[0];
         if (currentUser == conversation.data()['users'][0]) {
           await conversationCollection.doc(conversation.id).update({'user1HasNewMessage': false});
-                 await conversationCollection.doc(conversation.id).update({'user2HasNewMessage': false});
+        } else {
+          await conversationCollection.doc(conversation.id).update({'user2HasNewMessage': false});
         }
 
         print('Conversation Already Exists');
@@ -42,7 +43,7 @@ class ChatService {
     return conversation;
   }
 
-  Future checkChat({String user1, String user2}) async {
+  Future checkChat({String user1, String user2, @required String currentUser}) async {
     List users = [user2, user1];
     users.sort();
     bool hasNewMessage;
@@ -66,9 +67,15 @@ class ChatService {
         //call here?
         //fetch conversation
         conversation = snapshot.docs[0];
-        Conversation convo = Conversation.get(conversation);
-        if (convo.user2HasNewMessage || convo.user1HasNewMessage) {
-          hasNewMessage = true;
+        Conversation c = Conversation.get(conversation);
+        if (currentUser == conversation.data()['users'][0]) {
+          if (c.user1HasNewMessage) {
+            hasNewMessage = true;
+          }
+        } else {
+          if (c.user2HasNewMessage) {
+            hasNewMessage = true;
+          }
         }
       }
     });

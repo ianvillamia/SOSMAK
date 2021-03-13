@@ -222,7 +222,7 @@ class _RedButtonState extends State<RedButton> {
 
   Future checkChat(UserModel police) async {
     bool hasNewMessage = false;
-    await ChatService().checkChat(user1: police.ref, user2: widget.currentUser.currentUser.ref).then((val) {
+    await ChatService().checkChat(user1: police.ref, user2: widget.currentUser.currentUser.ref,currentUser:widget.currentUser.currentUser.ref ).then((val) {
       if (val == true) {
         print('hotdog');
         hasNewMessage = true;
