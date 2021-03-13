@@ -5,6 +5,7 @@ import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
 import 'package:SOSMAK/services/chatService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -110,6 +111,10 @@ class _ChatListState extends State<ChatList> {
                         color: Colors.grey,
                       ),
                     ),
+                    RedButton(
+                police: police,
+                currentUser: _currentUser,
+              ),
               SizedBox(
                 width: 20,
               ),
@@ -120,10 +125,8 @@ class _ChatListState extends State<ChatList> {
                 police.firstName + " " + police.lastName,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
-              RedButton(
-                police: police,
-                currentUser: _currentUser,
-              )
+             
+              
             ],
           ),
         )),
@@ -204,7 +207,7 @@ class _RedButtonState extends State<RedButton> {
               child: Container(
                 width: 20,
                 height: 20,
-                color: Colors.red,
+                child: Icon(CupertinoIcons.bell_fill,color: Colors.red,),
               ),
             );
           } else {
