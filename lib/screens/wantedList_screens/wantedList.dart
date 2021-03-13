@@ -9,8 +9,9 @@ import '../../models/wantedModel.dart';
 import '../wantedList_screens/createWanted.dart';
 
 class WantedList extends StatefulWidget {
-  WantedList({Key key}) : super(key: key);
+  final bool isAdmin;
 
+  WantedList({@required this.isAdmin});
   @override
   _WantedListState createState() => _WantedListState();
 }
@@ -108,28 +109,31 @@ class _WantedListState extends State<WantedList> {
             ),
           ),
         ),
-        Positioned(
-            top: 0,
-            right: 0,
-            child: ClipOval(
-              child: Material(
-                color: Colors.red,
-                child: InkWell(
-                  splashColor: Colors.grey[100],
-                  child: SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
-                        color: Colors.white,
-                      )),
-                  onTap: () {
-                    UserService().deleteWanted(doc);
-                  },
+        Visibility(
+          visible: widget.isAdmin,
+                  child: Positioned(
+              top: 0,
+              right: 0,
+              child: ClipOval(
+                child: Material(
+                  color: Colors.red,
+                  child: InkWell(
+                    splashColor: Colors.grey[100],
+                    child: SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: Colors.white,
+                        )),
+                    onTap: () {
+                      UserService().deleteWanted(doc);
+                    },
+                  ),
                 ),
-              ),
-            ))
+              )),
+        )
       ],
     );
   }

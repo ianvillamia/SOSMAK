@@ -77,8 +77,17 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Center(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('S.O.S MAK',style: TextStyle(fontWeight: FontWeight.bold),), SizedBox(width: 10,),Container(width: 30, height: 30, child: Image.asset('assets/notif.png'))],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'S.O.S MAK',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Container(width: 30, height: 30, child: Image.asset('assets/notif.png'))
+          ],
         )),
       ),
       body: Container(
@@ -192,7 +201,9 @@ class _HomeState extends State<Home> {
               text: 'Wanted List',
               isImageIcon: true,
               image: 'assets/wanted.png',
-              widget: WantedList()),
+              widget: WantedList(
+                isAdmin: isAdmin,
+              )),
           Visibility(
             visible: isPolice,
             child: _buildTile(
@@ -220,11 +231,12 @@ class _HomeState extends State<Home> {
           Visibility(
             visible: isAdmin,
             child: _buildTile(
-                color: Colors.white,
-                text: 'Create Police Account',
-                widget: CreatePoliceAccount(),
-                isImageIcon: false,
-                icon: Icons.verified_user),
+              color: Colors.white,
+              text: 'Create Police Account',
+              widget: CreatePoliceAccount(),
+              isImageIcon: true,
+              image: 'assets/adduser.png',
+            ),
           ),
           Visibility(
             visible: isAdmin,
@@ -232,26 +244,28 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Approve account',
                 widget: ApproveAccount(),
-                isImageIcon: false,
-                icon: Icons.supervised_user_circle_rounded),
+                isImageIcon: true,
+                image: 'assets/approve.jpg'),
           ),
           Visibility(
             visible: isAdmin,
             child: _buildTile(
-                color: Colors.white,
-                text: "Citizen's Info",
-                widget: UsersInfo(),
-                isImageIcon: false,
-                icon: Icons.people),
+              color: Colors.white,
+              text: "Citizen's Info",
+              widget: UsersInfo(),
+              isImageIcon: true,
+              image: 'assets/citizenInfo.png',
+            ),
           ),
           Visibility(
             visible: isAdmin,
             child: _buildTile(
-                color: Colors.white,
-                text: 'Incident Report Admin',
-                widget: IncidentReportAdmin(),
-                isImageIcon: false,
-                icon: Icons.bar_chart_sharp),
+              color: Colors.white,
+              text: 'Incident Report Admin',
+              widget: IncidentReportAdmin(),
+              isImageIcon: true,
+              image: 'assets/incidentIcon.png',
+            ),
           ),
         ],
       ),
@@ -268,15 +282,19 @@ class _HomeState extends State<Home> {
           splashColor: Colors.blue,
           onTap: () {
             if (widget != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) {
-                return widget; //add widget here
-              }));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) {
+                  return widget; //add widget here
+                }),
+              );
             }
           },
           child: Container(
             width: size.width * .4,
             height: size.height * .2,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 isImageIcon
@@ -292,7 +310,10 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 5,
                 ),
-                Text(text),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(text,style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                ),
               ],
             ),
           ),
