@@ -26,7 +26,8 @@ class _MedicalReportState extends State<MedicalReport> {
 
   @override
   Widget build(BuildContext context) {
-    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
 
     size = MediaQuery.of(context).size;
     return Scaffold(
@@ -41,8 +42,12 @@ class _MedicalReportState extends State<MedicalReport> {
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance.collection('users').doc(userDetailsProvider.currentUser.ref).snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(userDetailsProvider.currentUser.ref)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             print(snapshot.connectionState);
 
             if (snapshot.connectionState == ConnectionState.active) {
@@ -68,37 +73,81 @@ class _MedicalReportState extends State<MedicalReport> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildText(
+            _buildRowText(
               title: 'Name: ',
               data: '${user.firstName} ${user.lastName}',
               title2: 'Birthday: ',
               data2: user.birthDate,
             ),
-            _buildText(
+            _buildRowText(
               title: 'Language: ',
               data: user.language,
               title2: 'Religion: ',
               data2: user.religion,
             ),
-            _buildText(
+            _buildRowText(
               title: 'Age: ',
               data: user.age,
               title2: 'Birthplace: ',
               data2: user.birthPlace,
             ),
-            _buildText(
+            _buildRowText(
               title: 'Height: ',
               data: user.height,
               title2: 'Weight: ',
               data2: user.weight,
             ),
-            _buildText(
+            _buildRowText(
               title: 'BloodType: ',
               data: user.bloodType,
               title2: 'Allergies: ',
               data2: user.allergies,
             ),
-            
+            SizedBox(height: 10),
+            (user.otherMedicalCondition1.isEmpty &&
+                    user.otherMedicalCondition2.isEmpty &&
+                    user.otherMedicalCondition3.isEmpty &&
+                    user.otherMedicalCondition4.isEmpty &&
+                    user.otherMedicalCondition5.isEmpty)
+                ? Text(
+                    'No Medical Conditions',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  )
+                : Text(
+                    'Medical Conditions',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+            SizedBox(height: 5),
+            (user.otherMedicalCondition1.isEmpty)
+                ? Container()
+                : _buildNormalText(
+                    icon: Icons.keyboard_arrow_right,
+                    data: user.otherMedicalCondition1,
+                  ),
+            (user.otherMedicalCondition2.isEmpty)
+                ? Container()
+                : _buildNormalText(
+                    icon: Icons.keyboard_arrow_right,
+                    data: user.otherMedicalCondition2,
+                  ),
+            (user.otherMedicalCondition3.isEmpty)
+                ? Container()
+                : _buildNormalText(
+                    icon: Icons.keyboard_arrow_right,
+                    data: user.otherMedicalCondition3,
+                  ),
+            (user.otherMedicalCondition4.isEmpty)
+                ? Container()
+                : _buildNormalText(
+                    icon: Icons.keyboard_arrow_right,
+                    data: user.otherMedicalCondition4,
+                  ),
+            (user.otherMedicalCondition5.isEmpty)
+                ? Container()
+                : _buildNormalText(
+                    icon: Icons.keyboard_arrow_right,
+                    data: user.otherMedicalCondition5,
+                  ),
             SizedBox(height: size.height * 0.05),
             RaisedButton(
                 color: Colors.blue[400],
@@ -119,7 +168,7 @@ class _MedicalReportState extends State<MedicalReport> {
     );
   }
 
-  _buildText({@required String title, title2, String data, data2}) {
+  _buildRowText({@required String title, title2, String data, data2}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -154,6 +203,18 @@ class _MedicalReportState extends State<MedicalReport> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  _buildNormalText({@required IconData icon, String data}) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Icon(icon),
+          Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
         ],
       ),
     );

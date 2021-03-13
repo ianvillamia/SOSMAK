@@ -254,25 +254,39 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   _dropDownButton() {
     return Container(
       width: size.width,
-      height: size.height * 0.075,
+      height: 55,
       child: DropdownButton<String>(
         isExpanded: true,
         value: dropdownValue,
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
-        style: TextStyle(color: Colors.redAccent),
+        elevation: 8,
         underline: Container(
-          height: 2,
-          color: Colors.redAccent,
+          height: 1,
+          color: Colors.grey,
         ),
         onChanged: (String newValue) {
           setState(() {
             dropdownValue = newValue;
           });
         },
-        items: <String>['Robbery', 'Snatching', 'Murder', 'Fire', 'Brawl']
-            .map<DropdownMenuItem<String>>((String value) {
+        items: <String>[
+          'Brawl',
+          'Burglary',
+          'Car/Motor Accident',
+          'Child Abuse',
+          'Cyber Crime',
+          'Domestic Abuse',
+          'Fire',
+          'Fraud',
+          'Murder',
+          'Rape',
+          'Robbery',
+          'Sexual Harassment',
+          'Snatching',
+          'Violent Crime',
+          'Terrorism'
+        ].map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),

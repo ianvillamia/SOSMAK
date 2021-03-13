@@ -54,11 +54,16 @@ class UserModel {
       this.idURL = doc.data()['idURL'] ?? this.idURL;
       this.language = doc.data()['language'] ?? this.language;
       this.religion = doc.data()['religion'] ?? this.religion;
-      this.otherMedicalCondition1 = doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
-      this.otherMedicalCondition2 = doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
-      this.otherMedicalCondition3 = doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
-      this.otherMedicalCondition4 = doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
-      this.otherMedicalCondition5 = doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
+      this.otherMedicalCondition1 =
+          doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
+      this.otherMedicalCondition2 =
+          doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
+      this.otherMedicalCondition3 =
+          doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
+      this.otherMedicalCondition4 =
+          doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
+      this.otherMedicalCondition5 =
+          doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
     } catch (e) {}
   }
   UserModel();
