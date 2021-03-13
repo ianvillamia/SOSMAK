@@ -27,8 +27,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<UserDetailsProvider>(create: (_) => UserDetailsProvider()),
       ],
       child: MaterialApp(
+        theme: new ThemeData(
+           // scaffoldBackgroundColor: const Color.fromRGBO(1, 60, 66, 1),
+            // textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white),
+            inputDecorationTheme: InputDecorationTheme(fillColor: Colors.white)),
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
         home: AuthenticationWrapper(),
       ),
     );
@@ -43,32 +46,30 @@ class AuthenticationWrapper extends StatefulWidget {
 }
 
 class _AuthenticationWrapperState extends State<AuthenticationWrapper> with WidgetsBindingObserver {
-
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-      WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    switch(state){
+    switch (state) {
       case AppLifecycleState.paused:
-      break;
+        break;
       case AppLifecycleState.inactive:
-      break;
+        break;
       default:
-      break;
+        break;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

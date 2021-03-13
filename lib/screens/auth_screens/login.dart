@@ -30,6 +30,7 @@ class _LoginState extends State<Login> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
+        color: Colors.white,
         width: size.width,
         height: size.height,
         child: SingleChildScrollView(
@@ -111,6 +112,7 @@ class _LoginState extends State<Login> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: TextFormField(
+        
         validator: (value) {
           if (value.isEmpty) {
             return 'Email is required';
@@ -119,6 +121,7 @@ class _LoginState extends State<Login> {
         },
         controller: controller,
         decoration: InputDecoration(
+          fillColor: Colors.white,
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
         ),
@@ -139,6 +142,8 @@ class _LoginState extends State<Login> {
         controller: controller,
         obscureText: _isHidden,
         decoration: InputDecoration(
+          
+          fillColor: Colors.white,
             labelText: label,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
             suffixIcon: IconButton(

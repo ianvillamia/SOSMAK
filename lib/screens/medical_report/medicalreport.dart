@@ -24,12 +24,9 @@ class _MedicalReportState extends State<MedicalReport> {
 
   UserDetailsProvider userDetailsProvider;
 
-  List<String> _hivChoice = ["Positive", "Negative"];
-
   @override
   Widget build(BuildContext context) {
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
 
     size = MediaQuery.of(context).size;
     return Scaffold(
@@ -44,18 +41,12 @@ class _MedicalReportState extends State<MedicalReport> {
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(userDetailsProvider.currentUser.ref)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          stream: FirebaseFirestore.instance.collection('users').doc(userDetailsProvider.currentUser.ref).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             print(snapshot.connectionState);
 
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
-                //_buildMedicalReport(snapshot.data);
-                print(snapshot.data);
                 return _buildMedicalReport(snapshot.data);
               }
             } else {
@@ -78,40 +69,49 @@ class _MedicalReportState extends State<MedicalReport> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildText(
-                title: 'Name: ',
-                data: '${user.firstName} ${user.lastName}',
-                title2: 'Birthday: ',
-                data2: user.birthDate,
-                doc: doc),
+              title: 'Name: ',
+              data: '${user.firstName} ${user.lastName}',
+              title2: 'Birthday: ',
+              data2: user.birthDate,
+            ),
             _buildText(
-                title: 'Age: ',
-                data: user.age,
-                title2: 'Birthplace: ',
-                data2: user.birthPlace,
-                doc: doc),
+              title: 'Language: ',
+              data: user.language,
+              title2: 'Religion: ',
+              data2: user.religion,
+            ),
             _buildText(
-                title: 'Height: ',
-                data: user.height,
-                title2: 'Weight: ',
-                data2: user.weight,
-                doc: doc),
+              title: 'Age: ',
+              data: user.age,
+              title2: 'Birthplace: ',
+              data2: user.birthPlace,
+            ),
             _buildText(
-                title: 'BloodType: ',
-                data: user.bloodType,
-                title2: 'Allergies: ',
-                data2: user.allergies,
-                doc: doc),
+              title: 'Height: ',
+              data: user.height,
+              title2: 'Weight: ',
+              data2: user.weight,
+            ),
+            _buildText(
+              title: 'BloodType: ',
+              data: user.bloodType,
+              title2: 'Allergies: ',
+              data2: user.allergies,
+            ),
+            
             SizedBox(height: size.height * 0.05),
             RaisedButton(
                 color: Colors.blue[400],
                 child: Text('Update', style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UpdateMedical(
-                                user: user,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateMedical(
+                        user: user,
+                      ),
+                    ),
+                  );
                 })
           ],
         ),
@@ -119,13 +119,7 @@ class _MedicalReportState extends State<MedicalReport> {
     );
   }
 
-  _buildText(
-      {@required String title,
-      title2,
-      String data,
-      data2,
-      DocumentSnapshot doc}) {
-    UserModel user = UserModel.get(doc);
+  _buildText({@required String title, title2, String data, data2}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -134,9 +128,11 @@ class _MedicalReportState extends State<MedicalReport> {
         children: [
           Row(
             children: [
-              Text(title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              Text(data, style: TextStyle(fontSize: 18)),
+              Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
             ],
           ),
           Container(
@@ -145,44 +141,20 @@ class _MedicalReportState extends State<MedicalReport> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(title2,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                Flexible(child: Text(data2, style: TextStyle(fontSize: 18))),
+                Text(
+                  title2,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Flexible(
+                  child: Text(
+                    data2,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  _buildRow({@required String title, @required String result}) {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Container(
-          width: size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Container(
-                width: size.width * 0.5,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(result, style: TextStyle(fontSize: 16)),
-                    SizedBox(width: size.width * 0.05)
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

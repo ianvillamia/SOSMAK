@@ -47,8 +47,7 @@ class _HomeState extends State<Home> {
       isCitizen = true;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
-        userDetailsProvider.currentUser.policeRank ==
-            'Deputy Director General' ||
+        userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Director') {
       isAdmin = true;
     }
@@ -73,18 +72,22 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
     return Scaffold(
+      appBar: AppBar(
+        title: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text('S.O.S MAK',style: TextStyle(fontWeight: FontWeight.bold),), SizedBox(width: 10,),Container(width: 30, height: 30, child: Image.asset('assets/notif.png'))],
+        )),
+      ),
       body: Container(
         width: size.width,
         height: size.height,
+        //color: Color.fromRGBO(1, 60, 66,1),
         child: StreamBuilder<DocumentSnapshot>(
           // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(firebaseUser.uid)
-              .snapshots(),
+          stream: FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
@@ -114,9 +117,7 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context
-                                  .read<AuthenticationService>()
-                                  .signOut(uid: firebaseUser.uid);
+                              context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ],
@@ -136,9 +137,7 @@ class _HomeState extends State<Home> {
                               color: Colors.redAccent,
                               textColor: Colors.white,
                               onPressed: () {
-                                context
-                                    .read<AuthenticationService>()
-                                    .signOut(uid: firebaseUser.uid);
+                                context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
                               },
                               child: Text('Logout')),
                         ),
@@ -167,16 +166,17 @@ class _HomeState extends State<Home> {
       child: Wrap(
         children: [
           _buildTile(
-              color: Colors.white,
-              text: 'Emergency HOTLINE',
-              widget: SOSPage(),
-              isImageIcon: false,
-              icon: Icons.call),
+            color: Colors.white,
+            text: 'Emergency HOTLINE',
+            widget: SOSPage(),
+            isImageIcon: true,
+            image: 'assets/hotline.png',
+          ),
           _buildTile(
               color: Colors.white,
               text: 'Emergency Maps',
-              icon: Icons.map,
-              isImageIcon: false,
+              image: 'assets/map.png',
+              isImageIcon: true,
               widget: MapView()),
           Visibility(
             visible: isAdmin == true ? false : true,
@@ -184,22 +184,23 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 text: 'Profile',
                 widget: MedicalReport(),
-                isImageIcon: false,
-                icon: Icons.person),
+                isImageIcon: true,
+                image: 'assets/user1.png'),
           ),
           _buildTile(
               color: Colors.white,
               text: 'Wanted List',
               isImageIcon: true,
-              image: 'assets/wanted-icon.png',
+              image: 'assets/wanted.png',
               widget: WantedList()),
           Visibility(
             visible: isPolice,
             child: _buildTile(
               color: Colors.white,
               text: 'Officers Chat',
-              icon: Icons.local_police,
-              isImageIcon: false,
+              //   icon: Icons.local_police,
+              isImageIcon: true,
+              image: 'assets/chat.jpg',
               //widget: Chat()
               widget: ChatHome(),
             ),
@@ -258,12 +259,7 @@ class _HomeState extends State<Home> {
   }
 
   _buildTile(
-      {@required Color color,
-      @required String text,
-      IconData icon,
-      Widget widget,
-      bool isImageIcon,
-      String image}) {
+      {@required Color color, @required String text, IconData icon, Widget widget, bool isImageIcon, String image}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -284,7 +280,11 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 isImageIcon
-                    ? Image.asset(image, width: 55)
+                    ? Image.asset(
+                        image,
+                        width: 60,
+                        height: 70,
+                      )
                     : Icon(
                         icon,
                         size: 50,
@@ -314,8 +314,7 @@ class _HomeState extends State<Home> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          content:
-              Text('Please open your GPS/Location to use our Map Feature.'),
+          content: Text('Please open your GPS/Location to use our Map Feature.'),
           actions: [
             FlatButton(
               child: Text("Click to turn on"),
