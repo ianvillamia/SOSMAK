@@ -84,7 +84,7 @@ class AuthenticationService {
         .putFile(file);
   }
 
-  Future<void> signOut({@required String uid}) async {
+   Future<void> signOut({@required String uid}) async {
     await _firebaseAuth.signOut().then((value) async {
       await FirebaseFirestore.instance
           .collection('users')

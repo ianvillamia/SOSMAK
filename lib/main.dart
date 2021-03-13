@@ -1,3 +1,4 @@
+import 'package:SOSMAK/models/globals.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/auth_screens/login.dart';
 import 'package:SOSMAK/screens/home.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: new ThemeData(
-           // scaffoldBackgroundColor: const Color.fromRGBO(1, 60, 66, 1),
+            // scaffoldBackgroundColor: const Color.fromRGBO(1, 60, 66, 1),
             // textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white),
             inputDecorationTheme: InputDecorationTheme(fillColor: Colors.white)),
         debugShowCheckedModeBanner: false,
@@ -46,9 +47,11 @@ class AuthenticationWrapper extends StatefulWidget {
 }
 
 class _AuthenticationWrapperState extends State<AuthenticationWrapper> with WidgetsBindingObserver {
+  String uid = '';
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -59,12 +62,12 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
-      case AppLifecycleState.paused:
-        break;
       case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        await AuthenticationService(FirebaseAuth.instance).signOut(uid: Globals.uid);
         break;
       default:
         break;
@@ -74,6 +77,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
+    Globals.uid=firebaseUser.uid;
     //set current User here
 
     if (firebaseUser != null) {
