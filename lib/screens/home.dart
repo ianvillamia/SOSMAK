@@ -103,8 +103,7 @@ class _HomeState extends State<Home> {
                 UserModel user = UserModel.get(snapshot.data);
 
                 currentIncident = snapshot.data.data()['currentIncidentRef'];
-                //  print(snapshot.data.data()['currentIncidentRef']);
-                //set thing?
+           
                 userDetailsProvider.setCurrentUser(snapshot.data);
                 setViews();
                 if (user.isApproved == false) {

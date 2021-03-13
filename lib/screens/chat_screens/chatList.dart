@@ -1,3 +1,5 @@
+import 'package:SOSMAK/models/conversation.dart';
+import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/chat_screens/chat.dart';
@@ -33,12 +35,8 @@ class _ChatListState extends State<ChatList> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .where('role', isEqualTo: 'police')
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                stream: FirebaseFirestore.instance.collection('users').where('role', isEqualTo: 'police').snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 5),
@@ -47,10 +45,7 @@ class _ChatListState extends State<ChatList> {
                         height: size.height,
                         child: Scrollbar(
                           child: SingleChildScrollView(
-                            child: Column(
-                                children: snapshot.data.docs
-                                    .map<Widget>((doc) => _buildCard(doc))
-                                    .toList()),
+                            child: Column(children: snapshot.data.docs.map<Widget>((doc) => _buildCard(doc)).toList()),
                           ),
                         ),
                       ),
@@ -69,7 +64,8 @@ class _ChatListState extends State<ChatList> {
 
   _buildCard(DocumentSnapshot doc) {
     UserModel police = UserModel.get(doc);
-    // Police police = Police.get(doc: doc);
+    bool hasNewMessage = false;
+
     if (_currentUser.currentUser.ref != police.ref) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 5),
@@ -78,17 +74,21 @@ class _ChatListState extends State<ChatList> {
           onTap: () async {
             // debugPrint(police.ref + '* ' + _currentUser.currentUser.ref);
             await ChatService()
-                .setChat(user1: police.ref, user2: _currentUser.currentUser.ref)
+                .setChat(
+                    user1: police.ref, user2: _currentUser.currentUser.ref, currentUser: _currentUser.currentUser.ref)
                 .then((doc) {
               if (doc != null) {
                 //push conversation
+                Navigator.pop(context);
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Chat(
-                              doc: doc,
-                              police: police,
-                            )));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Chat(
+                      doc: doc,
+                      police: police,
+                    ),
+                  ),
+                );
               }
             });
           },
@@ -114,14 +114,15 @@ class _ChatListState extends State<ChatList> {
                 width: 20,
               ),
               ClipOval(
-                child: Container(
-                    height: 80,
-                    width: 80,
-                    child: Image.network(police.imageUrl)),
+                child: Container(height: 80, width: 80, child: Image.network(police.imageUrl)),
               ),
               Text(
                 police.firstName + " " + police.lastName,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              RedButton(
+                police: police,
+                currentUser: _currentUser,
               )
             ],
           ),
@@ -177,5 +178,53 @@ class _ChatListState extends State<ChatList> {
         ),
       ),
     );
+  }
+}
+
+class RedButton extends StatefulWidget {
+  final UserModel police;
+  final UserDetailsProvider currentUser;
+  RedButton({@required this.police, @required this.currentUser});
+
+  @override
+  _RedButtonState createState() => _RedButtonState();
+}
+
+class _RedButtonState extends State<RedButton> {
+  bool hasRead =false;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: checkChat(widget.police),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+       
+        if (snapshot.hasData) {
+          if (snapshot.data == true && hasRead == false) {
+            return ClipOval(
+              child: Container(
+                width: 20,
+                height: 20,
+                color: Colors.red,
+              ),
+            );
+          } else {
+            return Container();
+          }
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Future checkChat(UserModel police) async {
+    bool hasNewMessage = false;
+    await ChatService().checkChat(user1: police.ref, user2: widget.currentUser.currentUser.ref).then((val) {
+      if (val == true) {
+        print('hotdog');
+        hasNewMessage = true;
+      }
+    });
+    return hasNewMessage;
   }
 }

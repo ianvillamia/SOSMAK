@@ -48,6 +48,7 @@ class AuthenticationWrapper extends StatefulWidget {
 
 class _AuthenticationWrapperState extends State<AuthenticationWrapper> with WidgetsBindingObserver {
   String uid = '';
+  User fsUser;
   @override
   void initState() {
     super.initState();
@@ -67,7 +68,10 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
-        await AuthenticationService(FirebaseAuth.instance).signOut(uid: Globals.uid);
+        if (fsUser != null) {
+          await AuthenticationService(FirebaseAuth.instance).signOut(uid: Globals.uid);
+        }
+
         break;
       default:
         break;
@@ -77,10 +81,12 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
-    Globals.uid=firebaseUser.uid;
+
     //set current User here
 
     if (firebaseUser != null) {
+      fsUser = firebaseUser;
+      Globals.uid = firebaseUser.uid;
       return Home();
     }
 

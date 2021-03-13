@@ -2,7 +2,7 @@ import 'package:SOSMAK/models/chatModel.dart';
 
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/services/chatService.dart';
-
+import 'chat_home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -48,6 +48,7 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(Duration(milliseconds: 200), () {
       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
           duration: Duration(milliseconds: 500), curve: Curves.ease);
@@ -58,65 +59,70 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     firebaseUser = context.watch<User>();
     size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.police.firstName + ' ' + widget.police.lastName),
-      ),
-      body: Container(
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          children: [
-            StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('conversation')
-                    .doc(widget.doc.id)
-                    .collection('chats')
-                    .orderBy('date')
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                      width: size.width,
-                      height: _image == null
-                          ? size.height * .785
-                          : size.height * .66,
-                      padding: EdgeInsets.all(5),
-                      color: Colors.grey,
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 20),
-                            child: Column(
-                                children: snapshot.data.docs
-                                    .map<Widget>((doc) => _buildMessage(doc))
-                                    .toList()),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: (){
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatHome()));
+            }
+          ),
+          title: Text(widget.police.firstName + ' ' + widget.police.lastName),
+        ),
+        body: Container(
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: [
+              StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('conversation')
+                      .doc(widget.doc.id)
+                      .collection('chats')
+                      .orderBy('date')
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        width: size.width,
+                        height: _image == null ? size.height * .785 : size.height * .66,
+                        padding: EdgeInsets.all(5),
+                        color: Colors.grey,
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Column(
+                                  children: snapshot.data.docs.map<Widget>((doc) => _buildMessage(doc)).toList()),
+                            ),
                           ),
                         ),
-                      ),
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: size.width,
-                height: _image == null ? size.height * .09 : size.height * .22,
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    _imagePreview(),
-                    _buildTextFormField(controller: message),
-                  ],
+                  }),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: size.width,
+                  height: _image == null ? size.height * .09 : size.height * .22,
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      _imagePreview(),
+                      _buildTextFormField(controller: message),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -157,10 +163,7 @@ class _ChatState extends State<Chat> {
     }
   }
 
-  _buildMessageBox(
-      {@required Alignment alignment,
-      @required ChatModel chat,
-      @required bool withImage}) {
+  _buildMessageBox({@required Alignment alignment, @required ChatModel chat, @required bool withImage}) {
     if (withImage) {
       return Align(
         alignment: alignment,
@@ -176,9 +179,7 @@ class _ChatState extends State<Chat> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(chat.message),
                   ),
-                  chat.imageUrl != null
-                      ? _buildImages(chat.imageUrl.toString())
-                      : Container(),
+                  chat.imageUrl != null ? _buildImages(chat.imageUrl.toString()) : Container(),
                 ],
               ),
             ),
@@ -221,21 +222,17 @@ class _ChatState extends State<Chat> {
     if (chat.senderRef == firebaseUser.uid) {
       //ako nag send
       if (chat.imageUrl != null) {
-        return _buildMessageBox(
-            alignment: Alignment.centerRight, chat: chat, withImage: true);
+        return _buildMessageBox(alignment: Alignment.centerRight, chat: chat, withImage: true);
       } else {
-        return _buildMessageBox(
-            alignment: Alignment.centerRight, chat: chat, withImage: false);
+        return _buildMessageBox(alignment: Alignment.centerRight, chat: chat, withImage: false);
       }
     }
     //other sender
     else {
       if (chat.imageUrl != null) {
-        return _buildMessageBox(
-            alignment: Alignment.centerLeft, chat: chat, withImage: true);
+        return _buildMessageBox(alignment: Alignment.centerLeft, chat: chat, withImage: true);
       } else {
-        return _buildMessageBox(
-            alignment: Alignment.centerLeft, chat: chat, withImage: false);
+        return _buildMessageBox(alignment: Alignment.centerLeft, chat: chat, withImage: false);
       }
     }
   }
@@ -266,10 +263,8 @@ class _ChatState extends State<Chat> {
     return TextFormField(
       onTap: () {
         Future.delayed(Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease);
+          _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500), curve: Curves.ease);
         });
       },
       textCapitalization: TextCapitalization.sentences,
@@ -297,18 +292,21 @@ class _ChatState extends State<Chat> {
                     chat.date = DateTime.now();
                     chat.message = message.text;
                     chat.senderRef = firebaseUser.uid;
+                    // ChatParent chatParent = ChatParent.get(widget.doc);
+                    bool isUser1 = false;
+
+                    if (widget.doc.data()['users'][0] == firebaseUser.uid) {
+                      isUser1 = true;
+                    } else {
+                      isUser1 = false;
+                    }
                     ChatService()
-                        .sendMessage(
-                            chatModel: chat,
-                            chatID: widget.doc.id,
-                            image: _image)
+                        .sendMessage(isUser1: isUser1, chatModel: chat, chatID: widget.doc.id, image: _image)
                         .then((value) {
                       _image = null;
                       message.clear();
-                      _scrollController.animateTo(
-                          _scrollController.position.maxScrollExtent,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.ease);
+                      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 500), curve: Curves.ease);
                       FocusScope.of(context).requestFocus(new FocusNode());
                     });
 
