@@ -69,7 +69,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
         if (fsUser != null) {
-          await AuthenticationService(FirebaseAuth.instance).signOut(uid: Globals.uid);
+          await AuthenticationService(FirebaseAuth.instance).clearStatus(uid: Globals.uid);
         }
 
         break;
