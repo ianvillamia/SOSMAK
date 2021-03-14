@@ -47,7 +47,8 @@ class _HomeState extends State<Home> {
       isCitizen = true;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
-        userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
+        userDetailsProvider.currentUser.policeRank ==
+            'Deputy Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Director') {
       isAdmin = true;
     }
@@ -72,7 +73,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
-    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -86,7 +88,8 @@ class _HomeState extends State<Home> {
             SizedBox(
               width: 10,
             ),
-            Container(width: 30, height: 30, child: Image.asset('assets/notif.png'))
+            Container(
+                width: 30, height: 30, child: Image.asset('assets/notif.png'))
           ],
         )),
       ),
@@ -96,14 +99,17 @@ class _HomeState extends State<Home> {
         //color: Color.fromRGBO(1, 60, 66,1),
         child: StreamBuilder<DocumentSnapshot>(
           // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
-          stream: FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(firebaseUser.uid)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
                 UserModel user = UserModel.get(snapshot.data);
 
                 currentIncident = snapshot.data.data()['currentIncidentRef'];
-           
+
                 userDetailsProvider.setCurrentUser(snapshot.data);
                 setViews();
                 if (user.isApproved == false) {
@@ -125,7 +131,9 @@ class _HomeState extends State<Home> {
                             color: Colors.redAccent,
                             textColor: Colors.white,
                             onPressed: () {
-                              context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
+                              context
+                                  .read<AuthenticationService>()
+                                  .signOut(uid: firebaseUser.uid);
                             },
                             child: Text('Logout')),
                       ],
@@ -145,7 +153,9 @@ class _HomeState extends State<Home> {
                               color: Colors.redAccent,
                               textColor: Colors.white,
                               onPressed: () {
-                                context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
+                                context
+                                    .read<AuthenticationService>()
+                                    .signOut(uid: firebaseUser.uid);
                               },
                               child: Text('Logout')),
                         ),
@@ -272,7 +282,12 @@ class _HomeState extends State<Home> {
   }
 
   _buildTile(
-      {@required Color color, @required String text, IconData icon, Widget widget, bool isImageIcon, String image}) {
+      {@required Color color,
+      @required String text,
+      IconData icon,
+      Widget widget,
+      bool isImageIcon,
+      String image}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -311,7 +326,11 @@ class _HomeState extends State<Home> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text(text,style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                  child: Text(
+                    text,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
@@ -334,7 +353,8 @@ class _HomeState extends State<Home> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          content: Text('Please open your GPS/Location to use our Map Feature.'),
+          content:
+              Text('Please open your GPS/Location to use our Map Feature.'),
           actions: [
             FlatButton(
               child: Text("Click to turn on"),

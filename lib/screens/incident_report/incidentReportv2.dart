@@ -439,33 +439,38 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
   showNoLocation() {
     AlertDialog alert = AlertDialog(
-      title: Text("Error"),
-      content: Row(
-        children: [
-          RichText(
-            text: TextSpan(
-              text: 'Click the',
-              style: TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w300,
-                color: Colors.black,
-                height: 1.5,
-              ),
-            ),
+      title: Text(
+        "Error",
+        style: TextStyle(
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      content: RichText(
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w300,
+            color: Colors.black,
+            height: 1.5,
           ),
-          Icon(Icons.location_on_outlined),
-          RichText(
-            text: TextSpan(
-              text: 'to get My Current Location',
+          children: [
+            TextSpan(
+              text: 'No location found. \n',
               style: TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w300,
-                color: Colors.black,
-                height: 1.5,
+                fontWeight: FontWeight.w800,
               ),
             ),
-          )
-        ],
+            TextSpan(
+              text: 'Click the',
+            ),
+            WidgetSpan(
+              child: Icon(Icons.location_on_outlined),
+            ),
+            TextSpan(
+              text: 'to get My Current Location',
+            ),
+          ],
+        ),
       ),
       actions: [
         FlatButton(

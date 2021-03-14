@@ -24,14 +24,18 @@ class MyApp extends StatelessWidget {
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
-        StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
-        ChangeNotifierProvider<UserDetailsProvider>(create: (_) => UserDetailsProvider()),
+        StreamProvider(
+            create: (context) =>
+                context.read<AuthenticationService>().authStateChanges),
+        ChangeNotifierProvider<UserDetailsProvider>(
+            create: (_) => UserDetailsProvider()),
       ],
       child: MaterialApp(
         theme: new ThemeData(
             // scaffoldBackgroundColor: const Color.fromRGBO(1, 60, 66, 1),
             // textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white),
-            inputDecorationTheme: InputDecorationTheme(fillColor: Colors.white)),
+            inputDecorationTheme:
+                InputDecorationTheme(fillColor: Colors.white)),
         debugShowCheckedModeBanner: false,
         home: AuthenticationWrapper(),
       ),
@@ -46,7 +50,8 @@ class AuthenticationWrapper extends StatefulWidget {
   _AuthenticationWrapperState createState() => _AuthenticationWrapperState();
 }
 
-class _AuthenticationWrapperState extends State<AuthenticationWrapper> with WidgetsBindingObserver {
+class _AuthenticationWrapperState extends State<AuthenticationWrapper>
+    with WidgetsBindingObserver {
   String uid = '';
   User fsUser;
   @override
@@ -69,7 +74,8 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> with Widg
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
         if (fsUser != null) {
-          await AuthenticationService(FirebaseAuth.instance).signOut(uid: Globals.uid);
+          await AuthenticationService(FirebaseAuth.instance)
+              .signOut(uid: Globals.uid);
         }
 
         break;
