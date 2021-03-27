@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:location/location.dart' as loc;
 
@@ -24,8 +25,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   String dropdownValue = 'Robbery';
   List<Asset> images = List<Asset>();
 
-  TextEditingController locationController = TextEditingController(),
-      descriptionController = TextEditingController();
+  TextEditingController locationController = TextEditingController(), descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool isButtonDisabled = true;
@@ -53,10 +53,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   }
 
   check() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('incidentReports')
-        .doc(currentIncidentRef)
-        .get();
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('incidentReports').doc(currentIncidentRef).get();
     if (doc.exists) {
       //see first if document exists
     }
@@ -87,8 +84,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   Future<void> _getLocation(Position position) async {
     debugPrint('location: ${position.latitude}');
     final coordinates = new Coordinates(position.latitude, position.longitude);
-    List<Address> addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    List<Address> addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
     Address first = addresses.first;
     _location = "${first.featureName}";
     _addressLine = " ${first.addressLine}";
@@ -98,9 +94,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   }
 
   void _getCurrentLocation() {
-    _geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
+    _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
       _getLocation(position);
     }).catchError((e) {
       print(e);
@@ -109,10 +103,8 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
   @override
   Widget build(BuildContext context) {
-    locationController = new TextEditingController(
-        text: done == false
-            ? "Click the icon to My Current Location"
-            : "$_addressLine");
+    locationController =
+        new TextEditingController(text: done == false ? "Click the icon to My Current Location" : "$_addressLine");
     size = MediaQuery.of(context).size;
     //  print(currentIncident);
     return Scaffold(
@@ -176,9 +168,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Text('Incident Report',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 ),
                 SizedBox(height: 20),
                 _buildTextFormField(
@@ -217,11 +207,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
     );
   }
 
-  _buildTextFormField(
-      {@required String label,
-      TextEditingController controller,
-      int maxLines,
-      bool isIcon}) {
+  _buildTextFormField({@required String label, TextEditingController controller, int maxLines, bool isIcon}) {
     return Container(
       width: size.width,
       child: TextFormField(
@@ -384,21 +370,21 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         elevation: 5,
         onPressed: () async {
           // validate
-          if (locationController.text ==
-              "Click the icon to My Current Location") {
+          if (locationController.text == "Click the icon to My Current Location") {
             showNoLocation();
           }
-          if (_formKey.currentState.validate() &&
-              locationController.text !=
-                  "Click the icon to My Current Location") {
+          if (_formKey.currentState.validate() && locationController.text != "Click the icon to My Current Location") {
             //print
             IncidentModel incident = IncidentModel();
             DateTime currentDate = DateTime.now();
+            String currentTime = DateFormat('hh:mm a').format(DateTime.now());
             incident.date = currentDate.month.toString() +
                 "/" +
                 currentDate.day.toString() +
                 "/" +
-                currentDate.year.toString(); // MM//DD//YYYY
+                currentDate.year.toString() +
+                " - " +
+                currentTime; // MM//DD//YYYY
             incident.desc = descriptionController.text;
             incident.incident = dropdownValue;
             incident.location = locationController.text;
@@ -409,9 +395,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
               isLoading = true;
             });
             if (images.length != 0) {
-              await UserService()
-                  .postIncident(incident: incident, images: images)
-                  .then((doc) async {
+              await UserService().postIncident(incident: incident, images: images).then((doc) async {
                 Future.delayed(Duration(seconds: 3), () {
                   setState(() {
                     isLoading = false;

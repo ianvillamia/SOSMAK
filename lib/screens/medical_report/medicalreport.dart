@@ -98,17 +98,33 @@ class _MedicalReportState extends State<MedicalReport> {
               title2: 'Gender: ',
               data2: user.gender,
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  Text(
-                    'Allergies: ',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Allergies: ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(user.allergies, style: TextStyle(fontSize: 18) ?? 'data'),
+                    ],
                   ),
-                  Text(user.allergies, style: TextStyle(fontSize: 18) ?? 'data'),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Contact Person: ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(user.contactPerson, style: TextStyle(fontSize: 18) ?? 'data'),
+                    ],
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 10),
             (user.otherMedicalCondition1.isEmpty &&

@@ -75,7 +75,7 @@ class AuthenticationService {
     DateTime date = DateTime.now();
     String fileName = date.toString();
 
-    return await firebase_storage.FirebaseStorage.instance.ref('uploads/$fileName.png').putFile(fileID);
+    return await firebase_storage.FirebaseStorage.instance.ref('uploads/ID/$fileName.png').putFile(fileID);
   }
 
   Future uploadProfileFile(File fileProfile) async {

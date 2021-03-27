@@ -93,7 +93,7 @@ class ChatService {
         await conversationCollection.doc(chatID).update({'user1HasNewMessage': true});
       }
       if (image != null) {
-        await UserService().uploadFile(image).then((value) async {
+        await UserService().uploadPostFile(image).then((value) async {
           String downUrl = await value.ref.getDownloadURL();
           chatModel.imageUrl = downUrl;
 

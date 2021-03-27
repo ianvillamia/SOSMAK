@@ -38,6 +38,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       allergiesController = TextEditingController(),
       languageController = TextEditingController(),
       religionController = TextEditingController(),
+      contactPersonController = TextEditingController(),
       medicalController1 = TextEditingController(),
       medicalController2 = TextEditingController(),
       medicalController3 = TextEditingController(),
@@ -106,6 +107,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       weight,
       language,
       religion,
+      contactPerson,
       medCondition1,
       medCondition2,
       medCondition3,
@@ -155,6 +157,10 @@ class _UpdateMedicalState extends State<UpdateMedical> {
     this.religion = rel;
   }
 
+  getContactPerson(contact) {
+    this.contactPerson = contact;
+  }
+
   getMedical1(med1) {
     this.medCondition1 = med1;
   }
@@ -197,6 +203,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
     bloodTypeController.text = widget.user.bloodType;
     languageController.text = widget.user.language;
     religionController.text = widget.user.religion;
+    contactPersonController.text = widget.user.contactPerson;
 
     medicalController1.text = widget.user.otherMedicalCondition1;
     medicalController2.text = widget.user.otherMedicalCondition2;
@@ -313,6 +320,12 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                         ),
                         textFormFeld(
                             width: size.width,
+                            controller: contactPersonController,
+                            label: 'Contact Person',
+                            isNumber: false,
+                            onChanged: (String contact) => getContactPerson(contact)),
+                        textFormFeld(
+                            width: size.width,
                             controller: medicalController1,
                             label: 'Medical Condition 1',
                             isNumber: false,
@@ -357,6 +370,8 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                             widget.user.allergies = allergiesController.text;
                             widget.user.language = languageController.text;
                             widget.user.religion = religionController.text;
+                            widget.user.contactPerson = contactPersonController.text;
+
                             widget.user.otherMedicalCondition1 = medicalController1.text;
                             widget.user.otherMedicalCondition2 = medicalController2.text;
                             widget.user.otherMedicalCondition3 = medicalController3.text;
@@ -378,6 +393,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                               'allergies': widget.user.allergies,
                               'language': widget.user.language,
                               'religion': widget.user.religion,
+                              'contactPerson': widget.user.contactPerson,
                               'otherMedicalCondition1': widget.user.otherMedicalCondition1,
                               'otherMedicalCondition2': widget.user.otherMedicalCondition2,
                               'otherMedicalCondition3': widget.user.otherMedicalCondition3,

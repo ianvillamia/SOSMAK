@@ -12,12 +12,9 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class UserService {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  CollectionReference courses =
-      FirebaseFirestore.instance.collection('courses');
-  CollectionReference wantedList =
-      FirebaseFirestore.instance.collection('wantedList');
-  CollectionReference incidentReports =
-      FirebaseFirestore.instance.collection('incidentReports');
+  CollectionReference courses = FirebaseFirestore.instance.collection('courses');
+  CollectionReference wantedList = FirebaseFirestore.instance.collection('wantedList');
+  CollectionReference incidentReports = FirebaseFirestore.instance.collection('incidentReports');
 
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
@@ -27,12 +24,7 @@ class UserService {
   Future addPoliceAccount({Police police}) async {
     try {
       var value;
-      await this
-          .users
-          .limit(1)
-          .where('email', isEqualTo: police.email)
-          .get()
-          .then((QuerySnapshot snapshot) async {
+      await this.users.limit(1).where('email', isEqualTo: police.email).get().then((QuerySnapshot snapshot) async {
         if (snapshot.size == 0) {
           print('all good to create');
           //
@@ -56,8 +48,8 @@ class UserService {
     }
   }
 
-  Future<void> updateMedical(DocumentSnapshot doc, String firstName, lastName,
-      birthDate, birthPlace, bloodType, allergies, age, height, weight) {
+  Future<void> updateMedical(DocumentSnapshot doc, String firstName, lastName, birthDate, birthPlace, bloodType,
+      allergies, age, height, weight) {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(doc.id)
@@ -79,9 +71,7 @@ class UserService {
   Future addIncident(IncidentModel incident) async {
     String docRef;
     await incidentReports.add(incident.toMap()).then((value) async {
-      await users
-          .doc(incident.reporterRef)
-          .update({'currentIncidentRef': value.id});
+      await users.doc(incident.reporterRef).update({'currentIncidentRef': value.id});
       docRef = value.id;
     });
     return docRef;
@@ -92,13 +82,18 @@ class UserService {
     DateTime date = DateTime.now();
     String fileName = date.toString();
 
-    return await firebase_storage.FirebaseStorage.instance
-        .ref('uploads/$fileName.png')
-        .putFile(file);
+    return await firebase_storage.FirebaseStorage.instance.ref('uploads/wantedImages/$fileName.png').putFile(file);
   }
 
-  Future addCriminalPoster(
-      {@required Wanted wanted, @required File file}) async {
+  Future uploadPostFile(File file) async {
+    // File file = File(filePath);
+    DateTime date = DateTime.now();
+    String fileName = date.toString();
+
+    return await firebase_storage.FirebaseStorage.instance.ref('uploads/postImages/$fileName.png').putFile(file);
+  }
+
+  Future addCriminalPoster({@required Wanted wanted, @required File file}) async {
     //upload first
     bool added;
     try {
@@ -122,10 +117,7 @@ class UserService {
   }
 
   Future<DocumentSnapshot> getCurrentIncident(String docId) async {
-    return await FirebaseFirestore.instance
-        .collection('incidentReports')
-        .doc(docId)
-        .get();
+    return await FirebaseFirestore.instance.collection('incidentReports').doc(docId).get();
   }
 
   void addCoursesToUser(uid) async {
@@ -152,15 +144,12 @@ class UserService {
     return Future.value(imageUrls);
   }
 
-  Future postIncident(
-      {@required IncidentModel incident, @required List<Asset> images}) async {
+  Future postIncident({@required IncidentModel incident, @required List<Asset> images}) async {
     var docRef;
 
     await incidentReports.add(incident.toMap()).then((value) async {
       docRef = value.id;
-      await users
-          .doc(incident.reporterRef)
-          .update({'currentIncidentRef': value.id});
+      await users.doc(incident.reporterRef).update({'currentIncidentRef': value.id});
     }).then((value) {
       //create doc
       List imageUrls = [];
@@ -170,8 +159,7 @@ class UserService {
         });
         if (imageUrls.length == images.length) {
           //call firestore to
-          await incidentReports.doc(docRef).update(
-              {'images': FieldValue.arrayUnion(imageUrls), 'updated': 'true'});
+          await incidentReports.doc(docRef).update({'images': FieldValue.arrayUnion(imageUrls), 'updated': 'true'});
         }
       });
     });
@@ -183,11 +171,9 @@ class UserService {
   //single image only
   Future<dynamic> postImage(Asset imageFile) async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    firebase_storage.Reference reference = firebase_storage
-        .FirebaseStorage.instance
-        .ref('uploads/incidentImages/$fileName');
-    firebase_storage.UploadTask uploadTask =
-        reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    firebase_storage.Reference reference =
+        firebase_storage.FirebaseStorage.instance.ref('uploads/incidentImages/$fileName');
+    firebase_storage.UploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
     //TaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     var imageUrl = await (await uploadTask).ref.getDownloadURL();
     print(imageUrl);
@@ -204,8 +190,8 @@ class UserService {
     });
   }
 
-  Future<void> updateIncident(DocumentSnapshot doc, String location,
-      String date, String time, String incident, String desc) {
+  Future<void> updateIncident(
+      DocumentSnapshot doc, String location, String date, String time, String incident, String desc) {
     return incidentReports
         .doc(doc.id)
         .update({
