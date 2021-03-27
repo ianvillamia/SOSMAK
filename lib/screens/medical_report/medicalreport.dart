@@ -26,8 +26,7 @@ class _MedicalReportState extends State<MedicalReport> {
 
   @override
   Widget build(BuildContext context) {
-    userDetailsProvider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
+    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
 
     size = MediaQuery.of(context).size;
     return Scaffold(
@@ -42,12 +41,8 @@ class _MedicalReportState extends State<MedicalReport> {
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(userDetailsProvider.currentUser.ref)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          stream: FirebaseFirestore.instance.collection('users').doc(userDetailsProvider.currentUser.ref).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             print(snapshot.connectionState);
 
             if (snapshot.connectionState == ConnectionState.active) {
@@ -82,14 +77,14 @@ class _MedicalReportState extends State<MedicalReport> {
             _buildRowText(
               title: 'Language: ',
               data: user.language,
-              title2: 'Religion: ',
-              data2: user.religion,
-            ),
-            _buildRowText(
-              title: 'Age: ',
-              data: user.age,
               title2: 'Birthplace: ',
               data2: user.birthPlace,
+            ),
+            _buildRowText(
+              title: 'Religion: ',
+              data: user.religion,
+              title2: 'Age: ',
+              data2: user.age,
             ),
             _buildRowText(
               title: 'Height: ',
@@ -100,8 +95,20 @@ class _MedicalReportState extends State<MedicalReport> {
             _buildRowText(
               title: 'BloodType: ',
               data: user.bloodType,
-              title2: 'Allergies: ',
-              data2: user.allergies,
+              title2: 'Gender: ',
+              data2: user.gender,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Allergies: ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  Text(user.allergies, style: TextStyle(fontSize: 18) ?? 'data'),
+                ],
+              ),
             ),
             SizedBox(height: 10),
             (user.otherMedicalCondition1.isEmpty &&

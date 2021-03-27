@@ -44,7 +44,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       medicalController4 = TextEditingController(),
       medicalController5 = TextEditingController();
 
-  _selectDate(BuildContext context) async {
+  void _selectDate(BuildContext context) async {
     DateTime newSelectedDate = await showDatePicker(
         context: context,
         initialDate: selectedDate != null ? selectedDate : DateTime.now(),
@@ -69,10 +69,30 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       selectedDate = newSelectedDate;
       birthdayController
         ..text = DateFormat.yMMMd().format(selectedDate)
-        ..selection = TextSelection.fromPosition(TextPosition(
-            offset: birthdayController.text.length,
-            affinity: TextAffinity.upstream));
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: birthdayController.text.length, affinity: TextAffinity.upstream));
+      setState(() {
+        age = calculateAge(selectedDate).toString();
+        ageController.text = age;
+      });
     }
+  }
+
+  calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+    int month1 = currentDate.month;
+    int month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      int day1 = currentDate.day;
+      int day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    return age;
   }
 
   String firstName,
@@ -218,74 +238,62 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                         SizedBox(
                           height: size.height * .01,
                         ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: size.width * 0.42,
-                                child: TextFormField(
-                                    focusNode: AlwaysDisabledFocusNode(),
-                                    controller: birthdayController,
-                                    onTap: () {
-                                      _selectDate(context);
-                                    },
-                                    onChanged: (String birthDay) =>
-                                        getBirthDay(birthDay),
-                                    decoration: InputDecoration(
-                                      labelText: 'Birthdate',
-                                      labelStyle:
-                                          TextStyle(color: Colors.black),
-                                    )),
-                              ),
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: ageController,
-                                  label: 'Age',
-                                  isNumber: true,
-                                  onChanged: (String age) => getAge(age)),
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: languageController,
-                                  label: 'Language',
-                                  isNumber: false,
-                                  onChanged: (String lang) =>
-                                      getLanguage(lang)),
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: religionController,
-                                  label: 'Religion',
-                                  isNumber: false,
-                                  onChanged: (String rel) => getReligion(rel)),
-                            ]),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Container(
+                            width: size.width * 0.42,
+                            child: TextFormField(
+                                focusNode: AlwaysDisabledFocusNode(),
+                                controller: birthdayController,
+                                onTap: () {
+                                  _selectDate(context);
+                                },
+                                onChanged: (String birthDay) => getBirthDay(birthDay),
+                                decoration: InputDecoration(
+                                  labelText: 'Birthdate',
+                                  labelStyle: TextStyle(color: Colors.black),
+                                )),
+                          ),
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: ageController,
+                              label: 'Age',
+                              isNumber: true,
+                              onChanged: (String age) => getAge(age)),
+                        ]),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: languageController,
+                              label: 'Language',
+                              isNumber: false,
+                              onChanged: (String lang) => getLanguage(lang)),
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: religionController,
+                              label: 'Religion',
+                              isNumber: false,
+                              onChanged: (String rel) => getReligion(rel)),
+                        ]),
                         textFormFeld(
                             width: size.width,
                             controller: birthPlaceController,
                             label: 'Birth Place',
                             isNumber: false,
-                            onChanged: (String birthPlace) =>
-                                getBirthPlace(birthPlace)),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: heightController,
-                                  label: 'Height (cm)',
-                                  isNumber: true,
-                                  onChanged: (String height) =>
-                                      getHeight(height)),
-                              textFormFeld(
-                                  width: size.width * 0.42,
-                                  controller: weightController,
-                                  label: 'Weight (kg)',
-                                  isNumber: true,
-                                  onChanged: (String weight) =>
-                                      getWeight(weight)),
-                            ]),
+                            onChanged: (String birthPlace) => getBirthPlace(birthPlace)),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: heightController,
+                              label: 'Height (cm)',
+                              isNumber: true,
+                              onChanged: (String height) => getHeight(height)),
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: weightController,
+                              label: 'Weight (kg)',
+                              isNumber: true,
+                              onChanged: (String weight) => getWeight(weight)),
+                        ]),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -294,15 +302,13 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                                 controller: bloodTypeController,
                                 label: 'Blood Type',
                                 isNumber: false,
-                                onChanged: (String bloodType) =>
-                                    getBloodType(bloodType)),
+                                onChanged: (String bloodType) => getBloodType(bloodType)),
                             textFormFeld(
                                 width: size.width * 0.68,
                                 controller: allergiesController,
                                 label: 'Allergies',
                                 isNumber: false,
-                                onChanged: (String allergies) =>
-                                    getAllergies(allergies)),
+                                onChanged: (String allergies) => getAllergies(allergies)),
                           ],
                         ),
                         textFormFeld(
@@ -338,8 +344,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                         SizedBox(height: size.height * 0.06),
                         RaisedButton(
                           color: Colors.blue[400],
-                          child: Text('Update',
-                              style: TextStyle(color: Colors.white)),
+                          child: Text('Update', style: TextStyle(color: Colors.white)),
                           onPressed: () async {
                             // widget.user.firstName = firstNameController.text;
                             // widget.user.lastName = lastNameController.text;
@@ -352,24 +357,16 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                             widget.user.allergies = allergiesController.text;
                             widget.user.language = languageController.text;
                             widget.user.religion = religionController.text;
-                            widget.user.otherMedicalCondition1 =
-                                medicalController1.text;
-                            widget.user.otherMedicalCondition2 =
-                                medicalController2.text;
-                            widget.user.otherMedicalCondition3 =
-                                medicalController3.text;
-                            widget.user.otherMedicalCondition4 =
-                                medicalController4.text;
-                            widget.user.otherMedicalCondition5 =
-                                medicalController5.text;
+                            widget.user.otherMedicalCondition1 = medicalController1.text;
+                            widget.user.otherMedicalCondition2 = medicalController2.text;
+                            widget.user.otherMedicalCondition3 = medicalController3.text;
+                            widget.user.otherMedicalCondition4 = medicalController4.text;
+                            widget.user.otherMedicalCondition5 = medicalController5.text;
 
                             //update here
                             // print(_user.currentUser.ref);
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(firebaseUser.uid)
-                                .update({
+                            await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update({
                               // 'firstName': widget.user.firstName,
                               // 'lastName': widget.user.lastName,
                               'birthDate': widget.user.birthDate,
@@ -381,16 +378,11 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                               'allergies': widget.user.allergies,
                               'language': widget.user.language,
                               'religion': widget.user.religion,
-                              'otherMedicalCondition1':
-                                  widget.user.otherMedicalCondition1,
-                              'otherMedicalCondition2':
-                                  widget.user.otherMedicalCondition2,
-                              'otherMedicalCondition3':
-                                  widget.user.otherMedicalCondition3,
-                              'otherMedicalCondition4':
-                                  widget.user.otherMedicalCondition4,
-                              'otherMedicalCondition5':
-                                  widget.user.otherMedicalCondition5,
+                              'otherMedicalCondition1': widget.user.otherMedicalCondition1,
+                              'otherMedicalCondition2': widget.user.otherMedicalCondition2,
+                              'otherMedicalCondition3': widget.user.otherMedicalCondition3,
+                              'otherMedicalCondition4': widget.user.otherMedicalCondition4,
+                              'otherMedicalCondition5': widget.user.otherMedicalCondition5,
                             }).then((value) {
                               Navigator.pop(context);
                             });
@@ -423,9 +415,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
       padding: EdgeInsets.only(top: 6, bottom: 6),
       child: TextFormField(
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        inputFormatters: isNumber
-            ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
-            : null,
+        inputFormatters: isNumber ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly] : null,
         controller: controller,
         textCapitalization: TextCapitalization.words,
         enabled: enable,
@@ -442,8 +432,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
           fillColor: Colors.white,
           filled: true,
           alignLabelWithHint: true,
-          focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.black)),
+          focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.black)),
           contentPadding: EdgeInsets.all(8),
           labelText: label,
           labelStyle: TextStyle(color: Colors.black),
@@ -452,13 +441,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
     );
   }
 
-  button(
-      {@required String name,
-      @required onPressed,
-      Color btncolor,
-      Color color,
-      IconData icon,
-      bool haveIcon}) {
+  button({@required String name, @required onPressed, Color btncolor, Color color, IconData icon, bool haveIcon}) {
     return RaisedButton(
       padding: EdgeInsets.zero,
       onPressed: onPressed,
