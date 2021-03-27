@@ -306,7 +306,7 @@ class _HomeState extends State<Home> {
           },
           child: Container(
             width: size.width * .4,
-            height: size.height * .2,
+            height: size.height * .22,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

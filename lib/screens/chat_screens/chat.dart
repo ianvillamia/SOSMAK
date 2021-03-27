@@ -64,12 +64,12 @@ class _ChatState extends State<Chat> {
       child: Scaffold(
         appBar: AppBar(
           leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
-            onPressed: (){
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatHome()));
-            }
-          ),
+              icon: new Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ChatHome()));
+              }),
           title: Text(widget.police.firstName + ' ' + widget.police.lastName),
         ),
         body: Container(
@@ -84,11 +84,14 @@ class _ChatState extends State<Chat> {
                       .collection('chats')
                       .orderBy('date')
                       .snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
                       return Container(
                         width: size.width,
-                        height: _image == null ? size.height * .785 : size.height * .66,
+                        height: _image == null
+                            ? size.height * .785
+                            : size.height * .66,
                         padding: EdgeInsets.all(5),
                         color: Colors.grey,
                         child: Scrollbar(
@@ -97,7 +100,9 @@ class _ChatState extends State<Chat> {
                             child: Padding(
                               padding: EdgeInsets.only(top: 20),
                               child: Column(
-                                  children: snapshot.data.docs.map<Widget>((doc) => _buildMessage(doc)).toList()),
+                                  children: snapshot.data.docs
+                                      .map<Widget>((doc) => _buildMessage(doc))
+                                      .toList()),
                             ),
                           ),
                         ),
@@ -111,7 +116,8 @@ class _ChatState extends State<Chat> {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   width: size.width,
-                  height: _image == null ? size.height * .09 : size.height * .22,
+                  height:
+                      _image == null ? size.height * .095 : size.height * .22,
                   color: Colors.white,
                   child: Column(
                     children: [
@@ -163,7 +169,10 @@ class _ChatState extends State<Chat> {
     }
   }
 
-  _buildMessageBox({@required Alignment alignment, @required ChatModel chat, @required bool withImage}) {
+  _buildMessageBox(
+      {@required Alignment alignment,
+      @required ChatModel chat,
+      @required bool withImage}) {
     if (withImage) {
       return Align(
         alignment: alignment,
@@ -179,7 +188,9 @@ class _ChatState extends State<Chat> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(chat.message),
                   ),
-                  chat.imageUrl != null ? _buildImages(chat.imageUrl.toString()) : Container(),
+                  chat.imageUrl != null
+                      ? _buildImages(chat.imageUrl.toString())
+                      : Container(),
                 ],
               ),
             ),
@@ -222,17 +233,21 @@ class _ChatState extends State<Chat> {
     if (chat.senderRef == firebaseUser.uid) {
       //ako nag send
       if (chat.imageUrl != null) {
-        return _buildMessageBox(alignment: Alignment.centerRight, chat: chat, withImage: true);
+        return _buildMessageBox(
+            alignment: Alignment.centerRight, chat: chat, withImage: true);
       } else {
-        return _buildMessageBox(alignment: Alignment.centerRight, chat: chat, withImage: false);
+        return _buildMessageBox(
+            alignment: Alignment.centerRight, chat: chat, withImage: false);
       }
     }
     //other sender
     else {
       if (chat.imageUrl != null) {
-        return _buildMessageBox(alignment: Alignment.centerLeft, chat: chat, withImage: true);
+        return _buildMessageBox(
+            alignment: Alignment.centerLeft, chat: chat, withImage: true);
       } else {
-        return _buildMessageBox(alignment: Alignment.centerLeft, chat: chat, withImage: false);
+        return _buildMessageBox(
+            alignment: Alignment.centerLeft, chat: chat, withImage: false);
       }
     }
   }
@@ -263,8 +278,10 @@ class _ChatState extends State<Chat> {
     return TextFormField(
       onTap: () {
         Future.delayed(Duration(milliseconds: 200), () {
-          _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 500), curve: Curves.ease);
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease);
         });
       },
       textCapitalization: TextCapitalization.sentences,
@@ -300,15 +317,21 @@ class _ChatState extends State<Chat> {
                       print('user1');
                     } else {
                       isUser1 = false;
-                        print('user2');
+                      print('user2');
                     }
                     ChatService()
-                        .sendMessage(isUser1: isUser1, chatModel: chat, chatID: widget.doc.id, image: _image)
+                        .sendMessage(
+                            isUser1: isUser1,
+                            chatModel: chat,
+                            chatID: widget.doc.id,
+                            image: _image)
                         .then((value) {
                       _image = null;
                       message.clear();
-                      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-                          duration: Duration(milliseconds: 500), curve: Curves.ease);
+                      _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.ease);
                       FocusScope.of(context).requestFocus(new FocusNode());
                     });
 

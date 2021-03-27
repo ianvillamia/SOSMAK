@@ -1,13 +1,9 @@
-import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/screens/auth_screens/login.dart';
-import 'package:SOSMAK/services/authentication_service.dart';
-import 'package:SOSMAK/services/errors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:SOSMAK/screens/auth_screens/signup2.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:dotted_border/dotted_border.dart';
 
 class Signup extends StatefulWidget {
   Signup({Key key}) : super(key: key);
@@ -16,17 +12,31 @@ class Signup extends StatefulWidget {
   _SignupState createState() => _SignupState();
 }
 
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
+}
+
 class _SignupState extends State<Signup> {
-  TextEditingController emailContoller = TextEditingController(),
+  TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController(),
       firstNameController = TextEditingController(),
       addressController = TextEditingController(),
-      lastNameController = TextEditingController();
+      lastNameController = TextEditingController(),
+      genderController = TextEditingController(),
+      birthdayController = TextEditingController(),
+      ageController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+
   Size size;
   final _formKey = GlobalKey<FormState>();
-  File _image;
+  File _imageProfile;
   final picker = ImagePicker();
   bool _isHidden = true;
+  List<String> gender = ['Male', 'Female'];
+  String selectedGender;
+  String age;
+  var selectedYear;
 
   void _toggleVisibility() {
     setState(() {
@@ -34,8 +44,66 @@ class _SignupState extends State<Signup> {
     });
   }
 
+  void _selectDate(BuildContext context) async {
+    DateTime newSelectedDate = await showDatePicker(
+        context: context,
+        initialDate: selectedDate != null ? selectedDate : DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2022),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.blue[800],
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Colors.blue[300],
+            ),
+            child: child,
+          );
+        });
+
+    if (newSelectedDate != null) {
+      selectedDate = newSelectedDate;
+      birthdayController
+        ..text = DateFormat.yMMMd().format(selectedDate)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: birthdayController.text.length, affinity: TextAffinity.upstream));
+      setState(() {
+        age = calculateAge(selectedDate).toString();
+      });
+    }
+  }
+
+  calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+    int month1 = currentDate.month;
+    int month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      int day1 = currentDate.day;
+      int day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    return age;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ageController.text = age;
+  }
+
   @override
   Widget build(BuildContext context) {
+    ageController.text = age;
     size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
@@ -47,15 +115,10 @@ class _SignupState extends State<Signup> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                SizedBox(height: 40),
                 Align(
                   alignment: Alignment.center,
-                  child: Container(
-                      width: size.width * .35,
-                      height: size.height * .25,
-                      child: Image.asset(
-                        'assets/sosmakLogo.png',
-                        fit: BoxFit.contain,
-                      )),
+                  child: createProfileImage(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
@@ -64,75 +127,71 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
-                _buildTextFormField(
-                    controller: firstNameController, label: 'First Name'),
-                _buildTextFormField(
-                    controller: lastNameController, label: 'Last Name'),
-                _buildTextFormField(
-                    controller: addressController,
-                    label: 'Address',
-                    maxLines: 2),
-                _buildTextFormField(
-                    caps: false, controller: emailContoller, label: 'Email'),
-                _buildPasswordField(
-                    controller: passwordController, label: 'Password'),
-                SizedBox(height: 15),
-                Center(
-                  child: DottedBorder(
-                    dashPattern: [9, 5],
-                    child: Container(
-                        height: size.height * .2,
-                        width: size.width * .8,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                        ),
-                        child: _image == null
-                            ? Center(
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    getImage();
-                                  },
-                                  child: Text('Upload Valid ID'),
-                                ),
-                              )
-                            : Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  Container(
-                                    height: size.height * .2,
-                                    width: size.width * .8,
-                                    child: Image.file(
-                                      _image,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  MaterialButton(
-                                    color: Color.fromRGBO(197, 213, 240, 0.5),
-                                    onPressed: () {
-                                      getImage();
-                                    },
-                                    child: Text('Upload Valid ID'),
-                                  ),
-                                ],
-                              )),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.5,
+                      child: _buildTextFormField(controller: firstNameController, label: 'First Name'),
+                    ),
+                    Container(
+                      width: size.width * 0.5,
+                      child: _buildTextFormField(controller: lastNameController, label: 'Last Name'),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 15),
+                _buildTextFormField(caps: false, controller: emailController, label: 'Email'),
+                _buildTextFormField(controller: addressController, label: 'Address', maxLines: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.5,
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                      child: TextFormField(
+                        focusNode: AlwaysDisabledFocusNode(),
+                        controller: birthdayController,
+                        onTap: () {
+                          _selectDate(context);
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please select your Birthday';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(10),
+                            alignLabelWithHint: true,
+                            labelText: 'Birthdate',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+                      ),
+                    ),
+                    Container(
+                      width: size.width * 0.5,
+                      child: _buildTextFormField(
+                        controller: ageController,
+                        label: 'Age',
+                      ),
+                    ),
+                  ],
+                ),
+                _dropDownButton(),
+                _buildPasswordField(controller: passwordController, label: 'Password'),
+                SizedBox(height: 10),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerRight,
                   child: Padding(
-                      padding: EdgeInsets.only(left: 35),
+                      padding: EdgeInsets.only(right: 15),
                       child: GestureDetector(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (_) {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) {
                               return Login();
                             }));
                           },
-                          child: Text(
-                              'Already Got an Account? Click here to login'))),
+                          child: Text('Already Got an Account? Click here to login'))),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -144,35 +203,40 @@ class _SignupState extends State<Signup> {
                       color: Colors.blueAccent,
                       textColor: Colors.white,
                       onPressed: () {
-                        //set user model
                         if (_formKey.currentState.validate()) {
-                          UserModel user = UserModel();
-                          user.firstName = firstNameController.text;
-                          user.lastName = lastNameController.text;
-                          user.email = emailContoller.text;
-                          user.address = addressController.text;
-                          user.role = 'citizen';
-                          //upload mo muna ?
-                          context
-                              .read<AuthenticationService>()
-                              .signUp(
-                                  file: _image,
-                                  email: emailContoller.text.trim(),
-                                  password: passwordController.text.trim(),
-                                  user: user)
-                              .then((value) {
-                            showNotApproveAlertDialog();
-                            if (value == true) {
-                              Navigator.of(context).pop();
-                            } else {
-                              showAlertDialog(value);
-                            }
-                          });
+                          if (_imageProfile != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignUpMedical(
+                                  fNameController: firstNameController,
+                                  lNameController: lastNameController,
+                                  emailContoller: emailController,
+                                  addressController: addressController,
+                                  bdayController: birthdayController,
+                                  ageController: ageController,
+                                  gender: selectedGender,
+                                  passwordController: passwordController,
+                                  imageProfile: _imageProfile,
+                                ),
+                              ),
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Something went wrong"),
+                                  content: Text("Please take a profile picture."),
+                                );
+                              },
+                            );
+                          }
                         }
 
                         //.signIn(email: email.text.trim(), password: password.text.trim());
                       },
-                      child: Text('Sign Up'),
+                      child: Text('Next'),
                     )
                   ],
                 ),
@@ -194,8 +258,7 @@ class _SignupState extends State<Signup> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: TextFormField(
-        textCapitalization:
-            caps ? TextCapitalization.words : TextCapitalization.none,
+        textCapitalization: caps ? TextCapitalization.words : TextCapitalization.none,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter a value';
@@ -209,25 +272,9 @@ class _SignupState extends State<Signup> {
             contentPadding: EdgeInsets.all(10),
             alignLabelWithHint: true,
             labelText: label,
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
       ),
     );
-  }
-
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-
-        debugPrint('hey');
-        print(_image);
-      } else {
-        print('No image selected.');
-      }
-    });
   }
 
   _buildPasswordField({TextEditingController controller, String label}) {
@@ -248,43 +295,106 @@ class _SignupState extends State<Signup> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
             suffixIcon: IconButton(
                 onPressed: _toggleVisibility,
-                icon: _isHidden
-                    ? Icon(Icons.visibility_off, size: 20)
-                    : Icon(Icons.visibility, size: 20))),
+                icon: _isHidden ? Icon(Icons.visibility_off, size: 20) : Icon(Icons.visibility, size: 20))),
       ),
     );
   }
 
-  showAlertDialog(FirebaseAuthException problem) {
-    print(problem.message);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Something went wrong"),
-          content: Text("${Errors.show(problem.code)}"),
-        );
-      },
+  _dropDownButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: Container(
+        width: size.width,
+        child: DropdownButtonFormField(
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(10),
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(30.0),
+              ),
+            ),
+            hintText: "Gender",
+          ),
+          validator: (value) {
+            if (value == null) {
+              return 'Please choose a gender';
+            }
+            return null;
+          },
+          value: selectedGender,
+          onChanged: (String gValue) {
+            setState(() {
+              selectedGender = gValue;
+            });
+          },
+          items: gender
+              .map(
+                (value) => DropdownMenuItem(
+                  value: value,
+                  child: Text("$value"),
+                ),
+              )
+              .toList(),
+        ),
+      ),
     );
   }
 
-  showNotApproveAlertDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Text("Successfully Created an Account!"),
-          actions: [
-            FlatButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
+  createProfileImage() {
+    return Stack(children: [
+      _imageProfile == null
+          ? CircleAvatar(
+              backgroundColor: Colors.black,
+              radius: 70,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70),
+                  child: Image.asset(
+                    'assets/citizen.png',
+                    fit: BoxFit.cover,
+                    width: 130,
+                    height: 130,
+                  )))
+          : ClipOval(
+              child: Container(
+                width: 150,
+                height: 150,
+                child: Image.file(
+                  _imageProfile,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ],
-        );
-      },
+      Positioned(
+        left: 100,
+        top: 100,
+        child: ClipOval(
+          child: Material(
+            color: Colors.grey[200],
+            child: InkWell(
+              child: SizedBox(width: 40, height: 40, child: Icon(Icons.photo_camera)),
+              onTap: () => getProfileImage(),
+            ),
+          ),
+        ),
+      )
+    ]);
+  }
+
+  Future getProfileImage() async {
+    final pickedFile = await picker.getImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
     );
+
+    setState(() {
+      if (pickedFile != null) {
+        _imageProfile = File(pickedFile.path);
+
+        debugPrint('hey');
+        print(_imageProfile);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 }

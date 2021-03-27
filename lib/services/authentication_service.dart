@@ -40,18 +40,26 @@ class AuthenticationService {
   }
 
   Future signUp(
-      {@required String email, @required String password, @required File file, @required UserModel user}) async {
+      {@required String email,
+      @required String password,
+      @required File fileID,
+      @required File fileProfile,
+      @required UserModel user}) async {
     try {
       var isSuccessful;
 
-      uploadFile(file).then((value) async {
-        String downUrl = await value.ref.getDownloadURL();
-        user.idURL = downUrl;
-        await _firebaseAuth
-            .createUserWithEmailAndPassword(email: email.trim(), password: password.trim())
-            .then((doc) async {
-          isSuccessful = true;
-          await _userService.addUserToCollection(user: user, uid: doc.user.uid);
+      uploadIDFile(fileID).then((idValue) async {
+        String downIDUrl = await idValue.ref.getDownloadURL();
+        user.idURL = downIDUrl;
+        uploadProfileFile(fileProfile).then((profileValue) async {
+          String downProfileUrl = await profileValue.ref.getDownloadURL();
+          user.profileUrl = downProfileUrl;
+          await _firebaseAuth
+              .createUserWithEmailAndPassword(email: email.trim(), password: password.trim())
+              .then((doc) async {
+            isSuccessful = true;
+            await _userService.addUserToCollection(user: user, uid: doc.user.uid);
+          });
         });
       });
 
@@ -62,12 +70,22 @@ class AuthenticationService {
     }
   }
 
-  Future uploadFile(File file) async {
+  Future uploadIDFile(File fileID) async {
     // File file = File(filePath);
     DateTime date = DateTime.now();
     String fileName = date.toString();
 
-    return await firebase_storage.FirebaseStorage.instance.ref('uploads/$fileName.png').putFile(file);
+    return await firebase_storage.FirebaseStorage.instance.ref('uploads/$fileName.png').putFile(fileID);
+  }
+
+  Future uploadProfileFile(File fileProfile) async {
+    // File file = File(filePath);
+    DateTime date = DateTime.now();
+    String fileName = date.toString();
+
+    return await firebase_storage.FirebaseStorage.instance
+        .ref('uploads/profileImages/$fileName.png')
+        .putFile(fileProfile);
   }
 
   Future<void> signOut({@required String uid}) async {

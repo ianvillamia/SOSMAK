@@ -24,8 +24,7 @@ class _ApproveAccountState extends State<ApproveAccount> {
         width: size.width,
         height: size.height,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: size.width * .05, vertical: size.height * .03),
+          padding: EdgeInsets.symmetric(horizontal: size.width * .05, vertical: size.height * .03),
           child: StreamBuilder<QuerySnapshot>(
             // future: AuthenticationService.getCurrentUser(firebaseUser.uid),
             stream: FirebaseFirestore.instance
@@ -84,22 +83,39 @@ class _ApproveAccountState extends State<ApproveAccount> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: const EdgeInsets.all(10),
           content: Container(
-            height: size.height * .4,
+            height: size.height * .6,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  height: size.height * .2,
-                  width: size.width,
-                  child: FadeInImage(
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: FadeInImage(
+                              fit: BoxFit.contain,
+                              placeholder: AssetImage('assets/id.jpg'),
+                              image: NetworkImage(user.idURL),
+                            ),
+                          );
+                        });
+                  },
+                  child: Container(
+                    height: size.height * .3,
+                    width: size.width,
+                    child: FadeInImage(
                       fit: BoxFit.contain,
-                      placeholder: AssetImage('assets/user.png'),
-                      image: NetworkImage(user.idURL)),
+                      placeholder: AssetImage('assets/id.jpg'),
+                      image: NetworkImage(user.idURL),
+                    ),
+                  ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 30,
                 ),
                 Align(
                     alignment: Alignment.centerLeft,
@@ -107,27 +123,46 @@ class _ApproveAccountState extends State<ApproveAccount> {
                       'Name: ' + user.firstName + " " + user.lastName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     )),
+                SizedBox(height: 10),
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Email:' + user.email,
+                      'Email: ' + user.email,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     )),
-                MaterialButton(
-                  elevation: 5,
-                  onPressed: () async {
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.ref)
-                        .update({'isApproved': true}).then((value) {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                    });
-                  },
-                  child: Text(
-                    'APPROVE',
-                    style: TextStyle(color: Colors.white),
+                SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'ID Type: ' + user.idType,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'ID Number: ' + user.idNumber,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: MaterialButton(
+                    elevation: 5,
+                    onPressed: () async {
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.ref)
+                          .update({'isApproved': true}).then((value) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                      });
+                    },
+                    child: Text(
+                      'APPROVE',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.blueAccent,
                   ),
-                  color: Colors.blueAccent,
                 )
               ],
             ),

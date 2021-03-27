@@ -11,6 +11,7 @@ class UserModel {
   String currentIncidentRef;
   String birthDate;
   String birthPlace;
+  String gender;
   String height, weight, age;
   String bloodType;
   String allergies;
@@ -19,7 +20,10 @@ class UserModel {
   bool isOnline = false;
   String imageUrl = '';
   bool isApproved = false;
+  String profileUrl = '';
   String idURL = '';
+  String idType = '';
+  String idNumber = '';
   String language = '';
   String religion = '';
   String otherMedicalCondition1 = '';
@@ -38,6 +42,7 @@ class UserModel {
       this.address = doc.data()['address'] ?? '';
       this.birthDate = doc.data()['birthDate'];
       this.birthPlace = doc.data()['birthPlace'] ?? '';
+      this.gender = doc.data()['gender'] ?? '';
       this.height = doc.data()['height'] ?? '';
       this.weight = doc.data()['weight'] ?? '';
       this.age = doc.data()['age'] ?? '';
@@ -51,19 +56,17 @@ class UserModel {
       this.isOnline = doc.data()['isOnline'] ?? isOnline;
       this.imageUrl = doc.data()['imageUrl'] ?? imageUrl;
       this.isApproved = doc.data()['isApproved'] ?? isApproved;
+      this.profileUrl = doc.data()['profileUrl'] ?? this.profileUrl;
       this.idURL = doc.data()['idURL'] ?? this.idURL;
+      this.idType = doc.data()['idType'] ?? this.idType;
+      this.idNumber = doc.data()['idNumber'] ?? this.idNumber;
       this.language = doc.data()['language'] ?? this.language;
       this.religion = doc.data()['religion'] ?? this.religion;
-      this.otherMedicalCondition1 =
-          doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
-      this.otherMedicalCondition2 =
-          doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
-      this.otherMedicalCondition3 =
-          doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
-      this.otherMedicalCondition4 =
-          doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
-      this.otherMedicalCondition5 =
-          doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
+      this.otherMedicalCondition1 = doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
+      this.otherMedicalCondition2 = doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
+      this.otherMedicalCondition3 = doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
+      this.otherMedicalCondition4 = doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
+      this.otherMedicalCondition5 = doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
     } catch (e) {}
   }
   UserModel();
@@ -76,6 +79,7 @@ class UserModel {
       'email': this.email,
       'birthDate': formatted,
       'birthPlace': this.birthPlace,
+      'gender': this.gender,
       'height': this.height,
       'weight': this.weight,
       'age': this.age,
@@ -86,7 +90,10 @@ class UserModel {
       'imageUrl':
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/icons8-user-male-256.png?alt=media&token=43904dc7-93c7-44f2-a6ad-59438f1759b5',
       'tempPassword': this.tempPassword,
+      'profileUrl': this.profileUrl,
       'idURL': this.idURL,
+      'idType': this.idType,
+      'idNumber': this.idNumber,
       'currentIncidentRef': '',
       'isOnline': this.isOnline,
       'isApproved': this.isApproved,
