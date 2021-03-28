@@ -111,10 +111,6 @@ class _ChatListState extends State<ChatList> {
                         color: Colors.grey,
                       ),
                     ),
-                    RedButton(
-                police: police,
-                currentUser: _currentUser,
-              ),
               SizedBox(
                 width: 20,
               ),
@@ -125,8 +121,10 @@ class _ChatListState extends State<ChatList> {
                 police.firstName + " " + police.lastName,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
-             
-              
+              RedButton(
+                police: police,
+                currentUser: _currentUser,
+              ),
             ],
           ),
         )),
@@ -194,20 +192,22 @@ class RedButton extends StatefulWidget {
 }
 
 class _RedButtonState extends State<RedButton> {
-  bool hasRead =false;
+  bool hasRead = false;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: checkChat(widget.police),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-       
         if (snapshot.hasData) {
           if (snapshot.data == true && hasRead == false) {
             return ClipOval(
               child: Container(
                 width: 20,
                 height: 20,
-                child: Icon(CupertinoIcons.bell_fill,color: Colors.red,),
+                child: Icon(
+                  CupertinoIcons.bell_fill,
+                  color: Colors.red,
+                ),
               ),
             );
           } else {
@@ -222,7 +222,12 @@ class _RedButtonState extends State<RedButton> {
 
   Future checkChat(UserModel police) async {
     bool hasNewMessage = false;
-    await ChatService().checkChat(user1: police.ref, user2: widget.currentUser.currentUser.ref,currentUser:widget.currentUser.currentUser.ref ).then((val) {
+    await ChatService()
+        .checkChat(
+            user1: police.ref,
+            user2: widget.currentUser.currentUser.ref,
+            currentUser: widget.currentUser.currentUser.ref)
+        .then((val) {
       if (val == true) {
         print('hotdog');
         hasNewMessage = true;
