@@ -156,24 +156,27 @@ class _HomeState extends State<Home> {
                     ),
                   );
                 } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        // setViews(),
-                        _buildTiles(),
-                        // _buildButtons();
-                        Align(
-                          alignment: Alignment.center,
-                          child: MaterialButton(
-                              color: Colors.redAccent,
-                              textColor: Colors.white,
-                              onPressed: () {
-                                context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
-                              },
-                              child: Text('Logout')),
-                        ),
-                      ],
+                  return Container(
+                    color: Color(0xFF93E9BE),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          // setViews(),
+                          _buildTiles(),
+                          // _buildButtons();
+                          Align(
+                            alignment: Alignment.center,
+                            child: MaterialButton(
+                                color: Colors.redAccent,
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
+                                },
+                                child: Text('Logout')),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -214,7 +217,7 @@ class _HomeState extends State<Home> {
             visible: isAdmin == true ? false : true,
             child: _buildTile(
                 color: Colors.white,
-                text: 'Profile',
+                text: 'My Profile',
                 widget: MedicalReport(),
                 isImageIcon: true,
                 image: 'assets/user1.png'),

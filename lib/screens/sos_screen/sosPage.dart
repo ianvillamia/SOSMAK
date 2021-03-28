@@ -19,6 +19,7 @@ class _SOSPageState extends State<SOSPage> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       body: Container(
         width: size.width,
         height: size.height,
@@ -57,39 +58,31 @@ class _SOSPageState extends State<SOSPage> {
           color: Colors.white,
           text: 'Police',
           image: 'assets/police-car.png',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PoliceNumbers())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PoliceNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Ambulance',
           image: 'assets/ambulance.png',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HospitalNumbers())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HospitalNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Fire Station',
           image: 'assets/fire-station.png',
-          onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FireNumbers())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FireNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Others',
           image: 'assets/more.png',
-          onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => OtherNumbers())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OtherNumbers())),
         ),
       ],
     );
   }
 
-  _buildTile(
-      {@required Color color,
-      @required String text,
-      @required String image,
-      @required onTap}) {
+  _buildTile({@required Color color, @required String text, @required String image, @required onTap}) {
     //     DocumentSnapshot doc,
     // EmergencyModel emergency = EmergencyModel.get(doc);
     // return StreamBuilder(

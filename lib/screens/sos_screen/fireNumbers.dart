@@ -16,6 +16,7 @@ class _FireNumbersState extends State<FireNumbers> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         title: Text(
           'Fire Emergency HOTLINE',
@@ -40,8 +41,7 @@ class _FireNumbersState extends State<FireNumbers> {
                   child: Container(
                     child: Text(
                       'TAP TO CALL',
-                      style:
-                          TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -53,8 +53,7 @@ class _FireNumbersState extends State<FireNumbers> {
                           .collection('emergencyNumbers')
                           .where('category', isEqualTo: 'fire')
                           .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {
                           return SingleChildScrollView(
                             child: Column(
@@ -85,15 +84,12 @@ class _FireNumbersState extends State<FireNumbers> {
           Card(
             elevation: 3,
             child: ListTile(
-              title: Text(emergency.name,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(emergency.subtitle, style: TextStyle(fontSize: 15)),
-                    Text(emergency.telNo, style: TextStyle(fontSize: 15)),
-                    Text(emergency.mobileNo, style: TextStyle(fontSize: 15))
-                  ]),
+              title: Text(emergency.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(emergency.subtitle, style: TextStyle(fontSize: 15)),
+                Text(emergency.telNo, style: TextStyle(fontSize: 15)),
+                Text(emergency.mobileNo, style: TextStyle(fontSize: 15))
+              ]),
               trailing: InkWell(
                 child: Icon(
                   Icons.call,

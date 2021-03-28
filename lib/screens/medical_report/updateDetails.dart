@@ -220,6 +220,7 @@ class _UpdateMedicalState extends State<UpdateMedical> {
 
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         title: Text('Update User Profile'),
         leading: IconButton(
@@ -256,6 +257,8 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                                 },
                                 onChanged: (String birthDay) => getBirthDay(birthDay),
                                 decoration: InputDecoration(
+                                  fillColor: Colors.white,
+                                  filled: true,
                                   labelText: 'Birthdate',
                                   labelStyle: TextStyle(color: Colors.black),
                                 )),

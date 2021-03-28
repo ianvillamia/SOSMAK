@@ -28,6 +28,7 @@ class _ChatHomeState extends State<ChatHome> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       // bottomNavigationBar: ChatBottomNavigationBar(
       //   pageController: pageController,
       // ),

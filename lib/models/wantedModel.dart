@@ -5,17 +5,21 @@ class Wanted {
   String alias;
   String reward;
   String criminalCaseNumber;
+  String description;
   String lastKnownAddress;
   String contactHotline;
   String imageUrl;
+  bool isHidden = false;
   Wanted.getData({DocumentSnapshot doc}) {
     this.name = doc.data()['name'];
     this.alias = doc.data()['alias'];
     this.reward = doc.data()['reward'];
     this.criminalCaseNumber = doc.data()['criminalCaseNumber'];
+    this.description = doc.data()['description'];
     this.lastKnownAddress = doc.data()['lastKnownAddress'];
     this.contactHotline = doc.data()['contactHotline'];
     this.imageUrl = doc.data()['imageUrl'];
+    this.isHidden = doc.data()['isHidden'] ?? isHidden;
   }
   Wanted();
   toMap() {
@@ -24,9 +28,11 @@ class Wanted {
       'alias': this.alias,
       'reward': this.reward,
       'criminalCaseNumber': this.criminalCaseNumber,
+      'description': this.description,
       'lastKnownAddress': this.lastKnownAddress,
       'contactHotline': this.contactHotline,
-      'imageUrl': this.imageUrl
+      'imageUrl': this.imageUrl,
+      'isHidden': this.isHidden
     };
   }
 }

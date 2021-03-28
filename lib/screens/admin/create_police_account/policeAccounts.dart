@@ -24,6 +24,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+        backgroundColor: Color(0xFF93E9BE),
         appBar: AppBar(
           title: Text('Police Accounts'),
         ),

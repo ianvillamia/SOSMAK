@@ -24,6 +24,7 @@ class _ChatListState extends State<ChatList> {
     _currentUser = Provider.of<UserDetailsProvider>(context, listen: false);
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(Icons.home),
@@ -97,18 +98,24 @@ class _ChatListState extends State<ChatList> {
           child: Row(
             children: [
               police.isOnline
-                  ? ClipOval(
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.green,
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ClipOval(
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.green,
+                        ),
                       ),
                     )
-                  : ClipOval(
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.grey,
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ClipOval(
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
               SizedBox(
@@ -116,6 +123,9 @@ class _ChatListState extends State<ChatList> {
               ),
               ClipOval(
                 child: Container(height: 80, width: 80, child: Image.network(police.imageUrl)),
+              ),
+              SizedBox(
+                width: 10,
               ),
               Text(
                 police.firstName + " " + police.lastName,

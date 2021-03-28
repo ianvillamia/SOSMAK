@@ -80,6 +80,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         title: Text('Create Police Account'),
       ),
@@ -102,20 +103,10 @@ class _CreateAccountState extends State<CreateAccount> {
                     onChanged: onChangeDropdownItem,
                   ),
                 ),
-                _buildTextFormField(
-                    controller: firstNameController,
-                    label: 'First Name',
-                    caps: true),
-                _buildTextFormField(
-                    controller: lastNameController,
-                    label: 'Last Name',
-                    caps: true),
-                _buildTextFormField(
-                    controller: emailController, label: 'Email', caps: false),
-                _buildTextFormField(
-                    controller: stationController,
-                    label: 'Station Assigned',
-                    caps: true),
+                _buildTextFormField(controller: firstNameController, label: 'First Name', caps: true),
+                _buildTextFormField(controller: lastNameController, label: 'Last Name', caps: true),
+                _buildTextFormField(controller: emailController, label: 'Email', caps: false),
+                _buildTextFormField(controller: stationController, label: 'Station Assigned', caps: true),
                 MaterialButton(
                     color: Colors.blueAccent,
                     textColor: Colors.white,
@@ -138,8 +129,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         )
                             .then((value) {
                           if (value == false) {
-                            showAlertDialog(context,
-                                message: 'Account Already Exists');
+                            showAlertDialog(context, message: 'Account Already Exists');
                           } else {
                             showAlertDialog(context,
                                 message: 'Hey',
@@ -147,19 +137,15 @@ class _CreateAccountState extends State<CreateAccount> {
                                   height: size.height * .2,
                                   child: Center(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           'Account Created',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         Text('Email:' + emailController.text),
-                                        Text('Temporary Password:' +
-                                            temporaryPassword),
+                                        Text('Temporary Password:' + temporaryPassword),
                                       ],
                                     ),
                                   ),
@@ -186,13 +172,11 @@ class _CreateAccountState extends State<CreateAccount> {
     _selectedIncident = null;
   }
 
-  _buildTextFormField(
-      {TextEditingController controller, String label, bool caps}) {
+  _buildTextFormField({TextEditingController controller, String label, bool caps}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: TextFormField(
-        textCapitalization:
-            caps ? TextCapitalization.words : TextCapitalization.none,
+        textCapitalization: caps ? TextCapitalization.words : TextCapitalization.none,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter some text';
@@ -200,17 +184,14 @@ class _CreateAccountState extends State<CreateAccount> {
           return null;
         },
         controller: controller,
-        decoration: InputDecoration(
-            labelText: label,
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+        decoration:
+            InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
       ),
     );
   }
 }
 
-showAlertDialog(BuildContext context,
-    {@required String message, Widget widget}) {
+showAlertDialog(BuildContext context, {@required String message, Widget widget}) {
   // show the dialog
   showDialog(
     context: context,

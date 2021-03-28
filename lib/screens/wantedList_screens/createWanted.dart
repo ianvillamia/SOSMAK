@@ -25,6 +25,7 @@ class _CreateWantedState extends State<CreateWanted> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         title: Text('New Wanted Person'),
@@ -58,11 +59,7 @@ class _CreateWantedState extends State<CreateWanted> {
                   label: 'Criminal Case Number',
                 ),
                 textFormFeld(
-                    width: size.width,
-                    controller: null,
-                    enable: false,
-                    label: 'Hotline',
-                    initialValue: '887-1798'),
+                    width: size.width, controller: null, enable: false, label: 'Hotline', initialValue: '887-1798'),
                 textFormFeld(
                   width: size.width,
                   controller: rewardController,
@@ -80,29 +77,21 @@ class _CreateWantedState extends State<CreateWanted> {
                         Wanted wanted = Wanted();
                         wanted.alias = aliasController.text;
                         wanted.contactHotline = '887-1798';
-                        wanted.criminalCaseNumber =
-                            criminalNumberController.text;
-                        wanted.lastKnownAddress =
-                            lastKnownAddressController.text;
+                        wanted.criminalCaseNumber = criminalNumberController.text;
+                        wanted.lastKnownAddress = lastKnownAddressController.text;
                         wanted.name = nameController.text;
                         wanted.reward = rewardController.text;
 
                         //service
-                        UserService()
-                            .addCriminalPoster(wanted: wanted, file: _image)
-                            .then((value) {
+                        UserService().addCriminalPoster(wanted: wanted, file: _image).then((value) {
                           //reset controllers
                           reset();
                           Navigator.pop(context);
                           if (value == true) {
-                            showAlertDialog(
-                                title: 'Success!',
-                                content: "Wanted Person Added.");
+                            showAlertDialog(title: 'Success!', content: "Wanted Person Added.");
                           } else {
                             //problem error
-                            showAlertDialog(
-                                title: 'Error',
-                                content: "Please check your input.");
+                            showAlertDialog(title: 'Error', content: "Please check your input.");
                           }
                         });
                       }
@@ -207,8 +196,7 @@ class _CreateWantedState extends State<CreateWanted> {
           child: Material(
             color: Colors.grey[200],
             child: InkWell(
-              child: SizedBox(
-                  width: 40, height: 40, child: Icon(Icons.photo_camera)),
+              child: SizedBox(width: 40, height: 40, child: Icon(Icons.photo_camera)),
               onTap: () => getImage(),
             ),
           ),

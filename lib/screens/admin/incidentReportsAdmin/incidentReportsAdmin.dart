@@ -18,6 +18,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Incident Report Admin'),
@@ -41,10 +42,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
 
   _buildStream({@required int status, @required String title}) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('incidentReports')
-            .where('status', isEqualTo: status)
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('incidentReports').where('status', isEqualTo: status).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data.docs.length != 0) {
@@ -57,8 +55,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                       children: [
                         Text(
                           title,
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         Container(
                           width: size.width * .95,
@@ -66,10 +63,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                           child: ListView(
                               addAutomaticKeepAlives: true,
                               scrollDirection: Axis.horizontal,
-                              children: snapshot.data.docs
-                                  .map<Widget>(
-                                      (doc) => _buildCard(doc, context))
-                                  .toList()),
+                              children: snapshot.data.docs.map<Widget>((doc) => _buildCard(doc, context)).toList()),
                         ),
                       ],
                     ),
@@ -86,8 +80,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                       children: [
                         Text(
                           title,
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         Container(
                             width: size.width * .95,
@@ -117,8 +110,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
               isScrollControlled: true,
               context: context,
               builder: (context) => Container(
-                  height: MediaQuery.of(context).size.height * 0.95,
-                  child: _buildBottomSheet(doc, context, incident)));
+                  height: MediaQuery.of(context).size.height * 0.95, child: _buildBottomSheet(doc, context, incident)));
         },
         child: Container(
           padding: EdgeInsets.all(8),
@@ -139,8 +131,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
     );
   }
 
-  _buildBottomSheet(
-      DocumentSnapshot doc, BuildContext context, IncidentModel incident) {
+  _buildBottomSheet(DocumentSnapshot doc, BuildContext context, IncidentModel incident) {
     return IncidentReportBottomSheet(
       doc: doc,
       incident: incident,

@@ -30,7 +30,8 @@ class _MedicalReportState extends State<MedicalReport> {
 
     size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      drawerScrimColor: Color(0xFF93E9BE),
+      backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         title: Text('My Profile'),
         leading: IconButton(

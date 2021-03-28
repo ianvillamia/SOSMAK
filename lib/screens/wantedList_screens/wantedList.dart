@@ -20,6 +20,7 @@ class _WantedListState extends State<WantedList> {
   Size size;
   UserDetailsProvider currentUser;
   bool isAdmin = false;
+  bool isHidden = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -36,6 +37,7 @@ class _WantedListState extends State<WantedList> {
     size = MediaQuery.of(context).size;
     print(currentUser.currentUser.role);
     return Scaffold(
+        backgroundColor: Color(0xFF93E9BE),
         floatingActionButton: Visibility(
           visible: isAdmin,
           child: FloatingActionButton(
@@ -60,20 +62,15 @@ class _WantedListState extends State<WantedList> {
           ),
         ),
         body: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('wantedList').snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            stream: FirebaseFirestore.instance.collection('wantedList').where('isHidden', isEqualTo: false).snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 25),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: SingleChildScrollView(
-                      child: Wrap(
-                          children: snapshot.data.docs
-                              .map<Widget>((doc) => _wantedCard(doc))
-                              .toList()),
+                      child: Wrap(children: snapshot.data.docs.map<Widget>((doc) => _wantedCard(doc)).toList()),
                     ),
                   ),
                 );
@@ -111,7 +108,7 @@ class _WantedListState extends State<WantedList> {
         ),
         Visibility(
           visible: widget.isAdmin,
-                  child: Positioned(
+          child: Positioned(
               top: 0,
               right: 0,
               child: ClipOval(
@@ -128,7 +125,8 @@ class _WantedListState extends State<WantedList> {
                           color: Colors.white,
                         )),
                     onTap: () {
-                      UserService().deleteWanted(doc);
+                      isHidden = true;
+                      UserService().deleteWanted(doc, isHidden);
                     },
                   ),
                 ),
@@ -205,11 +203,9 @@ class _WantedPosterState extends State<WantedPoster> {
           children: [
             Text(
               'WANTED',
-              style: TextStyle(
-                  color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            Container(
-                height: 150, child: Image.network(widget.wanted.imageUrl)),
+            Container(height: 150, child: Image.network(widget.wanted.imageUrl)),
             Text(
               'Reward:' + widget.wanted.reward,
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
@@ -227,6 +223,7 @@ class _WantedPosterState extends State<WantedPoster> {
       );
     } else {
       return Container(
+        color: Colors.blue,
         child: Stack(
           children: [
             Align(
@@ -249,10 +246,7 @@ class _WantedPosterState extends State<WantedPoster> {
                   ),
                   Text(
                     'WANTED',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Image.network(
                     widget.wanted.imageUrl,
@@ -296,15 +290,18 @@ class _WantedPosterState extends State<WantedPoster> {
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                  width: 70,
-                  height: 70,
-                  child: Image.asset(
-                    'assets/pnp-logo.png',
-                    fit: BoxFit.contain,
-                  )),
+            Positioned(
+              left: -15,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Container(
+                    width: 70,
+                    height: 70,
+                    child: Image.asset(
+                      'assets/pnp-logo.png',
+                      fit: BoxFit.contain,
+                    )),
+              ),
             ),
           ],
         ),
