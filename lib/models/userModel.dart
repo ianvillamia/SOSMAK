@@ -32,6 +32,7 @@ class UserModel {
   String otherMedicalCondition3 = '';
   String otherMedicalCondition4 = '';
   String otherMedicalCondition5 = '';
+  bool isArchived = false;
 
   String tempPassword;
   final DateTime now = DateTime.now();
@@ -69,6 +70,7 @@ class UserModel {
       this.otherMedicalCondition3 = doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
       this.otherMedicalCondition4 = doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
       this.otherMedicalCondition5 = doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
+      this.isArchived = doc.data()['isArchived'] ?? this.isArchived;
     } catch (e) {}
   }
   UserModel();
@@ -101,7 +103,8 @@ class UserModel {
       'isApproved': this.isApproved,
       'language': this.language,
       'religion': this.religion,
-      'contactPerson': this.contactPerson
+      'contactPerson': this.contactPerson,
+      'isArchived': this.isArchived
     };
   }
 }

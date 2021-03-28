@@ -29,8 +29,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateAccount()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccount()));
           },
           child: Icon(Icons.add),
         ),
@@ -41,9 +40,9 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                 stream: FirebaseFirestore.instance
                     .collection('users')
                     .where('role', isEqualTo: 'police')
+                    .where('isArchived', isEqualTo: false)
                     .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data.size > 0) {
                       return Padding(
@@ -51,10 +50,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: SingleChildScrollView(
-                            child: Column(
-                                children: snapshot.data.docs
-                                    .map<Widget>((doc) => _userCards(doc))
-                                    .toList()),
+                            child: Column(children: snapshot.data.docs.map<Widget>((doc) => _userCards(doc)).toList()),
                           ),
                         ),
                       );
@@ -98,12 +94,6 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
   }
 
   showAlertDialog(Police police, DocumentSnapshot doc) {
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
     AlertDialog alert = AlertDialog(
       title: Image.network(police.imageUrl, width: 100, height: 100),
       content: Container(
@@ -113,11 +103,9 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                buildInfo('Name: ', '${police.firstName}, ${police.lastName}',
-                    false, doc),
+                buildInfo('Name: ', '${police.firstName}, ${police.lastName}', false, doc),
                 buildInfo('Email: ', police.email, false, doc),
-                buildInfo(
-                    'Temporary Password: ', police.tempPassword, false, doc),
+                buildInfo('Temporary Password: ', police.tempPassword, false, doc),
                 buildInfo('Age: ', police.age, false, doc),
                 buildInfo('Birthday: ', police.birthDate, false, doc),
                 buildInfo('BirthPlace: ', police.birthPlace, false, doc),
@@ -132,7 +120,23 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
         ),
       ),
       actions: [
-        okButton,
+        FlatButton(
+          color: Colors.redAccent,
+          child: Text("Delete"),
+          onPressed: () async {
+            //update izArchived == true
+            print(police.ref);
+            confirmDelete(context, police);
+            //show dialog ~
+          },
+        ),
+        FlatButton(
+          color: Colors.blue,
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ],
     );
     showDialog(
@@ -143,18 +147,81 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     );
   }
 
-  buildInfo(
-      String name, String medicalInfo, bool spaces, DocumentSnapshot doc) {
+  buildInfo(String name, String medicalInfo, bool spaces, DocumentSnapshot doc) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
-        mainAxisAlignment:
-            spaces ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
-        children: [
-          Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(medicalInfo)
-        ],
+        mainAxisAlignment: spaces ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+        children: [Text(name, style: TextStyle(fontWeight: FontWeight.bold)), Text(medicalInfo)],
       ),
+    );
+  }
+
+  confirmDelete(BuildContext context, Police police) {
+    // set up the button
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Are You sure you want to delete this Police account?"),
+      //content: Text(""),
+      actions: [
+        FlatButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          color: Colors.red,
+          child: Text("Delete"),
+          onPressed: () async {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(police.ref)
+                .update({'isArchived': true}).then((value) {
+              //show delete success
+              Navigator.pop(context);
+              Navigator.pop(context);
+              deleteSuccess(context);
+            });
+          },
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  deleteSuccess(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Police successfully deleted"),
+      // content: Text("This is my message."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
