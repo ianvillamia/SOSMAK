@@ -15,20 +15,38 @@ class _CreateWantedState extends State<CreateWanted> {
       aliasController = TextEditingController(),
       contactController = TextEditingController(),
       criminalNumberController = TextEditingController(),
+      descriptionController = TextEditingController(),
       rewardController = TextEditingController();
   File _image;
   final picker = ImagePicker();
   Size size;
   final _formKey = GlobalKey<FormState>();
+  bool isHidden = false;
+  List<String> levels = ['High Level Crime', 'Low Level Crime'];
+  String selectedLevel;
+  int crimeLevel;
+
+  @override
+  void initState() {
+    super.initState();
+    contactController.text = '0927 505 1518';
+  }
 
   @override
   Widget build(BuildContext context) {
+    contactController.text = '0927 505 1518';
     size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         title: Text('New Wanted Person'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info, size: 30),
+            onPressed: () => showReminderDialog(),
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
@@ -50,16 +68,21 @@ class _CreateWantedState extends State<CreateWanted> {
                 ),
                 textFormFeld(
                   width: size.width,
-                  controller: lastKnownAddressController,
-                  label: 'Last Known Address',
-                ),
-                textFormFeld(
-                  width: size.width,
                   controller: criminalNumberController,
                   label: 'Criminal Case Number',
                 ),
+                _dropDownButton(),
                 textFormFeld(
-                    width: size.width, controller: null, enable: false, label: 'Hotline', initialValue: '887-1798'),
+                  width: size.width,
+                  controller: descriptionController,
+                  label: 'Description',
+                ),
+                textFormFeld(
+                  width: size.width,
+                  controller: lastKnownAddressController,
+                  label: 'Last Known Address',
+                ),
+                textFormFeld(width: size.width, controller: contactController, enable: false, label: 'Hotline'),
                 textFormFeld(
                   width: size.width,
                   controller: rewardController,
@@ -74,26 +97,35 @@ class _CreateWantedState extends State<CreateWanted> {
                     onPressed: () {
                       //validate!
                       if (_formKey.currentState.validate()) {
-                        Wanted wanted = Wanted();
-                        wanted.alias = aliasController.text;
-                        wanted.contactHotline = '887-1798';
-                        wanted.criminalCaseNumber = criminalNumberController.text;
-                        wanted.lastKnownAddress = lastKnownAddressController.text;
-                        wanted.name = nameController.text;
-                        wanted.reward = rewardController.text;
+                        if (_image != null) {
+                          Wanted wanted = Wanted();
+                          print(aliasController.text);
+                          wanted.name = nameController.text;
+                          wanted.alias = aliasController.text;
+                          wanted.criminalCaseNumber = criminalNumberController.text;
+                          wanted.description = descriptionController.text;
+                          wanted.lastKnownAddress = lastKnownAddressController.text;
+                          wanted.contactHotline = contactController.text;
+                          wanted.crimeLevel = crimeLevel;
+                          wanted.reward = rewardController.text;
+                          wanted.isHidden = isHidden;
 
-                        //service
-                        UserService().addCriminalPoster(wanted: wanted, file: _image).then((value) {
-                          //reset controllers
-                          reset();
-                          Navigator.pop(context);
-                          if (value == true) {
-                            showAlertDialog(title: 'Success!', content: "Wanted Person Added.");
-                          } else {
-                            //problem error
-                            showAlertDialog(title: 'Error', content: "Please check your input.");
-                          }
-                        });
+                          //service
+                          UserService().addCriminalPoster(wanted: wanted, file: _image).then((value) {
+                            //reset controllers
+                            reset();
+                            if (value == null) {
+                              Navigator.pop(context);
+                              showAlertDialog(title: 'Success!', content: "Wanted Person Added.");
+                            } else {
+                              //problem error
+                              showAlertDialog(title: 'Error', content: "Please check your input.");
+                            }
+                          });
+                        } else {
+                          //problem error
+                          showAlertDialog(title: 'Error', content: "Please add a Wanted Image.");
+                        }
                       }
                     })
               ],
@@ -125,10 +157,51 @@ class _CreateWantedState extends State<CreateWanted> {
     );
   }
 
+  showReminderDialog() {
+    AlertDialog alert = AlertDialog(
+        contentPadding: EdgeInsets.all(12),
+        title: Text('Note', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+        content: Container(
+          width: size.width,
+          height: size.height * .6,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                Text('High Level Crimes', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                      '•	Rape\n•	Murder\n•	Terrorism\n•	Robbery\n•	Any Crime Abuse\n•	Cyber Crime\n•	High Class – Drug Lord\n•	Sexual Harassment\n•	Fraud\n•	Kidnapping'),
+                ),
+                SizedBox(height: 20),
+                Text('Low Level Crimes', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                      '•	Snatching\n•	Brawl\n•	Assault\n•	Low Class-Drug Users and Sellers\n•	Shoplifting\n•	Violent Crime\n•	Burglary'),
+                ),
+              ],
+            ),
+          ),
+        ));
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   reset() {
     nameController.text = '';
     lastKnownAddressController.text = '';
     aliasController.text = '';
+    descriptionController.text = '';
     contactController.text = '';
     criminalNumberController.text = '';
     rewardController.text = '';
@@ -138,14 +211,12 @@ class _CreateWantedState extends State<CreateWanted> {
       {@required TextEditingController controller,
       @required String label,
       @required width,
-      String initialValue,
       int maxLines,
       bool enable}) {
     return Container(
       width: width,
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: TextFormField(
-        initialValue: initialValue,
         textCapitalization: TextCapitalization.words,
         enabled: enable,
         maxLines: maxLines ?? 1,
@@ -161,6 +232,47 @@ class _CreateWantedState extends State<CreateWanted> {
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.all(8),
             labelText: label),
+      ),
+    );
+  }
+
+  _dropDownButton() {
+    return Container(
+      width: size.width,
+      padding: EdgeInsets.only(top: 8, bottom: 8),
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(10),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1),
+          ),
+          hintText: "Crime Level",
+        ),
+        validator: (value) {
+          if (value == null) {
+            return 'Please choose a crime level';
+          }
+          return null;
+        },
+        value: selectedLevel,
+        onChanged: (String gValue) {
+          setState(() {
+            selectedLevel = gValue;
+            if (selectedLevel == 'High Level Crime') {
+              crimeLevel = 1;
+            } else if (selectedLevel == 'Low Level Crime') {
+              crimeLevel = 2;
+            }
+          });
+        },
+        items: levels
+            .map(
+              (value) => DropdownMenuItem(
+                value: value,
+                child: Text("$value"),
+              ),
+            )
+            .toList(),
       ),
     );
   }

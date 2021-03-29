@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
+import 'package:SOSMAK/screens/wantedList_screens/hiddenWantedList.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -60,31 +61,117 @@ class _WantedListState extends State<WantedList> {
               Navigator.pop(context);
             },
           ),
+          actions: [
+            widget.isAdmin
+                ? IconButton(
+                    icon: Icon(Icons.visibility_off_outlined, size: 30),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HiddenWantedList()),
+                    ),
+                  )
+                : IconButton(
+                    icon: Icon(Icons.info, size: 30),
+                    onPressed: () => showReminderDialog(),
+                  ),
+          ],
         ),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('wantedList').where('isHidden', isEqualTo: false).snapshots(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasData) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 25),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SingleChildScrollView(
-                      child: Wrap(children: snapshot.data.docs.map<Widget>((doc) => _wantedCard(doc)).toList()),
+        body: Column(
+          children: [
+            _buildWantedStream(level: 1, title: 'HIGH PROFILE WANTED'),
+            _buildWantedStream(level: 2, title: 'LOW PROFILE WANTED')
+            // StreamBuilder<QuerySnapshot>(
+            //     stream:
+            //         FirebaseFirestore.instance.collection('wantedList').where('isHidden', isEqualTo: false).snapshots(),
+            //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            //       if (snapshot.hasData) {
+            //         return Padding(
+            //           padding: EdgeInsets.symmetric(vertical: 25),
+            //           child: Align(
+            //             alignment: Alignment.topCenter,
+            //             child: ListView(
+            //               addAutomaticKeepAlives: true,
+            //               scrollDirection: Axis.horizontal,
+            //               children: snapshot.data.docs.map<Widget>((doc) => _wantedCard(doc)).toList(),
+            //             ),
+            //           ),
+            //         );
+            //       }
+
+            //       return Center(
+            //         child: CircularProgressIndicator(),
+            //       );
+            //     }),
+          ],
+        ));
+  }
+
+  _buildWantedStream({@required int level, @required String title}) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('wantedList')
+            .where('isHidden', isEqualTo: false)
+            .where('crimeLevel', isEqualTo: level)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data.docs.length != 0) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          width: size.width * .95,
+                          height: size.height * .2,
+                          child: ListView(
+                              addAutomaticKeepAlives: true,
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data.docs.map<Widget>((doc) => _wantedCard(doc)).toList()),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              }
-
-              return Center(
-                child: CircularProgressIndicator(),
+                ),
               );
-            }));
+            } else {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                            width: size.width * .95,
+                            height: size.height * .2,
+                            child: Text("There's no $title Incident")),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 
   _wantedCard(doc) {
     Wanted wanted = Wanted.getData(doc: doc);
-
     return Stack(
       children: [
         Card(
@@ -137,9 +224,6 @@ class _WantedListState extends State<WantedList> {
   }
 
   showAlertDialog(BuildContext context, {@required Wanted wanted}) {
-    // set up the button
-
-    // set up the AlertDialog
     AlertDialog alert = AlertDialog(
         contentPadding: EdgeInsets.all(12),
         content: Container(
@@ -181,6 +265,46 @@ class _WantedListState extends State<WantedList> {
       throw 'Could not launch $url';
     }
   }
+
+  showReminderDialog() {
+    AlertDialog alert = AlertDialog(
+        contentPadding: EdgeInsets.all(12),
+        title: Text('Note', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+        content: Container(
+          width: size.width,
+          height: size.height * .6,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                Text('High Level Crimes', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                      '•	Rape\n•	Murder\n•	Terrorism\n•	Robbery\n•	Any Crime Abuse\n•	Cyber Crime\n•	High Class – Drug Lord\n•	Sexual Harassment\n•	Fraud\n•	Kidnapping'),
+                ),
+                SizedBox(height: 20),
+                Text('Low Level Crimes', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                      '•	Snatching\n•	Brawl\n•	Assault\n•	Low Class-Drug Users and Sellers\n•	Shoplifting\n•	Violent Crime\n•	Burglary'),
+                ),
+              ],
+            ),
+          ),
+        ));
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }
 
 class WantedPoster extends StatefulWidget {
@@ -201,29 +325,32 @@ class _WantedPosterState extends State<WantedPoster> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'WANTED',
-              style: TextStyle(color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
+            // Text(
+            //   'WANTED',
+            //   style: TextStyle(color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
+            // ),
+            Container(
+              height: 150,
+              padding: const EdgeInsets.all(10),
+              child: Image.network(widget.wanted.imageUrl),
             ),
-            Container(height: 150, child: Image.network(widget.wanted.imageUrl)),
-            Text(
-              'Reward:' + widget.wanted.reward,
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: Text(
-                widget.wanted.name,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            )
+            // Text(
+            //   'Reward:' + widget.wanted.reward,
+            //   style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.all(3.0),
+            //   child: Text(
+            //     widget.wanted.name,
+            //     textAlign: TextAlign.center,
+            //     overflow: TextOverflow.ellipsis,
+            //   ),
+            // )
           ],
         ),
       );
     } else {
       return Container(
-        color: Colors.blue,
         child: Stack(
           children: [
             Align(
@@ -254,21 +381,27 @@ class _WantedPosterState extends State<WantedPoster> {
                     height: 220,
                   ),
                   Text(
-                    widget.wanted.name,
-                    style: customTextStyle(17.0),
-                  ),
-                  Text(
-                    'AKA:' + widget.wanted.alias,
-                    style: customTextStyle(17.0),
-                  ),
-                  Text(
-                    "REWARD:" + widget.wanted.reward,
+                    'DEAD OR ALIVE',
                     style: TextStyle(
-                      color: Colors.red,
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
                     ),
                   ),
+                  SizedBox(height: 15),
+                  Text(
+                    'Name',
+                    style: customTextStyle(10.0),
+                  ),
+                  Text(
+                    widget.wanted.name,
+                    style: customTextStyle(17.0),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'AKA: ' + '"' + widget.wanted.alias + '"',
+                    style: customTextStyle(17.0),
+                  ),
+                  SizedBox(height: 10),
                   Text(
                     'Criminal Case Number',
                     style: customTextStyle(10.0),
@@ -276,16 +409,30 @@ class _WantedPosterState extends State<WantedPoster> {
                   Text(
                     widget.wanted.criminalCaseNumber,
                     textAlign: TextAlign.center,
-                    style: customTextStyle(10.0),
+                    style: customTextStyle(15.0),
                   ),
+                  SizedBox(height: 10),
                   Text(
                     'Last Known Address',
-                    style: customTextStyle(12.0),
+                    style: customTextStyle(10.0),
                   ),
                   Text(
                     widget.wanted.lastKnownAddress,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: customTextStyle(15.0),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Reward ",
+                    style: customTextStyle(10.0),
+                  ),
+                  Text(
+                    widget.wanted.reward,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
                   ),
                 ],
               ),

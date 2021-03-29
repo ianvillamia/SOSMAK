@@ -8,6 +8,7 @@ class Wanted {
   String description;
   String lastKnownAddress;
   String contactHotline;
+  int crimeLevel;
   String imageUrl;
   bool isHidden = false;
   Wanted.getData({DocumentSnapshot doc}) {
@@ -18,6 +19,7 @@ class Wanted {
     this.description = doc.data()['description'];
     this.lastKnownAddress = doc.data()['lastKnownAddress'];
     this.contactHotline = doc.data()['contactHotline'];
+    this.crimeLevel = doc.data()['crimeLevel'];
     this.imageUrl = doc.data()['imageUrl'];
     this.isHidden = doc.data()['isHidden'] ?? isHidden;
   }
@@ -31,6 +33,7 @@ class Wanted {
       'description': this.description,
       'lastKnownAddress': this.lastKnownAddress,
       'contactHotline': this.contactHotline,
+      'crimeLevel': this.crimeLevel,
       'imageUrl': this.imageUrl,
       'isHidden': this.isHidden
     };
