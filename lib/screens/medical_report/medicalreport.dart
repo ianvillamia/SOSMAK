@@ -1,3 +1,4 @@
+import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/medical_report/updateDetails.dart';
@@ -23,7 +24,7 @@ class _MedicalReportState extends State<MedicalReport> {
   Size size;
 
   UserDetailsProvider userDetailsProvider;
-
+  UserModel user;
   @override
   Widget build(BuildContext context) {
     userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
@@ -40,6 +41,21 @@ class _MedicalReportState extends State<MedicalReport> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          RaisedButton(
+              color: Colors.blue[400],
+              child: Text('Edit', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UpdateMedical(
+                      user: user,
+                    ),
+                  ),
+                );
+              })
+        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance.collection('users').doc(userDetailsProvider.currentUser.ref).snapshots(),
@@ -60,8 +76,8 @@ class _MedicalReportState extends State<MedicalReport> {
   }
 
   _buildMedicalReport(DocumentSnapshot doc) {
-    UserModel user = UserModel.get(doc);
-
+    user = UserModel.get(doc);
+    Police police = Police.get(doc: doc);
     return Container(
       width: size.width,
       height: size.height,
@@ -69,23 +85,55 @@ class _MedicalReportState extends State<MedicalReport> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildRowText(
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: (user.role == 'police')
+                  ? ClipOval(
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Image.network(
+                          user.profileUrl,
+                          fit: BoxFit.cover,
+                          width: 130,
+                          height: 130,
+                        ),
+                      ),
+                    )
+                  : ClipOval(
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Image.network(
+                          user.profileUrl,
+                          fit: BoxFit.cover,
+                          width: 130,
+                          height: 130,
+                        ),
+                      ),
+                    ),
+            ),
+            _buildNormalText(
               title: 'Name: ',
               data: '${user.firstName} ${user.lastName}',
-              title2: 'Birthday: ',
-              data2: user.birthDate,
+            ),
+            _buildNormalText(
+              title: 'Gender: ',
+              data: user.gender,
             ),
             _buildRowText(
-              title: 'Language: ',
-              data: user.language,
-              title2: 'Birthplace: ',
-              data2: user.birthPlace,
-            ),
-            _buildRowText(
-              title: 'Religion: ',
-              data: user.religion,
+              title: 'Birthday: ',
+              data: user.birthDate,
               title2: 'Age: ',
               data2: user.age,
+            ),
+            _buildNormalText(
+              title: 'Contact No.: ',
+              data: user.contactNo,
+            ),
+            _buildNormalText(
+              title: 'Address: ',
+              data: user.address,
             ),
             _buildRowText(
               title: 'Height: ',
@@ -96,36 +144,21 @@ class _MedicalReportState extends State<MedicalReport> {
             _buildRowText(
               title: 'BloodType: ',
               data: user.bloodType,
-              title2: 'Gender: ',
-              data2: user.gender,
+              title2: 'Allergies: ',
+              data2: user.allergies,
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Allergies: ',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(user.allergies, style: TextStyle(fontSize: 18) ?? 'data'),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Contact Person: ',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(user.contactPerson, style: TextStyle(fontSize: 18) ?? 'data'),
-                    ],
-                  ),
-                ),
-              ],
+            SizedBox(height: 10),
+            _buildNormalText(
+              title: 'Emergency Contact: ',
+              data: '',
+            ),
+            _buildNormalText(
+              title: 'Name: ',
+              data: user.contactPerson,
+            ),
+            _buildNormalText(
+              title: 'Contact No.: ',
+              data: user.emergencyContact,
             ),
             SizedBox(height: 10),
             (user.otherMedicalCondition1.isEmpty &&
@@ -144,48 +177,48 @@ class _MedicalReportState extends State<MedicalReport> {
             SizedBox(height: 5),
             (user.otherMedicalCondition1.isEmpty)
                 ? Container()
-                : _buildNormalText(
+                : _buildMedicalText(
                     icon: Icons.keyboard_arrow_right,
                     data: user.otherMedicalCondition1,
                   ),
             (user.otherMedicalCondition2.isEmpty)
                 ? Container()
-                : _buildNormalText(
+                : _buildMedicalText(
                     icon: Icons.keyboard_arrow_right,
                     data: user.otherMedicalCondition2,
                   ),
             (user.otherMedicalCondition3.isEmpty)
                 ? Container()
-                : _buildNormalText(
+                : _buildMedicalText(
                     icon: Icons.keyboard_arrow_right,
                     data: user.otherMedicalCondition3,
                   ),
             (user.otherMedicalCondition4.isEmpty)
                 ? Container()
-                : _buildNormalText(
+                : _buildMedicalText(
                     icon: Icons.keyboard_arrow_right,
                     data: user.otherMedicalCondition4,
                   ),
             (user.otherMedicalCondition5.isEmpty)
                 ? Container()
-                : _buildNormalText(
+                : _buildMedicalText(
                     icon: Icons.keyboard_arrow_right,
                     data: user.otherMedicalCondition5,
                   ),
             SizedBox(height: size.height * 0.05),
-            RaisedButton(
-                color: Colors.blue[400],
-                child: Text('Update', style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UpdateMedical(
-                        user: user,
-                      ),
-                    ),
-                  );
-                })
+            // RaisedButton(
+            //     color: Colors.blue[400],
+            //     child: Text('Update', style: TextStyle(color: Colors.white)),
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => UpdateMedical(
+            //             user: user,
+            //           ),
+            //         ),
+            //       );
+            //     })
           ],
         ),
       ),
@@ -232,7 +265,22 @@ class _MedicalReportState extends State<MedicalReport> {
     );
   }
 
-  _buildNormalText({@required IconData icon, String data}) {
+  _buildNormalText({@required String title, String data}) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
+        ],
+      ),
+    );
+  }
+
+  _buildMedicalText({@required IconData icon, String data}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(

@@ -1,25 +1,14 @@
 import 'package:SOSMAK/models/police.dart';
-import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
-import 'package:SOSMAK/screens/admin/create_police_account/suspendedPolice.dart';
 import 'package:SOSMAK/services/rankImages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 
-class CreatePoliceAccount extends StatefulWidget {
-  CreatePoliceAccount({Key key}) : super(key: key);
-
+class SuspendedPolice extends StatefulWidget {
   @override
-  _CreatePoliceAccountState createState() => _CreatePoliceAccountState();
+  _SuspendedPoliceState createState() => _SuspendedPoliceState();
 }
 
-class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
-  bool isAdmin;
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _SuspendedPoliceState extends State<SuspendedPolice> {
   Size size;
   @override
   Widget build(BuildContext context) {
@@ -27,34 +16,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
-        title: Text('Police Accounts'),
-        leading: IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          FlatButton(
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SuspendedPolice(),
-                )),
-            child: Text(
-              'Suspended',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccount()));
-        },
-        child: Icon(Icons.add),
+        title: Text('Suspended Police'),
       ),
       body: Container(
         width: size.width,
@@ -63,7 +25,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
             stream: FirebaseFirestore.instance
                 .collection('users')
                 .where('role', isEqualTo: 'police')
-                .where('isArchived', isEqualTo: false)
+                .where('isArchived', isEqualTo: true)
                 .snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
@@ -78,7 +40,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                     ),
                   );
                 } else {
-                  return Center(child: Text('No Police Registered yet'));
+                  return Center(child: Text('No Police Suspended yet'));
                 }
               }
 
@@ -98,16 +60,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           elevation: 2,
           child: ListTile(
             contentPadding: const EdgeInsets.all(8.0),
-            leading: ClipOval(
-              child: Container(
-                width: 60,
-                height: 60,
-                child: Image.network(
-                  police.profileUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            leading: Image.network(police.imageUrl),
             title: Text("${police.firstName}, ${police.lastName}"),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,14 +108,14 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
       ),
       actions: [
         FlatButton(
-          color: Colors.redAccent,
-          child: Text("Suspend"),
+          color: Colors.green,
+          child: Text("Unsuspend"),
           onPressed: () async {
             //update izArchived == true
             print(police.ref);
 
             Navigator.pop(context);
-            confirmSuspend(context, police);
+            confirmUnsuspend(context, police);
             //show dialog ~
           },
         ),
@@ -193,12 +146,12 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     );
   }
 
-  confirmSuspend(BuildContext context, Police police) {
+  confirmUnsuspend(BuildContext context, Police police) {
     // set up the button
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Are You sure you want to suspend this Police account?"),
+      title: Text("Are You sure you want to Unsuspend this Police account?"),
       //content: Text(""),
       actions: [
         FlatButton(
@@ -208,16 +161,16 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
           },
         ),
         FlatButton(
-          color: Colors.red,
-          child: Text("Suspend"),
+          color: Colors.green,
+          child: Text("Unsuspend"),
           onPressed: () async {
             await FirebaseFirestore.instance
                 .collection('users')
                 .doc(police.ref)
-                .update({'isArchived': true}).then((value) {
+                .update({'isArchived': false}).then((value) {
               //show Suspend success
               Navigator.pop(context);
-              suspendSuccess(context);
+              unsuspendSuccess(context);
             });
           },
         ),
@@ -233,7 +186,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
     );
   }
 
-  suspendSuccess(BuildContext context) {
+  unsuspendSuccess(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
       child: Text("OK"),
@@ -244,7 +197,7 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Police successfully suspended"),
+      title: Text("Police successfully Unsuspended"),
       // content: Text("This is my message."),
       actions: [
         okButton,

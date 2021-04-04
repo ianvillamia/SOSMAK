@@ -26,6 +26,8 @@ class UserModel {
   String idNumber = '';
   String language = '';
   String religion = '';
+  String contactNo = '';
+  String emergencyContact = '';
   String contactPerson = '';
   String otherMedicalCondition1 = '';
   String otherMedicalCondition2 = '';
@@ -64,6 +66,8 @@ class UserModel {
       this.idNumber = doc.data()['idNumber'] ?? this.idNumber;
       this.language = doc.data()['language'] ?? this.language;
       this.religion = doc.data()['religion'] ?? this.religion;
+      this.contactNo = doc.data()['contactNo'] ?? this.contactNo;
+      this.emergencyContact = doc.data()['emergencyContact'] ?? this.emergencyContact;
       this.contactPerson = doc.data()['contactPerson'] ?? this.contactPerson;
       this.otherMedicalCondition1 = doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
       this.otherMedicalCondition2 = doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
@@ -103,6 +107,8 @@ class UserModel {
       'isApproved': this.isApproved,
       'language': this.language,
       'religion': this.religion,
+      'contactNo': this.contactNo,
+      'emergencyContact': this.emergencyContact,
       'contactPerson': this.contactPerson,
       'isArchived': this.isArchived
     };

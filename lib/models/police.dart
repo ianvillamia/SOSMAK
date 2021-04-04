@@ -6,6 +6,7 @@ class Police {
   String lastName = '';
   String email = '';
   String imageUrl;
+  String profileUrl;
   String role = '';
   String birthDate = '';
   String birthPlace = '';
@@ -36,10 +37,11 @@ class Police {
     this.policeRank = doc.data()['policeRank'] ?? '';
     this.stationAssigned = doc.data()['stationAssigned'] ?? '';
     this.tempPassword = doc.data()['tempPassword'] ?? '';
+    this.profileUrl = doc.data()['profileUrl'] ?? '';
     this.imageUrl = doc.data()['imageUrl'] ?? '';
     this.ref = doc.data()['ref'] ?? '';
     this.isApproved = doc.data()['isApproved'] ?? isApproved;
-    this.isArchived = doc.data()['isArchived']?? isArchived;
+    this.isArchived = doc.data()['isArchived'] ?? isArchived;
   }
   Police();
   toMap() {
@@ -58,12 +60,14 @@ class Police {
       'bloodType': this.bloodType,
       'allergies': this.allergies,
       'tempPassword': this.tempPassword,
+      'profileUrl':
+          'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
       'imageUrl':
           'https://firebasestorage.googleapis.com/v0/b/sosmak-82380.appspot.com/o/police.png?alt=media&token=998171c7-a096-4442-9908-15bf9047b977',
       'policeRank': this.policeRank,
       'stationAssigned': this.stationAssigned,
       'isApproved': this.isApproved,
-      'isArchived':this.isArchived
+      'isArchived': this.isArchived
     };
   }
 }

@@ -53,6 +53,7 @@ class _PoliceNumbersState extends State<PoliceNumbers> {
                       stream: FirebaseFirestore.instance
                           .collection('emergencyNumbers')
                           .where('category', isEqualTo: 'police')
+                          .orderBy('name', descending: false)
                           .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {

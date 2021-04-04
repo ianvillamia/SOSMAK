@@ -1,3 +1,4 @@
+import 'package:SOSMAK/screens/sos_screen/barangayNumbers.dart';
 import 'package:SOSMAK/screens/sos_screen/sosNumbers.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,6 +72,12 @@ class _SOSPageState extends State<SOSPage> {
           text: 'Fire Station',
           image: 'assets/fire-station.png',
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FireNumbers())),
+        ),
+        _buildTile(
+          color: Colors.white,
+          text: 'Barangay Contacts',
+          image: 'assets/more.png',
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BarangayNumbers())),
         ),
         _buildTile(
           color: Colors.white,

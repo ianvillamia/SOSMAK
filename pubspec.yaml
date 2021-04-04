@@ -51,6 +51,9 @@ dependencies:
   multi_image_picker: ^4.7.14
   carousel_pro: ^1.0.0
   dotted_border: ^1.0.7
+  #flutter_sms: ^2.1.1
+  #sms_maintained: ^0.2.5
+  #twilio_flutter: ^0.0.5
   #path_provider: ^1.6.27
   dio: ^3.0.4
   intl: ^0.16.1

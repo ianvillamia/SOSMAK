@@ -1,28 +1,13 @@
-import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/userModel.dart';
-import 'package:SOSMAK/screens/admin/create_police_account/createAccount.dart';
-import 'package:SOSMAK/screens/user_info/suspendedCitizen.dart';
-import 'package:SOSMAK/screens/user_info/testSMS.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
-class UsersInfo extends StatefulWidget {
-  UsersInfo({@required this.userType});
-  final String userType;
-
+class SuspendedCitizen extends StatefulWidget {
   @override
-  _UsersInfoState createState() => _UsersInfoState();
+  _SuspendedCitizenState createState() => _SuspendedCitizenState();
 }
 
-class _UsersInfoState extends State<UsersInfo> {
-  bool isAdmin;
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _SuspendedCitizenState extends State<SuspendedCitizen> {
   Size size;
   @override
   Widget build(BuildContext context) {
@@ -30,48 +15,13 @@ class _UsersInfoState extends State<UsersInfo> {
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
-        title: Text('Citizen Accounts'),
-        leading: IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          FlatButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SuspendedCitizen(),
-                ),
-              );
-            },
-            child: Text(
-              'Suspended',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        title: Text('Suspended Citizen'),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(context,
-      //         MaterialPageRoute(builder: (context) => CreateAccount()));
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
       body: Container(
         width: size.width,
         height: size.height,
         child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('users')
-                .where('role', isEqualTo: widget.userType)
-                .where('isArchived', isEqualTo: false)
-                .snapshots(),
+            stream: FirebaseFirestore.instance.collection('users').where('isArchived', isEqualTo: true).snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.size > 0) {
@@ -85,7 +35,7 @@ class _UsersInfoState extends State<UsersInfo> {
                     ),
                   );
                 } else {
-                  return Center(child: Text('No ' + widget.userType + ' yet'));
+                  return Center(child: Text('No suspended citizen yet'));
                 }
               }
 
@@ -209,17 +159,16 @@ class _UsersInfoState extends State<UsersInfo> {
       ),
       actions: [
         FlatButton(
-          color: Colors.red,
-          child: Text("Suspend"),
+          color: Colors.green,
+          child: Text("Unuspend"),
           onPressed: () {
             //confirm suspend
             //
             Navigator.pop(context);
-            confirmSuspend(context, userModel);
+            confirmUnsuspend(context, userModel);
           },
         ),
         FlatButton(
-          color: Colors.blue,
           child: Text("OK"),
           onPressed: () {
             Navigator.pop(context);
@@ -243,12 +192,12 @@ class _UsersInfoState extends State<UsersInfo> {
     );
   }
 
-  confirmSuspend(BuildContext context, UserModel user) {
+  confirmUnsuspend(BuildContext context, UserModel user) {
     // set up the button
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Are You sure you want to suspend this Citizen account?"),
+      title: Text("Are You sure you want to Unsuspend this Citizen account?"),
       //content: Text(""),
       actions: [
         FlatButton(
@@ -258,16 +207,16 @@ class _UsersInfoState extends State<UsersInfo> {
           },
         ),
         FlatButton(
-          color: Colors.red,
-          child: Text("Suspend"),
+          color: Colors.green,
+          child: Text("Unsuspend"),
           onPressed: () async {
             await FirebaseFirestore.instance
                 .collection('users')
                 .doc(user.ref)
-                .update({'isArchived': true}).then((value) {
+                .update({'isArchived': false}).then((value) {
               //show suspend success
               Navigator.pop(context);
-              suspendSuccess(context);
+              unsuspendSuccess(context);
             });
           },
         ),
@@ -283,18 +232,18 @@ class _UsersInfoState extends State<UsersInfo> {
     );
   }
 
-  suspendSuccess(BuildContext context) {
+  unsuspendSuccess(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
-        Navigator.of(context).pop();
+        Navigator.pop(context);
       },
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Citizen successfully suspended"),
+      title: Text("Citizen successfully Unsuspended"),
       // content: Text("This is my message."),
       actions: [
         okButton,
