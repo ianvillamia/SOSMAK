@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:SOSMAK/models/userModel.dart';
-import 'package:SOSMAK/screens/medical_report/updateDetails_2.dart';
+import 'package:SOSMAK/screens/user_profile/updateDetails_2.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,12 +13,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class UpdateMedical extends StatefulWidget {
+class UpdateUserProfile extends StatefulWidget {
   final UserModel user;
-  UpdateMedical({@required this.user, Key key}) : super(key: key);
+  UpdateUserProfile({@required this.user, Key key}) : super(key: key);
 
   @override
-  _UpdateMedicalState createState() => _UpdateMedicalState();
+  _UpdateUserProfileState createState() => _UpdateUserProfileState();
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {
@@ -26,7 +26,7 @@ class AlwaysDisabledFocusNode extends FocusNode {
   bool get hasFocus => false;
 }
 
-class _UpdateMedicalState extends State<UpdateMedical> {
+class _UpdateUserProfileState extends State<UpdateUserProfile> {
   Size size;
   User firebaseUser;
   int counter = 0;
@@ -255,63 +255,6 @@ class _UpdateMedicalState extends State<UpdateMedical> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          RaisedButton(
-            color: Colors.blue[400],
-            child: Text('Update', style: TextStyle(color: Colors.white)),
-            onPressed: () async {
-              // widget.user.firstName = firstNameController.text;
-              // widget.user.lastName = lastNameController.text;
-
-              widget.user.birthDate = birthdayController.text;
-              widget.user.birthPlace = birthPlaceController.text;
-              widget.user.age = ageController.text;
-              widget.user.height = heightController.text;
-              widget.user.weight = weightController.text;
-              widget.user.bloodType = bloodTypeController.text;
-              widget.user.allergies = allergiesController.text;
-              widget.user.language = languageController.text;
-              widget.user.religion = religionController.text;
-              widget.user.contactNo = contactNoController.text;
-              widget.user.contactPerson = contactPersonController.text;
-              widget.user.emergencyContact = emergencyContactController.text;
-
-              widget.user.otherMedicalCondition1 = medicalController1.text;
-              widget.user.otherMedicalCondition2 = medicalController2.text;
-              widget.user.otherMedicalCondition3 = medicalController3.text;
-              widget.user.otherMedicalCondition4 = medicalController4.text;
-              widget.user.otherMedicalCondition5 = medicalController5.text;
-
-              //update here
-              // print(_user.currentUser.ref);
-
-              await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update({
-                // 'firstName': widget.user.firstName,
-                // 'lastName': widget.user.lastName,
-                'birthDate': widget.user.birthDate,
-                'birthPlace': widget.user.birthPlace,
-                'age': widget.user.age,
-                'height': widget.user.height,
-                'weight': widget.user.weight,
-                'bloodType': widget.user.bloodType,
-                'allergies': widget.user.allergies,
-                'language': widget.user.language,
-                'religion': widget.user.religion,
-                'contactNo': widget.user.contactNo,
-                'contactPerson': widget.user.contactPerson,
-                'emergencyContact': widget.user.emergencyContact,
-                'profileUrl': widget.user.profileUrl,
-                'otherMedicalCondition1': widget.user.otherMedicalCondition1,
-                'otherMedicalCondition2': widget.user.otherMedicalCondition2,
-                'otherMedicalCondition3': widget.user.otherMedicalCondition3,
-                'otherMedicalCondition4': widget.user.otherMedicalCondition4,
-                'otherMedicalCondition5': widget.user.otherMedicalCondition5,
-              }).then((value) {
-                Navigator.pop(context);
-              });
-            },
-          )
-        ],
       ),
       body: Container(
         width: size.width,
@@ -452,7 +395,62 @@ class _UpdateMedicalState extends State<UpdateMedical> {
                             label: 'Medical Condition 5',
                             isNumber: false,
                             onChanged: (String med5) => getMedical5(med5)),
-                        SizedBox(height: size.height * 0.06),
+                        SizedBox(height: size.height * 0.03),
+                        RaisedButton(
+                          color: Colors.blue[400],
+                          child: Text('Update', style: TextStyle(color: Colors.white)),
+                          onPressed: () async {
+                            // widget.user.firstName = firstNameController.text;
+                            // widget.user.lastName = lastNameController.text;
+
+                            widget.user.birthDate = birthdayController.text;
+                            widget.user.birthPlace = birthPlaceController.text;
+                            widget.user.age = ageController.text;
+                            widget.user.height = heightController.text;
+                            widget.user.weight = weightController.text;
+                            widget.user.bloodType = bloodTypeController.text;
+                            widget.user.allergies = allergiesController.text;
+                            widget.user.language = languageController.text;
+                            widget.user.religion = religionController.text;
+                            widget.user.contactNo = contactNoController.text;
+                            widget.user.contactPerson = contactPersonController.text;
+                            widget.user.emergencyContact = emergencyContactController.text;
+
+                            widget.user.otherMedicalCondition1 = medicalController1.text;
+                            widget.user.otherMedicalCondition2 = medicalController2.text;
+                            widget.user.otherMedicalCondition3 = medicalController3.text;
+                            widget.user.otherMedicalCondition4 = medicalController4.text;
+                            widget.user.otherMedicalCondition5 = medicalController5.text;
+
+                            //update here
+                            // print(_user.currentUser.ref);
+
+                            await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update({
+                              // 'firstName': widget.user.firstName,
+                              // 'lastName': widget.user.lastName,
+                              'birthDate': widget.user.birthDate,
+                              'birthPlace': widget.user.birthPlace,
+                              'age': widget.user.age,
+                              'height': widget.user.height,
+                              'weight': widget.user.weight,
+                              'bloodType': widget.user.bloodType,
+                              'allergies': widget.user.allergies,
+                              'language': widget.user.language,
+                              'religion': widget.user.religion,
+                              'contactNo': widget.user.contactNo,
+                              'contactPerson': widget.user.contactPerson,
+                              'emergencyContact': widget.user.emergencyContact,
+                              'profileUrl': widget.user.profileUrl,
+                              'otherMedicalCondition1': widget.user.otherMedicalCondition1,
+                              'otherMedicalCondition2': widget.user.otherMedicalCondition2,
+                              'otherMedicalCondition3': widget.user.otherMedicalCondition3,
+                              'otherMedicalCondition4': widget.user.otherMedicalCondition4,
+                              'otherMedicalCondition5': widget.user.otherMedicalCondition5,
+                            }).then((value) {
+                              Navigator.pop(context);
+                            });
+                          },
+                        )
                       ],
                     ),
                   ),

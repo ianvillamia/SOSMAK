@@ -24,17 +24,14 @@ class _CurrentIncidentState extends State<CurrentIncident> {
     print(widget.documentId);
     size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF93E9BE),
       body: Container(
-        color: Colors.grey[100],
+        color: Color(0xFF93E9BE),
         width: size.width,
         height: size.height,
         child: StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('incidentReports')
-                .doc(widget.documentId)
-                .snapshots(),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
+            stream: FirebaseFirestore.instance.collection('incidentReports').doc(widget.documentId).snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               print(snapshot.connectionState);
 
               if (snapshot.connectionState == ConnectionState.active) {
@@ -64,8 +61,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
     switch (incident.status) {
       case 0:
         color = Colors.amber;
-        status =
-            'Reported please wait for authorities to arrive to your location ';
+        status = 'Reported please wait for authorities to arrive to your location ';
         break;
       case 1:
         color = Colors.orange;
@@ -91,10 +87,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(status,
                     textAlign: TextAlign.center,
-                    style: _buildtextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontsize: 20,
-                        color: Colors.white)),
+                    style: _buildtextStyle(fontWeight: FontWeight.bold, fontsize: 20, color: Colors.white)),
               ),
             ),
           ),
@@ -155,9 +148,7 @@ class _CurrentIncidentState extends State<CurrentIncident> {
 
   _buildtextStyle({double fontsize, FontWeight fontWeight, Color color}) {
     return TextStyle(
-        color: color ?? Colors.black,
-        fontSize: fontsize ?? 14,
-        fontWeight: fontWeight ?? FontWeight.normal);
+        color: color ?? Colors.black, fontSize: fontsize ?? 14, fontWeight: fontWeight ?? FontWeight.normal);
   }
 
   getImages({@required DocumentSnapshot doc}) {

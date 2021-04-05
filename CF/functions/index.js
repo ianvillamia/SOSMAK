@@ -49,3 +49,31 @@ exports.registerPolice = functions
         console.log("Error deleting user:", error);
       });
   });
+
+//   exports.changePassword = functions
+//   .region("asia-northeast1")
+//   .firestore.document("users/{userId}").updateUser(
+    
+//     uid, {
+      
+//       email: 
+//     }
+//   )
+  
+
+//   admin.auth().updateUser(uid, {
+//   email: "modifiedUser@example.com",
+//   phoneNumber: "+11234567890",
+//   emailVerified: true,
+//   password: "newPassword",
+//   displayName: "Jane Doe",
+//   photoURL: "http://www.example.com/12345678/photo.png",
+//   disabled: true
+// })
+//   .then(function(userRecord) {
+//     // See the UserRecord reference doc for the contents of userRecord.
+//     console.log("Successfully updated user", userRecord.toJSON());
+//   })
+//   .catch(function(error) {
+//     console.log("Error updating user:", error);
+//   });

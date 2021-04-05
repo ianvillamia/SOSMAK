@@ -11,69 +11,41 @@ class CreateAccount extends StatefulWidget {
   _CreateAccountState createState() => _CreateAccountState();
 }
 
-class PoliceRanks {
-  int id;
-  String name;
-
-  PoliceRanks(this.id, this.name);
-
-  static List<PoliceRanks> getCompanies() {
-    return <PoliceRanks>[
-      PoliceRanks(1, 'Director General'),
-      PoliceRanks(2, 'Deputy Director General'),
-      PoliceRanks(3, 'Director'),
-      PoliceRanks(4, 'Chief Superintendent'),
-      PoliceRanks(5, 'Senior Superintendent'),
-      PoliceRanks(6, 'Superintendent'),
-      PoliceRanks(7, 'Chief Inspector'),
-      PoliceRanks(8, 'Senior Inspector'),
-      PoliceRanks(9, 'Inspector'),
-      PoliceRanks(10, 'Senior Police Officer IV'),
-      PoliceRanks(11, 'Senior Police Officer III'),
-      PoliceRanks(12, 'Senior Police Officer II'),
-      PoliceRanks(13, 'Senior Police Officer I'),
-      PoliceRanks(14, 'Police Officer III'),
-      PoliceRanks(15, 'Police Officer II'),
-      PoliceRanks(16, 'Police Officer I'),
-    ];
-  }
-}
-
 class _CreateAccountState extends State<CreateAccount> {
   TextEditingController emailController = TextEditingController(),
       lastNameController = TextEditingController(),
       firstNameController = TextEditingController(),
+      addressController = TextEditingController(),
+      badgeNumberController = TextEditingController(),
       stationController = TextEditingController();
   Size size;
   final _formKey = GlobalKey<FormState>();
 
-  List<PoliceRanks> _policeRanks = PoliceRanks.getCompanies();
-  List<DropdownMenuItem<PoliceRanks>> _dropdownMenuItems;
-  PoliceRanks _selectedIncident;
+  List<String> ranks = [
+    'Director General',
+    'Deputy Director General',
+    'Director',
+    'Chief Superintendent',
+    'Senior Superintendent',
+    'Superintendent',
+    'Chief Inspector',
+    'Senior Inspector',
+    'Inspector',
+    'Senior Police Officer IV',
+    'Senior Police Officer III',
+    'Senior Police Officer II',
+    'Senior Police Officer I',
+    'Police Officer III',
+    'Police Officer II',
+    'Police Officer I'
+  ];
+  String selectedRanks;
+  List<String> gender = ['Male', 'Female'];
+  String selectedGender;
 
   @override
   void initState() {
-    _dropdownMenuItems = buildDropdownMenuItems(_policeRanks);
     super.initState();
-  }
-
-  List<DropdownMenuItem<PoliceRanks>> buildDropdownMenuItems(List policeRanks) {
-    List<DropdownMenuItem<PoliceRanks>> items = List();
-    for (PoliceRanks police in policeRanks) {
-      items.add(
-        DropdownMenuItem(
-          value: police,
-          child: Text(police.name),
-        ),
-      );
-    }
-    return items;
-  }
-
-  onChangeDropdownItem(PoliceRanks selectedCompany) {
-    setState(() {
-      _selectedIncident = selectedCompany;
-    });
   }
 
   @override
@@ -92,20 +64,45 @@ class _CreateAccountState extends State<CreateAccount> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  width: size.width * 0.98,
-                  padding: EdgeInsets.fromLTRB(15, 12, 15, 0),
-                  child: DropdownButton(
-                    isExpanded: true,
-                    hint: Text('Please select Police Rank'),
-                    value: _selectedIncident,
-                    items: _dropdownMenuItems,
-                    onChanged: onChangeDropdownItem,
-                  ),
+                _buildDropDownButton(
+                  value: selectedRanks,
+                  hintText: 'Police Rank',
+                  items: ranks
+                      .map(
+                        (rankValue) => DropdownMenuItem(
+                          value: rankValue,
+                          child: Text("$rankValue"),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (String rValue) {
+                    setState(() {
+                      selectedRanks = rValue;
+                    });
+                  },
                 ),
                 _buildTextFormField(controller: firstNameController, label: 'First Name', caps: true),
                 _buildTextFormField(controller: lastNameController, label: 'Last Name', caps: true),
                 _buildTextFormField(controller: emailController, label: 'Email', caps: false),
+                _buildDropDownButton(
+                  value: selectedGender,
+                  hintText: 'Gender',
+                  items: gender
+                      .map(
+                        (genderValue) => DropdownMenuItem(
+                          value: genderValue,
+                          child: Text("$genderValue"),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (String gValue) {
+                    setState(() {
+                      selectedGender = gValue;
+                    });
+                  },
+                ),
+                _buildTextFormField(controller: addressController, label: 'Address', caps: true),
+                _buildTextFormField(controller: badgeNumberController, label: 'Badge Number', caps: true),
                 _buildTextFormField(controller: stationController, label: 'Station Assigned', caps: true),
                 MaterialButton(
                     color: Colors.blueAccent,
@@ -119,7 +116,10 @@ class _CreateAccountState extends State<CreateAccount> {
                         police.firstName = firstNameController.text;
                         police.lastName = lastNameController.text;
                         police.email = emailController.text;
-                        police.policeRank = _selectedIncident.name;
+                        police.gender = selectedGender;
+                        police.address = addressController.text;
+                        police.badgeNumber = badgeNumberController.text;
+                        police.policeRank = selectedRanks;
                         police.stationAssigned = stationController.text;
                         police.tempPassword = temporaryPassword;
                         police.role = 'police';
@@ -169,12 +169,15 @@ class _CreateAccountState extends State<CreateAccount> {
     lastNameController.text = '';
     emailController.text = '';
     stationController.text = '';
-    _selectedIncident = null;
+    badgeNumberController.text = '';
+    addressController.text = '';
+    selectedRanks = null;
+    selectedGender = null;
   }
 
   _buildTextFormField({TextEditingController controller, String label, bool caps}) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         textCapitalization: caps ? TextCapitalization.words : TextCapitalization.none,
         validator: (value) {
@@ -184,8 +187,47 @@ class _CreateAccountState extends State<CreateAccount> {
           return null;
         },
         controller: controller,
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+        decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(25.0),
+              ),
+            )),
+      ),
+    );
+  }
+
+  _buildDropDownButton({
+    @required String value,
+    @required String hintText,
+    @required onChanged,
+    @required items,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: Container(
+        width: size.width,
+        child: DropdownButtonFormField(
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(15),
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(25.0),
+              ),
+            ),
+            hintText: hintText,
+          ),
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Please choose a $hintText';
+            }
+            return null;
+          },
+          value: value,
+          onChanged: onChanged,
+          items: items,
+        ),
       ),
     );
   }

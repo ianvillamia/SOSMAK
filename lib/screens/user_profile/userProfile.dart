@@ -1,16 +1,17 @@
 import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
-import 'package:SOSMAK/screens/medical_report/updateDetails.dart';
+import 'package:SOSMAK/screens/user_profile/updateUserProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class MedicalReport extends StatefulWidget {
+class UserProfile extends StatefulWidget {
   @override
-  _MedicalReportState createState() => _MedicalReportState();
+  _UserProfileState createState() => _UserProfileState();
 }
 
 class RadioGroups {
@@ -20,7 +21,7 @@ class RadioGroups {
   RadioGroups({this.choice, this.index});
 }
 
-class _MedicalReportState extends State<MedicalReport> {
+class _UserProfileState extends State<UserProfile> {
   Size size;
 
   UserDetailsProvider userDetailsProvider;
@@ -41,21 +42,6 @@ class _MedicalReportState extends State<MedicalReport> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          RaisedButton(
-              color: Colors.blue[400],
-              child: Text('Edit', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UpdateMedical(
-                      user: user,
-                    ),
-                  ),
-                );
-              })
-        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance.collection('users').doc(userDetailsProvider.currentUser.ref).snapshots(),
@@ -156,9 +142,44 @@ class _MedicalReportState extends State<MedicalReport> {
               title: 'Name: ',
               data: user.contactPerson,
             ),
-            _buildNormalText(
-              title: 'Contact No.: ',
-              data: user.emergencyContact,
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Contact No.: ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  (user.emergencyContact != "")
+                      ? RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                              height: 1.5,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '${user.emergencyContact}   ',
+                              ),
+                              WidgetSpan(
+                                child: InkWell(
+                                  onTap: () => _launchURL(number: user.emergencyContact),
+                                  child: Icon(
+                                    Icons.call,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Text(
+                          user.emergencyContact,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                ],
+              ),
             ),
             SizedBox(height: 10),
             (user.otherMedicalCondition1.isEmpty &&
@@ -206,19 +227,19 @@ class _MedicalReportState extends State<MedicalReport> {
                     data: user.otherMedicalCondition5,
                   ),
             SizedBox(height: size.height * 0.05),
-            // RaisedButton(
-            //     color: Colors.blue[400],
-            //     child: Text('Update', style: TextStyle(color: Colors.white)),
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //           builder: (context) => UpdateMedical(
-            //             user: user,
-            //           ),
-            //         ),
-            //       );
-            //     })
+            RaisedButton(
+                color: Colors.blue[400],
+                child: Text('Update', style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateUserProfile(
+                        user: user,
+                      ),
+                    ),
+                  );
+                })
           ],
         ),
       ),
@@ -290,5 +311,14 @@ class _MedicalReportState extends State<MedicalReport> {
         ],
       ),
     );
+  }
+
+  _launchURL({String number}) async {
+    String url = 'tel:$number';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

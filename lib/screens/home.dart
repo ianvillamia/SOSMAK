@@ -4,11 +4,12 @@ import 'package:SOSMAK/screens/admin/approve_account/approveAccount.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
-import 'package:SOSMAK/screens/medical_report/medicalreport.dart';
+import 'package:SOSMAK/screens/user_profile/userProfile.dart';
 import 'package:SOSMAK/screens/profile/profile.dart';
 import 'package:SOSMAK/screens/user_info/usersInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
   bool isCitizen = false;
   Size size;
   String currentIncident;
+  String number;
   UserDetailsProvider userDetailsProvider;
 
   loc.Location location = loc.Location();
@@ -45,6 +47,7 @@ class _HomeState extends State<Home> {
       isAdmin = true;
     } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
       isCitizen = true;
+      number = userDetailsProvider.currentUser.emergencyContact;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
@@ -218,7 +221,7 @@ class _HomeState extends State<Home> {
             child: _buildTile(
                 color: Colors.white,
                 text: 'My Profile',
-                widget: MedicalReport(),
+                widget: UserProfile(),
                 isImageIcon: true,
                 image: 'assets/user1.png'),
           ),
@@ -253,6 +256,10 @@ class _HomeState extends State<Home> {
                   userRef: userDetailsProvider.currentUser.ref,
                   currentIncidentDoc: this.currentIncident,
                 )),
+          ),
+          Visibility(
+            visible: isCitizen,
+            child: _buildSOSButton(emergencyContact: number),
           ),
           Visibility(
             visible: isAdmin,
@@ -354,6 +361,39 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _buildSOSButton({@required String emergencyContact}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: size.width * .4,
+        height: size.height * .22,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () {
+                _launchURL(number: emergencyContact);
+              },
+              child: ClipOval(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset(
+                    'assets/sosmakLogo.png',
+                    fit: BoxFit.cover,
+                    width: 130,
+                    height: 130,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   showGPSAlertDialog() {
     showDialog(
       barrierDismissible: false,
@@ -383,5 +423,14 @@ class _HomeState extends State<Home> {
         );
       },
     );
+  }
+
+  _launchURL({String number}) async {
+    String url = 'tel:$number';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

@@ -129,9 +129,19 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
 
   showAlertDialog(Police police, DocumentSnapshot doc) {
     AlertDialog alert = AlertDialog(
-      title: Image.network(police.imageUrl, width: 100, height: 100),
+      title: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 70,
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(70),
+              child: Image.network(
+                police.profileUrl,
+                fit: BoxFit.cover,
+                width: 120,
+                height: 120,
+              ))),
       content: Container(
-        height: size.height * .4,
+        height: size.height * .45,
         width: size.width * .7,
         child: Scrollbar(
           child: SingleChildScrollView(
@@ -140,6 +150,8 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                 buildInfo('Name: ', '${police.firstName}, ${police.lastName}', false, doc),
                 buildInfo('Email: ', police.email, false, doc),
                 buildInfo('Temporary Password: ', police.tempPassword, false, doc),
+                buildInfo('Gender: ', police.gender, false, doc),
+                buildInfo('Address: ', police.address, false, doc),
                 buildInfo('Age: ', police.age, false, doc),
                 buildInfo('Birthday: ', police.birthDate, false, doc),
                 buildInfo('BirthPlace: ', police.birthPlace, false, doc),
@@ -147,6 +159,8 @@ class _CreatePoliceAccountState extends State<CreatePoliceAccount> {
                 buildInfo('Weight', police.weight, false, doc),
                 buildInfo('Blood Type: ', police.bloodType, false, doc),
                 buildInfo('Allergies: ', police.allergies, false, doc),
+                buildInfo('Badge Number: ', police.badgeNumber, false, doc),
+                buildInfo('Station Assigned: ', police.stationAssigned, false, doc),
                 SizedBox(height: size.height * 0.03),
               ],
             ),

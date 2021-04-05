@@ -1,5 +1,6 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
+import 'package:SOSMAK/screens/incident_report/incidentReportHistory.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -104,15 +105,17 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   @override
   Widget build(BuildContext context) {
     locationController =
-        new TextEditingController(text: done == false ? "Click the icon to My Current Location" : "$_addressLine");
+        new TextEditingController(text: done == false ? "Click the icon to get My Current Location" : "$_addressLine");
     size = MediaQuery.of(context).size;
     //  print(currentIncident);
     return Scaffold(
+        backgroundColor: Color(0xFF93E9BE),
         floatingActionButton: showFab
             ? FloatingActionButton(
                 onPressed: () {
                   setState(() {
                     newIncident = true;
+                    showFab = false;
                   });
                 },
                 child: Icon(Icons.add),
@@ -126,6 +129,15 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
               Navigator.pop(context);
             },
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.history),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => IncidentReportHistory()),
+              ),
+            ),
+          ],
         ),
         body: isLoading
             ? _buildLoading()
@@ -158,7 +170,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
       child: Container(
         width: size.width,
         height: size.height,
-        color: Colors.white,
+        color: Color(0xFF93E9BE),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
@@ -370,10 +382,11 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         elevation: 5,
         onPressed: () async {
           // validate
-          if (locationController.text == "Click the icon to My Current Location") {
+          if (locationController.text == "Click the icon to get My Current Location") {
             showNoLocation();
           }
-          if (_formKey.currentState.validate() && locationController.text != "Click the icon to My Current Location") {
+          if (_formKey.currentState.validate() &&
+              locationController.text != "Click the icon to get My Current Location") {
             //print
             IncidentModel incident = IncidentModel();
             DateTime currentDate = DateTime.now();

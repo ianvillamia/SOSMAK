@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:SOSMAK/screens/auth_screens/signupTermsAndCondition.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -131,7 +132,7 @@ class _SignUpMedicalState extends State<SignUpMedical> {
                         RichText(
                           text: TextSpan(
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 9,
                               fontWeight: FontWeight.w300,
                               color: Colors.black,
                               height: 1.5,
@@ -141,11 +142,15 @@ class _SignUpMedicalState extends State<SignUpMedical> {
                                 text: 'I agree to the ',
                               ),
                               TextSpan(
-                                  text: 'Terms and conditions',
+                                  text: 'Terms and conditions and Privacy Provisions',
                                   style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      print('Terms of Service"');
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SignUpTermsAndCondition(),
+                                          ));
                                     }),
                             ],
                           ),

@@ -176,7 +176,7 @@ class _SignupState extends State<Signup> {
                     ),
                   ],
                 ),
-                _dropDownButton(),
+                _genderDropDownButton(),
                 _buildPasswordField(controller: passwordController, label: 'Password'),
                 SizedBox(height: 10),
                 Align(
@@ -300,7 +300,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  _dropDownButton() {
+  _genderDropDownButton() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(

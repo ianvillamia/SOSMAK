@@ -95,47 +95,56 @@ class _ChatListState extends State<ChatList> {
             });
           },
           splashColor: Colors.blue,
-          child: Row(
-            children: [
-              police.isOnline
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: ClipOval(
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          color: Colors.green,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                police.isOnline
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: ClipOval(
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            color: Colors.green,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: ClipOval(
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: ClipOval(
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-              SizedBox(
-                width: 20,
-              ),
-              ClipOval(
-                child: Container(height: 80, width: 80, child: Image.network(police.imageUrl)),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                police.firstName + " " + police.lastName,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              RedButton(
-                police: police,
-                currentUser: _currentUser,
-              ),
-            ],
+                SizedBox(
+                  width: 20,
+                ),
+                ClipOval(
+                  child: Container(
+                      height: 60,
+                      width: 60,
+                      child: Image.network(
+                        police.profileUrl,
+                        fit: BoxFit.cover,
+                      )),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  police.firstName + " " + police.lastName,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                RedButton(
+                  police: police,
+                  currentUser: _currentUser,
+                ),
+              ],
+            ),
           ),
         )),
       );
