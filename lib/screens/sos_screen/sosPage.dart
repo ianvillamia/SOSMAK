@@ -58,25 +58,25 @@ class _SOSPageState extends State<SOSPage> {
         _buildTile(
           color: Colors.white,
           text: 'Police',
-          image: 'assets/police-car.png',
+          image: 'assets/icon-police-contacts.png',
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PoliceNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Ambulance',
-          image: 'assets/ambulance.png',
+          image: 'assets/icon-hosital-contacts.png',
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HospitalNumbers())),
         ),
         _buildTile(
           color: Colors.white,
           text: 'Fire Station',
-          image: 'assets/fire-station.png',
+          image: 'assets/icon-fire-contacts.png',
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FireNumbers())),
         ),
         _buildTile(
           color: Colors.white,
-          text: 'Barangay Contacts',
-          image: 'assets/more.png',
+          text: 'Barangay Hall',
+          image: 'assets/icon-brgy-contacts.png',
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BarangayNumbers())),
         ),
         _buildTile(
@@ -113,7 +113,10 @@ class _SOSPageState extends State<SOSPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(image),
+                Image.asset(
+                  image,
+                  height: 80,
+                ),
                 SizedBox(
                   height: 10,
                 ),

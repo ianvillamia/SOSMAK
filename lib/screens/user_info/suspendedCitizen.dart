@@ -21,7 +21,11 @@ class _SuspendedCitizenState extends State<SuspendedCitizen> {
         width: size.width,
         height: size.height,
         child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('users').where('isArchived', isEqualTo: true).snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .where('role', isEqualTo: 'citizen')
+                .where('isArchived', isEqualTo: true)
+                .snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.size > 0) {
@@ -105,8 +109,8 @@ class _SuspendedCitizenState extends State<SuspendedCitizen> {
                 buildInfo('Blood Type: ', user.bloodType, false),
                 SizedBox(height: 10),
                 buildInfo('Emergency Info: ', '', false),
-                buildInfo('Name: ', user.contactPerson, false),
-                buildInfo('Contact No.: ', user.emergencyContact, false),
+                buildInfo('Name: ', user.emergencycontactPerson, false),
+                buildInfo('Contact No.: ', user.emergencyContactNo, false),
                 SizedBox(height: 10),
                 (user.otherMedicalCondition1.isEmpty &&
                         user.otherMedicalCondition2.isEmpty &&

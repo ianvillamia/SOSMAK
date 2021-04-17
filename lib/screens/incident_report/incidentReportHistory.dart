@@ -39,7 +39,7 @@ class _IncidentReportHistoryState extends State<IncidentReportHistory> {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
-                        child: Wrap(
+                        child: Column(
                           children: snapshot.data.docs.map<Widget>((doc) => _buildHistoryCard(doc)).toList(),
                         ),
                       ),
@@ -65,20 +65,29 @@ class _IncidentReportHistoryState extends State<IncidentReportHistory> {
       child: InkWell(
         onTap: () => showDetails(doc),
         child: Container(
-          padding: EdgeInsets.all(8),
-          width: size.width * .43,
-          height: size.height * .2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Incident:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(incident.incident),
-              SizedBox(height: size.height * 0.04),
-              Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(incident.date),
-            ],
-          ),
-        ),
+            padding: EdgeInsets.all(8),
+            width: size.width,
+            height: 70,
+            child: ListTile(
+              title: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(incident.date),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text('Incident:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(incident.incident),
+                    ],
+                  )
+                ],
+              ),
+            )),
       ),
     );
   }

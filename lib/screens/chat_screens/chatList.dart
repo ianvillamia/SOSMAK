@@ -98,6 +98,7 @@ class _ChatListState extends State<ChatList> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 police.isOnline
                     ? Padding(
@@ -219,15 +220,10 @@ class _RedButtonState extends State<RedButton> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data == true && hasRead == false) {
-            return ClipOval(
-              child: Container(
-                width: 20,
-                height: 20,
-                child: Icon(
-                  CupertinoIcons.bell_fill,
-                  color: Colors.red,
-                ),
-              ),
+            return Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/mail-icon.png'),
             );
           } else {
             return Container();

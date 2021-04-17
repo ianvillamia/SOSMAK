@@ -92,7 +92,7 @@ class _BarangayNumbersState extends State<BarangayNumbers> {
                       ),
                       SizedBox(height: size.height * .03),
                       Container(
-                        height: size.height * 0.65,
+                        height: size.height * 0.58,
                         child: StreamBuilder(
                             stream: FirebaseFirestore.instance
                                 .collection('emergencyNumbers')
@@ -147,7 +147,7 @@ class _BarangayNumbersState extends State<BarangayNumbers> {
                       ),
                       SizedBox(height: size.height * .03),
                       Container(
-                        height: size.height * 0.65,
+                        height: size.height * 0.58,
                         child: StreamBuilder(
                             stream: FirebaseFirestore.instance
                                 .collection('emergencyNumbers')
@@ -180,7 +180,7 @@ class _BarangayNumbersState extends State<BarangayNumbers> {
             alignment: Alignment.bottomCenter,
             child: Container(
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

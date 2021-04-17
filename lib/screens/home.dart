@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/approve_account/approveAccount.dart';
 import 'package:SOSMAK/screens/admin/create_police_account/policeAccounts.dart';
+import 'package:SOSMAK/screens/admin/dashboard/dashboard.dart';
 import 'package:SOSMAK/screens/chat_screens/chat_home.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportv2.dart';
 import 'package:SOSMAK/screens/user_profile/userProfile.dart';
@@ -9,6 +12,8 @@ import 'package:SOSMAK/screens/profile/profile.dart';
 import 'package:SOSMAK/screens/user_info/usersInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './emergencyMap_screens/test2.dart';
 import 'package:SOSMAK/screens/sos_screen/sosPage.dart';
@@ -17,8 +22,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './wantedList_screens/wantedList.dart';
 import 'admin/incidentReportsAdmin/incidentReportsAdmin.dart';
+import 'package:SOSMAK/screens/user_info/testSMS.dart';
 
 import 'package:location/location.dart' as loc;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -31,23 +38,33 @@ class _HomeState extends State<Home> {
   bool isPolice = false;
   bool isAdmin = false;
   bool isCitizen = false;
+  bool enableAdditionalCard = false;
   Size size;
   String currentIncident;
   String number;
   UserDetailsProvider userDetailsProvider;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final users = FirebaseFirestore.instance.collection('users');
 
   loc.Location location = loc.Location();
   bool _serviceEnabled;
   loc.LocationData _locationData;
 
+  TwilioFlutter twilioFlutter;
+
+  String accountSid = DotEnv.env['ACCOUNT_SID'];
+  String authToken = DotEnv.env['AUTH_TOKEN'];
+  String twilioNumber = DotEnv.env['TWILIO_NUMBER'];
+
   setViews() {
     if (userDetailsProvider.currentUser.role == 'police' ?? '') {
       isPolice = true;
+      enableAdditionalCard = true;
     } else if (userDetailsProvider.currentUser.role == 'admin' ?? '') {
       isAdmin = true;
     } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
       isCitizen = true;
-      number = userDetailsProvider.currentUser.emergencyContact;
+      number = userDetailsProvider.currentUser.emergencyContactNo;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
@@ -68,6 +85,43 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
 
     checkerGPS();
+    twilioFlutter = TwilioFlutter(
+      accountSid: '$accountSid',
+      authToken: '$authToken',
+      twilioNumber: '$twilioNumber',
+    );
+    // if (Platform.isIOS) {
+    //   _fcm.requestNotificationPermissions(IosNotificationSettings());
+    // }
+
+    // _fcm.configure(
+    //   onMessage: (Map<String, dynamic> message) async {
+    //     _serialiseAndNavigate(message);
+    //     print("onMessage: $message");
+    //   },
+    //   onLaunch: (Map<String, dynamic> message) async {
+    //     _serialiseAndNavigate(message);
+    //     print("onLaunch: $message");
+    //   },
+    //   onResume: (Map<String, dynamic> message) async {
+    //     _serialiseAndNavigate(message);
+    //     print("onResume: $message");
+    //   },
+    // );
+
+    // _fcm.requestNotificationPermissions(
+    //     const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false));
+    // _fcm.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+    //   print("Settings registered: $settings");
+    // });
+
+    // _fcm.getToken().then((String token) {
+    //   assert(token != null);
+    //   setState(() {
+    //     print("Push Messaging token: $token");
+    //   });
+    // });
+
     super.initState();
   }
 
@@ -76,6 +130,7 @@ class _HomeState extends State<Home> {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
     userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -105,11 +160,11 @@ class _HomeState extends State<Home> {
               if (snapshot.hasData) {
                 UserModel user = UserModel.get(snapshot.data);
 
-                currentIncident = snapshot.data.data()['currentIncidentRef'];
+                currentIncident = snapshot.data.data()['currentIncidentRef'] ?? '';
 
                 userDetailsProvider.setCurrentUser(snapshot.data);
                 setViews();
-                if (user.isApproved == false) {
+                if (user.isApproved == false && user.isTerminate == false) {
                   print('not yet approved');
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: size.width * .2),
@@ -117,7 +172,7 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Not yet approved wait for admin to verify your account',
+                          'Not yet approved, wait for the admin to verify your account',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 20),
                         ),
@@ -141,7 +196,31 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'This Account has been Disabled please contact admin',
+                          'This Account has been Disabled please contact the admin',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(
+                          height: size.height * .03,
+                        ),
+                        MaterialButton(
+                            color: Colors.redAccent,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              context.read<AuthenticationService>().signOut(uid: firebaseUser.uid);
+                            },
+                            child: Text('Logout')),
+                      ],
+                    ),
+                  );
+                } else if (user.isTerminate) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * .2),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'This Account has been DISAPPROVED, please contact the admin',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 20),
                         ),
@@ -220,10 +299,10 @@ class _HomeState extends State<Home> {
             visible: isAdmin == true ? false : true,
             child: _buildTile(
                 color: Colors.white,
-                text: 'My Profile',
+                text: 'User Profile',
                 widget: UserProfile(),
                 isImageIcon: true,
-                image: 'assets/user1.png'),
+                image: 'assets/icon-user-profile.png'),
           ),
           _buildTile(
               color: Colors.white,
@@ -293,13 +372,33 @@ class _HomeState extends State<Home> {
             ),
           ),
           Visibility(
-            visible: isAdmin,
+            visible: enableAdditionalCard,
             child: _buildTile(
               color: Colors.white,
-              text: 'Incident Report Admin',
+              text: 'Incident Report (Processing and Monitoring)',
               widget: IncidentReportAdmin(),
               isImageIcon: true,
               image: 'assets/incidentIcon.png',
+            ),
+          ),
+          Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+              color: Colors.white,
+              text: 'Incident Report (Processing and Monitoring)',
+              widget: IncidentReportAdmin(),
+              isImageIcon: true,
+              image: 'assets/incidentIcon.png',
+            ),
+          ),
+          Visibility(
+            visible: isAdmin,
+            child: _buildTile(
+              color: Colors.white,
+              text: 'Dashboard',
+              widget: DashBoard(),
+              isImageIcon: true,
+              image: 'assets/sosmakLogo.png',
             ),
           ),
         ],
@@ -327,7 +426,7 @@ class _HomeState extends State<Home> {
           },
           child: Container(
             width: size.width * .4,
-            height: size.height * .22,
+            height: size.height * .24,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -361,6 +460,10 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void sendSms() async {
+    twilioFlutter.sendSMS(toNumber: '+639562354758', messageBody: "HELP ME! I'M IN TROUBLE, SEND SOME AUTHORITIES");
+  }
+
   _buildSOSButton({@required String emergencyContact}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -372,9 +475,7 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             InkWell(
-              onTap: () {
-                _launchURL(number: emergencyContact);
-              },
+              onTap: sendSms,
               child: ClipOval(
                 child: Container(
                   width: 150,
@@ -433,4 +534,31 @@ class _HomeState extends State<Home> {
       throw 'Could not launch $url';
     }
   }
+
+  void _serialiseAndNavigate(Map<String, dynamic> message) {
+    var notificationData = message['data'];
+    var view = notificationData['view'];
+
+    if (view != null) {
+      if (view == 'user_profile') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserProfile()),
+        );
+      }
+    }
+  }
+
+  // Future<void> _saveDeviceToken() async {
+  //   final firebaseUser = context.watch<User>();
+  //   String uid = firebaseUser.uid;
+  //   String fcmToken = await _fcm.getToken();
+
+  //   if (fcmToken != null) {
+  //     var tokenRef = users.doc(uid).collection('tokens').doc(fcmToken);
+
+  //     await tokenRef
+  //         .set({'token': fcmToken, 'createdAt': FieldValue.serverTimestamp(), 'platform': Platform.operatingSystem});
+  //   }
+  // }
 }

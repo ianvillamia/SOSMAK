@@ -1,6 +1,7 @@
 import 'package:SOSMAK/models/userModel.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/wantedList_screens/hiddenWantedList.dart';
+import 'package:SOSMAK/screens/wantedList_screens/infoWanted.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,11 @@ class WantedList extends StatefulWidget {
 }
 
 class _WantedListState extends State<WantedList> {
+  TextEditingController descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   Size size;
   UserDetailsProvider currentUser;
+  Wanted wanted;
   bool isAdmin = false;
   bool isHidden = false;
   @override
@@ -40,18 +44,50 @@ class _WantedListState extends State<WantedList> {
     return Scaffold(
         backgroundColor: Color(0xFF93E9BE),
         floatingActionButton: Visibility(
-          visible: isAdmin,
-          child: FloatingActionButton(
-            child: Icon(Icons.add),
-            backgroundColor: Colors.red,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateWanted()),
-              );
-            },
-          ),
-        ),
+            visible: isAdmin,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Stack(
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'Info',
+                      child: Icon(Icons.info_outline),
+                      backgroundColor: Colors.red,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SpotAlert()),
+                        );
+                      },
+                    ),
+                    // Positioned(
+                    //   top: 0,
+                    //   right: 0,
+                    //   child: ClipOval(
+                    //     child: Container(
+                    //       color: Colors.yellow,
+                    //       width: 15,
+                    //       height: 15,
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                FloatingActionButton(
+                  heroTag: 'Add',
+                  child: Icon(Icons.add),
+                  backgroundColor: Colors.red,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CreateWanted()),
+                    );
+                  },
+                ),
+              ],
+            )),
         appBar: AppBar(
           backgroundColor: Colors.redAccent,
           title: Text('Most Wanted List'),
@@ -80,28 +116,6 @@ class _WantedListState extends State<WantedList> {
           children: [
             _buildWantedStream(level: 1, title: 'HIGH PROFILE WANTED'),
             _buildWantedStream(level: 2, title: 'LOW PROFILE WANTED')
-            // StreamBuilder<QuerySnapshot>(
-            //     stream:
-            //         FirebaseFirestore.instance.collection('wantedList').where('isHidden', isEqualTo: false).snapshots(),
-            //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            //       if (snapshot.hasData) {
-            //         return Padding(
-            //           padding: EdgeInsets.symmetric(vertical: 25),
-            //           child: Align(
-            //             alignment: Alignment.topCenter,
-            //             child: ListView(
-            //               addAutomaticKeepAlives: true,
-            //               scrollDirection: Axis.horizontal,
-            //               children: snapshot.data.docs.map<Widget>((doc) => _wantedCard(doc)).toList(),
-            //             ),
-            //           ),
-            //         );
-            //       }
-
-            //       return Center(
-            //         child: CircularProgressIndicator(),
-            //       );
-            //     }),
           ],
         ));
   }
@@ -180,12 +194,12 @@ class _WantedListState extends State<WantedList> {
             onTap: () {
               //SHOW POPUP
               if (wanted.imageUrl != null) {
-                showAlertDialog(context, wanted: wanted);
+                showAlertDialog(context, doc: doc, wanted: wanted);
               }
             },
             child: Container(
               width: size.width * .4,
-              height: size.height * .35,
+              height: size.height * .4,
               child: WantedPoster(
                 isMini: true,
                 wanted: wanted,
@@ -223,28 +237,50 @@ class _WantedListState extends State<WantedList> {
     );
   }
 
-  showAlertDialog(BuildContext context, {@required Wanted wanted}) {
+  showAlertDialog(BuildContext context, {@required DocumentSnapshot doc, @required Wanted wanted}) {
     AlertDialog alert = AlertDialog(
         contentPadding: EdgeInsets.all(12),
         content: Container(
           width: size.width * .7,
           height: size.height * .8,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              WantedPoster(
-                isMini: false,
-                wanted: wanted,
-              ),
-              MaterialButton(
-                color: Colors.redAccent,
-                onPressed: () => _launchURL(wanted.contactHotline),
-                child: Text(
-                  'Contact Hotline',
-                  style: TextStyle(color: Colors.white),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                WantedPoster(
+                  isMini: false,
+                  wanted: wanted,
                 ),
-              )
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MaterialButton(
+                      color: Colors.redAccent,
+                      onPressed: () => _launchURL(wanted.contactHotline),
+                      child: Text(
+                        'Contact Hotline',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    (currentUser.currentUser.role == 'citizen') ? SizedBox(width: 20) : Container(),
+                    (currentUser.currentUser.role == 'citizen')
+                        ? MaterialButton(
+                            color: Colors.redAccent,
+                            onPressed: () => showNotifyDialog(
+                              context,
+                              doc: doc,
+                              wanted: wanted,
+                            ),
+                            child: Text(
+                              'Notify Admin',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                )
+              ],
+            ),
           ),
         ));
 
@@ -254,6 +290,100 @@ class _WantedListState extends State<WantedList> {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+
+  showNotifyDialog(BuildContext context, {@required DocumentSnapshot doc, @required Wanted wanted}) {
+    String uid = currentUser.currentUser.ref;
+    String firstName = currentUser.currentUser.firstName;
+    String lastName = currentUser.currentUser.lastName;
+    AlertDialog alert = AlertDialog(
+        contentPadding: EdgeInsets.all(12),
+        content: Container(
+          width: size.width * .7,
+          height: size.height * .3,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Where did you spot the criminal?'),
+                SizedBox(height: 10),
+                _buildTextFormField(
+                  label: 'Description',
+                  maxLines: 4,
+                  controller: descriptionController,
+                  isIcon: false,
+                ),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: MaterialButton(
+                    color: Colors.redAccent,
+                    child: Text(
+                      'Notify',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        UserService()
+                            .addSpotWantedCriminal(
+                                doc: doc,
+                                name: "$firstName $lastName",
+                                userId: uid,
+                                description: descriptionController.text)
+                            .then((value) {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Success!"),
+                                content: Text("You have successfully notified the Admin."),
+                                actions: [
+                                  FlatButton(onPressed: () => Navigator.of(context).pop(), child: Text('Ok')),
+                                ],
+                              );
+                            },
+                          );
+                          setState(() {
+                            descriptionController.text = '';
+                          });
+                        });
+                      }
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  _buildTextFormField({@required String label, TextEditingController controller, int maxLines, bool isIcon}) {
+    return Container(
+      width: size.width,
+      child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+          maxLines: maxLines ?? 1,
+          controller: controller,
+          decoration: InputDecoration(alignLabelWithHint: true, labelText: label, border: OutlineInputBorder())),
     );
   }
 
@@ -321,32 +451,11 @@ class _WantedPosterState extends State<WantedPoster> {
   Widget build(BuildContext context) {
     if (widget.isMini) {
       return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Text(
-            //   'WANTED',
-            //   style: TextStyle(color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
-            // ),
-            Container(
-              height: 150,
-              padding: const EdgeInsets.all(10),
-              child: Image.network(widget.wanted.imageUrl),
-            ),
-            // Text(
-            //   'Reward:' + widget.wanted.reward,
-            //   style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.all(3.0),
-            //   child: Text(
-            //     widget.wanted.name,
-            //     textAlign: TextAlign.center,
-            //     overflow: TextOverflow.ellipsis,
-            //   ),
-            // )
-          ],
+        height: 150,
+        padding: const EdgeInsets.all(10),
+        child: Image.network(
+          widget.wanted.imageUrl,
+          fit: BoxFit.cover,
         ),
       );
     } else {
@@ -459,4 +568,20 @@ class _WantedPosterState extends State<WantedPoster> {
   customTextStyle(size) {
     return TextStyle(fontWeight: FontWeight.bold, fontSize: size);
   }
+
+  //  Future checkChat(UserModel police) async {
+  //   bool hasNewMessage = false;
+  //   await ChatService()
+  //       .checkChat(
+  //           user1: police.ref,
+  //           user2: widget.currentUser.currentUser.ref,
+  //           currentUser: widget.currentUser.currentUser.ref)
+  //       .then((val) {
+  //     if (val == true) {
+  //       print('hotdog');
+  //       hasNewMessage = true;
+  //     }
+  //   });
+  //   return hasNewMessage;
+  // }
 }

@@ -1,18 +1,13 @@
 import 'package:SOSMAK/models/userModel.dart';
-import 'package:SOSMAK/screens/admin/approve_account/disapprovedAccounts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class ApproveAccount extends StatefulWidget {
-  ApproveAccount({Key key}) : super(key: key);
-
+class DisapprovedAccounts extends StatefulWidget {
   @override
-  _ApproveAccountState createState() => _ApproveAccountState();
+  _DisapprovedAccountsState createState() => _DisapprovedAccountsState();
 }
 
-class _ApproveAccountState extends State<ApproveAccount> {
+class _DisapprovedAccountsState extends State<DisapprovedAccounts> {
   Size size;
   @override
   Widget build(BuildContext context) {
@@ -20,17 +15,7 @@ class _ApproveAccountState extends State<ApproveAccount> {
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
-        title: Text('Admin Approval'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.do_disturb_alt_outlined),
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DisapprovedAccounts(),
-                )),
-          ),
-        ],
+        title: Text('Disapproved Accounts'),
       ),
       body: Container(
         width: size.width,
@@ -42,18 +27,45 @@ class _ApproveAccountState extends State<ApproveAccount> {
             stream: FirebaseFirestore.instance
                 .collection('users')
                 .where('isApproved', isEqualTo: false)
-                .where('isTerminate', isEqualTo: false)
+                .where('isTerminate', isEqualTo: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.size > 0) {
                   return Column(
-                      children: snapshot.data.docs.map<Widget>((doc) {
-                    return _buildUserCard(doc);
-                  }).toList());
+                    children: [
+                      Column(
+                          children: snapshot.data.docs.map<Widget>((doc) {
+                        return _buildUserCard(doc);
+                      }).toList()),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: MaterialButton(
+                          elevation: 5,
+                          onPressed: () async {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .where('isTerminate', isEqualTo: true)
+                                .get()
+                                .then((value) async {
+                              for (var data in value.docs) {
+                                await FirebaseFirestore.instance.collection('users').doc(data.id).delete();
+                              }
+                            });
+                            Navigator.of(context, rootNavigator: true).pop('dialog');
+                          },
+                          child: Text(
+                            'Terminate All Accounts',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  );
                 } else {
                   return Center(
-                    child: Text('No users to approve yet.'),
+                    child: Text('No users to terminate yet.'),
                   );
                 }
               }
@@ -158,44 +170,21 @@ class _ApproveAccountState extends State<ApproveAccount> {
                     )),
                 SizedBox(height: 20),
                 Align(
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        MaterialButton(
-                          elevation: 5,
-                          onPressed: () async {
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.ref)
-                                .update({'isApproved': true}).then((value) {
-                              Navigator.of(context, rootNavigator: true).pop('dialog');
-                            });
-                          },
-                          child: Text(
-                            'APPROVE',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.blueAccent,
-                        ),
-                        MaterialButton(
-                          elevation: 5,
-                          onPressed: () async {
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.ref)
-                                .update({'isTerminate': true}).then((value) {
-                              Navigator.of(context, rootNavigator: true).pop('dialog');
-                            });
-                          },
-                          child: Text(
-                            'DISAPPROVE',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.red,
-                        ),
-                      ],
-                    ))
+                  alignment: Alignment.center,
+                  child: MaterialButton(
+                    elevation: 5,
+                    onPressed: () async {
+                      await FirebaseFirestore.instance.collection('users').doc(user.ref).delete().then((value) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                      });
+                    },
+                    child: Text(
+                      'Terminate Account',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.red,
+                  ),
+                ),
               ],
             ),
           ),

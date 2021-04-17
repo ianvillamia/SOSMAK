@@ -32,10 +32,15 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
   int counter = 0;
   File _imageProfile;
   final picker = ImagePicker();
+  List<String> genderList = ['Male', 'Female', 'Bisexual', 'Lesbian', 'Others'];
+  String selectedGender;
+  List<String> civilStatusList = ['Single', 'Married', 'Widowed', 'Divorced'];
+  String selectedcivilStatus;
 
   DateTime selectedDate = DateTime.now();
   TextEditingController firstNameController = TextEditingController(),
       lastNameController = TextEditingController(),
+      addressController = TextEditingController(),
       ageController = TextEditingController(),
       birthdayController = TextEditingController(),
       birthPlaceController = TextEditingController(),
@@ -108,6 +113,9 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
 
   String firstName,
       lastName,
+      gender,
+      address,
+      civilStatus,
       birthDate,
       birthPlace,
       bloodType,
@@ -206,6 +214,18 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     this.profileImage = pic;
   }
 
+  getGender(gender) {
+    this.gender = gender;
+  }
+
+  getAddress(addr) {
+    this.address = addr;
+  }
+
+  getCivilStatus(cs) {
+    this.civilStatus = cs;
+  }
+
   @override
   void dispose() {
     // ignore: todo
@@ -220,16 +240,21 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     super.initState();
     // firstNameController.text = widget.user.firstName;
     // lastNameController.text = widget.user.lastName;
+
+    selectedcivilStatus = widget.user.civilStatus;
+    selectedGender = widget.user.gender;
+    addressController.text = widget.user.address;
     birthdayController.text = widget.user.birthDate;
     birthPlaceController.text = widget.user.birthPlace;
     ageController.text = widget.user.age;
     heightController.text = widget.user.height;
     weightController.text = widget.user.weight;
     bloodTypeController.text = widget.user.bloodType;
+    allergiesController.text = widget.user.allergies;
     languageController.text = widget.user.language;
     religionController.text = widget.user.religion;
-    contactPersonController.text = widget.user.contactPerson;
-    emergencyContactController.text = widget.user.emergencyContact;
+    contactPersonController.text = widget.user.emergencycontactPerson;
+    emergencyContactController.text = widget.user.emergencyContactNo;
 
     medicalController1.text = widget.user.otherMedicalCondition1;
     medicalController2.text = widget.user.otherMedicalCondition2;
@@ -243,7 +268,6 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
   @override
   Widget build(BuildContext context) {
     firebaseUser = context.watch<User>();
-
     size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
@@ -273,6 +297,27 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                         createProfileImage(),
                         SizedBox(height: size.height * .01),
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: contactNoController,
+                              label: 'Contact Number',
+                              isNumber: true,
+                              onChanged: (String myContact) => getContactNo(myContact)),
+                          Container(
+                            width: size.width * 0.42,
+                            child: _showDropDownButton(
+                              value: selectedGender,
+                              onChanged: (String gValue) {
+                                getGender(gValue);
+                                setState(() {
+                                  selectedGender = gValue;
+                                });
+                              },
+                              listData: genderList,
+                            ),
+                          ),
+                        ]),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           Container(
                             width: size.width * 0.42,
                             child: TextFormField(
@@ -298,10 +343,31 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                         ]),
                         textFormFeld(
                             width: size.width,
-                            controller: contactNoController,
-                            label: 'Contact Number',
-                            isNumber: true,
-                            onChanged: (String myContact) => getContactNo(myContact)),
+                            controller: addressController,
+                            label: 'Address',
+                            isNumber: false,
+                            onChanged: (String addr) => getAddress(addr)),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          textFormFeld(
+                              width: size.width * 0.42,
+                              controller: birthPlaceController,
+                              label: 'Birth Place',
+                              isNumber: false,
+                              onChanged: (String birthPlace) => getBirthPlace(birthPlace)),
+                          Container(
+                            width: size.width * 0.42,
+                            child: _showDropDownButton(
+                              value: selectedcivilStatus,
+                              onChanged: (String csValue) {
+                                getCivilStatus(csValue);
+                                setState(() {
+                                  selectedcivilStatus = csValue;
+                                });
+                              },
+                              listData: civilStatusList,
+                            ),
+                          ),
+                        ]),
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           textFormFeld(
                               width: size.width * 0.42,
@@ -316,12 +382,6 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                               isNumber: false,
                               onChanged: (String rel) => getReligion(rel)),
                         ]),
-                        textFormFeld(
-                            width: size.width,
-                            controller: birthPlaceController,
-                            label: 'Birth Place',
-                            isNumber: false,
-                            onChanged: (String birthPlace) => getBirthPlace(birthPlace)),
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           textFormFeld(
                               width: size.width * 0.42,
@@ -359,12 +419,26 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                             label: 'Emergency Contact Person',
                             isNumber: false,
                             onChanged: (String contact) => getContactPerson(contact)),
-                        textFormFeld(
-                            width: size.width,
-                            controller: emergencyContactController,
-                            label: 'Emergency Contact No.',
-                            isNumber: true,
-                            onChanged: (String emergency) => getEmergencyContact(emergency)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            textFormFeld(
+                              width: size.width * 0.2,
+                              controller: null,
+                              label: '+63',
+                              isDisabled: true,
+                              onChanged: () {},
+                              isNumber: false,
+                            ),
+                            textFormFeld(
+                                width: size.width * 0.68,
+                                controller: emergencyContactController,
+                                label: 'Emergency Contact No.',
+                                maxLength: 10,
+                                isNumber: true,
+                                onChanged: (String emergency) => getEmergencyContact(emergency)),
+                          ],
+                        ),
                         textFormFeld(
                             width: size.width,
                             controller: medicalController1,
@@ -402,10 +476,12 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                           onPressed: () async {
                             // widget.user.firstName = firstNameController.text;
                             // widget.user.lastName = lastNameController.text;
-
+                            widget.user.gender = selectedGender ?? '';
                             widget.user.birthDate = birthdayController.text;
                             widget.user.birthPlace = birthPlaceController.text;
                             widget.user.age = ageController.text;
+                            widget.user.address = addressController.text;
+                            widget.user.civilStatus = selectedcivilStatus ?? '';
                             widget.user.height = heightController.text;
                             widget.user.weight = weightController.text;
                             widget.user.bloodType = bloodTypeController.text;
@@ -413,8 +489,8 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                             widget.user.language = languageController.text;
                             widget.user.religion = religionController.text;
                             widget.user.contactNo = contactNoController.text;
-                            widget.user.contactPerson = contactPersonController.text;
-                            widget.user.emergencyContact = emergencyContactController.text;
+                            widget.user.emergencycontactPerson = contactPersonController.text;
+                            widget.user.emergencyContactNo = emergencyContactController.text;
 
                             widget.user.otherMedicalCondition1 = medicalController1.text;
                             widget.user.otherMedicalCondition2 = medicalController2.text;
@@ -428,9 +504,12 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                             await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update({
                               // 'firstName': widget.user.firstName,
                               // 'lastName': widget.user.lastName,
+                              'gender': widget.user.gender ?? '',
                               'birthDate': widget.user.birthDate,
                               'birthPlace': widget.user.birthPlace,
                               'age': widget.user.age,
+                              'address': widget.user.address,
+                              'civilStatus': widget.user.civilStatus,
                               'height': widget.user.height,
                               'weight': widget.user.weight,
                               'bloodType': widget.user.bloodType,
@@ -438,8 +517,8 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                               'language': widget.user.language,
                               'religion': widget.user.religion,
                               'contactNo': widget.user.contactNo,
-                              'contactPerson': widget.user.contactPerson,
-                              'emergencyContact': widget.user.emergencyContact,
+                              'emergencycontactPerson': widget.user.emergencycontactPerson,
+                              'emergencyContactNo': "+63${widget.user.emergencyContactNo}",
                               'profileUrl': widget.user.profileUrl,
                               'otherMedicalCondition1': widget.user.otherMedicalCondition1,
                               'otherMedicalCondition2': widget.user.otherMedicalCondition2,
@@ -472,10 +551,12 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
       int maxLines,
       bool enable,
       bool isNumber,
+      bool isDisabled,
+      int maxLength,
       onTap}) {
     return Container(
       width: width,
-      padding: EdgeInsets.only(top: 6, bottom: 6),
+      padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: TextFormField(
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         inputFormatters: isNumber ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly] : null,
@@ -483,7 +564,9 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
         textCapitalization: TextCapitalization.words,
         enabled: enable,
         maxLines: maxLines ?? 1,
+        maxLength: maxLength ?? 100,
         onTap: onTap,
+
         // onChanged: onChanged,
         validator: (value) {
           if (value.length == 0) {
@@ -491,7 +574,9 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
           }
           return null;
         },
+        readOnly: isDisabled ?? false,
         decoration: InputDecoration(
+          counterText: "",
           fillColor: Colors.white,
           filled: true,
           alignLabelWithHint: true,
@@ -595,5 +680,41 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     String fileName = date.toString();
 
     return await firebase_storage.FirebaseStorage.instance.ref('uploads/profileImages/$fileName.png').putFile(file);
+  }
+
+  _showDropDownButton({
+    @required String value,
+    @required onChanged,
+    @required List<String> listData,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, bottom: 6),
+      child: Container(
+        width: size.width,
+        child: DropdownButtonFormField(
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.all(8),
+          ),
+          value: value, //selectedGender,
+          onChanged: onChanged,
+          // (String gValue) {
+          //   getGender(gValue);
+          //   setState(() {
+          //     selectedGender = gValue;
+          //   });
+          // },
+          items: listData
+              .map(
+                (value) => DropdownMenuItem(
+                  value: value,
+                  child: Text("$value"),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
   }
 }

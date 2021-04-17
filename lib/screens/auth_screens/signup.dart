@@ -1,5 +1,5 @@
 import 'package:SOSMAK/screens/auth_screens/login.dart';
-import 'package:SOSMAK/screens/auth_screens/signup2.dart';
+import 'package:SOSMAK/screens/auth_screens/signup3.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,7 +25,10 @@ class _SignupState extends State<Signup> {
       lastNameController = TextEditingController(),
       genderController = TextEditingController(),
       birthdayController = TextEditingController(),
-      ageController = TextEditingController();
+      ageController = TextEditingController(),
+      codeNoController = TextEditingController(),
+      emergencyNameController = TextEditingController(),
+      emergencyContactController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
   Size size;
@@ -33,7 +36,7 @@ class _SignupState extends State<Signup> {
   File _imageProfile;
   final picker = ImagePicker();
   bool _isHidden = true;
-  List<String> gender = ['Male', 'Female'];
+  List<String> gender = ['Male', 'Female', 'Bisexual', 'Lesbian', 'Others'];
   String selectedGender;
   String age;
   var selectedYear;
@@ -99,6 +102,7 @@ class _SignupState extends State<Signup> {
     // TODO: implement initState
     super.initState();
     ageController.text = age;
+    codeNoController.text = '+63';
   }
 
   @override
@@ -127,21 +131,31 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'Personal Information',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       width: size.width * 0.5,
-                      child: _buildTextFormField(controller: firstNameController, label: 'First Name'),
+                      child:
+                          _buildTextFormField(controller: firstNameController, isDisabled: true, label: 'First Name'),
                     ),
                     Container(
                       width: size.width * 0.5,
-                      child: _buildTextFormField(controller: lastNameController, label: 'Last Name'),
+                      child: _buildTextFormField(controller: lastNameController, isDisabled: true, label: 'Last Name'),
                     ),
                   ],
                 ),
-                _buildTextFormField(caps: false, controller: emailController, label: 'Email'),
-                _buildTextFormField(controller: addressController, label: 'Address', maxLines: 2),
+                _buildTextFormField(caps: false, controller: emailController, isDisabled: true, label: 'Email'),
+                _buildTextFormField(controller: addressController, isDisabled: true, label: 'Address', maxLines: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -170,6 +184,7 @@ class _SignupState extends State<Signup> {
                     Container(
                       width: size.width * 0.5,
                       child: _buildTextFormField(
+                        isDisabled: true,
                         controller: ageController,
                         label: 'Age',
                       ),
@@ -178,6 +193,34 @@ class _SignupState extends State<Signup> {
                 ),
                 _genderDropDownButton(),
                 _buildPasswordField(controller: passwordController, label: 'Password'),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'Emergency Contact Detail',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 20),
+                _buildTextFormField(controller: emergencyNameController, isDisabled: true, label: 'Full Name'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.23,
+                      child: _buildTextFormField(
+                          controller: codeNoController, isNumber: true, isDisabled: false, label: ''),
+                    ),
+                    Container(
+                      width: size.width * 0.77,
+                      child: _buildTextFormField(
+                          isNumber: true,
+                          controller: emergencyContactController,
+                          isDisabled: true,
+                          label: 'Contact Number'),
+                    )
+                  ],
+                ),
                 SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,
@@ -208,16 +251,18 @@ class _SignupState extends State<Signup> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignUpMedical(
+                                builder: (context) => SignUpSecondPage(
                                   fNameController: firstNameController,
                                   lNameController: lastNameController,
                                   emailContoller: emailController,
                                   addressController: addressController,
                                   bdayController: birthdayController,
                                   ageController: ageController,
-                                  gender: selectedGender,
+                                  gender: selectedGender ?? '',
                                   passwordController: passwordController,
                                   imageProfile: _imageProfile,
+                                  emergencyNameController: emergencyNameController,
+                                  emergencyContactController: emergencyContactController,
                                 ),
                               ),
                             );
@@ -251,24 +296,29 @@ class _SignupState extends State<Signup> {
   _buildTextFormField({
     TextEditingController controller,
     String label,
-    bool isPassword,
     int maxLines,
     bool caps = true,
+    bool isNumber = false,
+    bool isDisabled,
+    int maxLength,
   }) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: TextFormField(
         textCapitalization: caps ? TextCapitalization.words : TextCapitalization.none,
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter a value';
           }
           return null;
         },
+        enabled: isDisabled,
         controller: controller,
         maxLines: maxLines ?? 1,
-        obscureText: isPassword ?? false,
+        maxLength: isNumber ? 10 : 100,
         decoration: InputDecoration(
+            counterText: "",
             contentPadding: EdgeInsets.all(10),
             alignLabelWithHint: true,
             labelText: label,
@@ -315,12 +365,6 @@ class _SignupState extends State<Signup> {
             ),
             hintText: "Gender",
           ),
-          validator: (value) {
-            if (value == null) {
-              return 'Please choose a gender';
-            }
-            return null;
-          },
           value: selectedGender,
           onChanged: (String gValue) {
             setState(() {

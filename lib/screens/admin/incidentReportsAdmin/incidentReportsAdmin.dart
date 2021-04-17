@@ -1,7 +1,9 @@
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/admin/incidentReportsAdmin/bottomSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 class IncidentReportAdmin extends StatefulWidget {
   IncidentReportAdmin({Key key}) : super(key: key);
@@ -13,10 +15,21 @@ class IncidentReportAdmin extends StatefulWidget {
 class _IncidentReportAdminState extends State<IncidentReportAdmin> {
   Size size;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  bool isPolice, isAdmin, isBoth;
+  UserDetailsProvider userDetailsProvider;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    if (userDetailsProvider.currentUser.role == 'police') {
+      isPolice = true;
+      isAdmin = false;
+      isBoth = true;
+    } else if (userDetailsProvider.currentUser.role == 'admin') {
+      isPolice = false;
+      isAdmin = true;
+      isBoth = true;
+    }
     return Scaffold(
       backgroundColor: Color(0xFF93E9BE),
       key: _scaffoldKey,
@@ -29,18 +42,26 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
         child: Column(
           children: [
             //pending
-            _buildStream(status: 0, title: 'Pending'),
+            Visibility(
+              visible: isPolice,
+              child: _buildStream(status: 0, title: 'Pending', userDetailsProvider: userDetailsProvider),
+            ),
             //is in progress
-            _buildStream(status: 1, title: 'In Progress'),
+            Visibility(
+              visible: isBoth,
+              child: _buildStream(status: 1, title: 'In Progress', userDetailsProvider: userDetailsProvider),
+            ),
             //closed
-            _buildStream(status: 2, title: 'Solved')
+            Visibility(
+                visible: isAdmin,
+                child: _buildStream(status: 2, title: 'Solved', userDetailsProvider: userDetailsProvider)),
           ],
         ),
       ),
     );
   }
 
-  _buildStream({@required int status, @required String title}) {
+  _buildStream({@required UserDetailsProvider userDetailsProvider, @required int status, @required String title}) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('incidentReports').where('status', isEqualTo: status).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -63,7 +84,9 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
                           child: ListView(
                               addAutomaticKeepAlives: true,
                               scrollDirection: Axis.horizontal,
-                              children: snapshot.data.docs.map<Widget>((doc) => _buildCard(doc, context)).toList()),
+                              children: snapshot.data.docs
+                                  .map<Widget>((doc) => _buildCard(userDetailsProvider, doc, context))
+                                  .toList()),
                         ),
                       ],
                     ),
@@ -100,7 +123,7 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
         });
   }
 
-  _buildCard(DocumentSnapshot doc, BuildContext context) {
+  _buildCard(UserDetailsProvider userDetailsProvider, DocumentSnapshot doc, BuildContext context) {
     IncidentModel incident = IncidentModel.get(doc);
     return Card(
       elevation: 5,
@@ -110,7 +133,8 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
               isScrollControlled: true,
               context: context,
               builder: (context) => Container(
-                  height: MediaQuery.of(context).size.height * 0.95, child: _buildBottomSheet(doc, context, incident)));
+                  height: MediaQuery.of(context).size.height * 0.95,
+                  child: _buildBottomSheet(userDetailsProvider, doc, context, incident)));
         },
         child: Container(
           padding: EdgeInsets.all(8),
@@ -131,8 +155,10 @@ class _IncidentReportAdminState extends State<IncidentReportAdmin> {
     );
   }
 
-  _buildBottomSheet(DocumentSnapshot doc, BuildContext context, IncidentModel incident) {
+  _buildBottomSheet(
+      UserDetailsProvider userDetailsProvider, DocumentSnapshot doc, BuildContext context, IncidentModel incident) {
     return IncidentReportBottomSheet(
+      userDetailsProvider: userDetailsProvider,
       doc: doc,
       incident: incident,
       context: context,

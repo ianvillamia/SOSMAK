@@ -155,8 +155,8 @@ class _UsersInfoState extends State<UsersInfo> {
                 buildInfo('Blood Type: ', user.bloodType, false),
                 SizedBox(height: 10),
                 buildInfo('Emergency Info: ', '', false),
-                buildInfo('Name: ', user.contactPerson, false),
-                buildInfo('Contact No.: ', user.emergencyContact, false),
+                buildInfo('Name: ', user.emergencycontactPerson, false),
+                buildInfo('Contact No.: ', user.emergencyContactNo, false),
                 SizedBox(height: 10),
                 (user.otherMedicalCondition1.isEmpty &&
                         user.otherMedicalCondition2.isEmpty &&

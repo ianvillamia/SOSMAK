@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:SOSMAK/screens/auth_screens/signup.dart';
 import 'package:SOSMAK/services/authentication_service.dart';
 import 'package:SOSMAK/services/errors.dart';
@@ -13,8 +15,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController emailController = TextEditingController(),
-      passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController(), passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   bool _isHidden = true;
@@ -41,14 +42,24 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: size.height * .1,
                 ),
-                Container(
-                    width: size.width * .6,
-                    height: size.height * .45,
-                    child: Image.asset('assets/sosmakLogo.png',
-                        fit: BoxFit.contain)),
+                Column(
+                  children: [
+                    Text(
+                      'SOSMAK',
+                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        width: size.width * .50, child: Image.asset('assets/watermarkLogo.png', fit: BoxFit.contain)),
+                  ],
+                ),
+                SizedBox(
+                  height: 50,
+                ),
                 _buildEmailField(controller: emailController, label: 'Email'),
-                _buildPasswordField(
-                    controller: passwordController, label: 'Password'),
+                _buildPasswordField(controller: passwordController, label: 'Password'),
                 SizedBox(
                   height: 5,
                 ),
@@ -58,8 +69,7 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.only(right: 25),
                       child: GestureDetector(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (_) {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) {
                               return Signup();
                             }));
                           },
@@ -80,9 +90,7 @@ class _LoginState extends State<Login> {
                           context
                               .read<AuthenticationService>()
                               //.signIn(email: email.text.trim(), password: password.text.trim());
-                              .signIn(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim())
+                              .signIn(email: emailController.text.trim(), password: passwordController.text.trim())
                               .then((value) {
                             if (value == true) {
                               //print loggin true;
@@ -100,6 +108,14 @@ class _LoginState extends State<Login> {
                     ),
                   ],
                 ),
+                SizedBox(height: 70),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'v2.0',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
               ],
             ),
           ),
@@ -112,7 +128,6 @@ class _LoginState extends State<Login> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: TextFormField(
-        
         validator: (value) {
           if (value.isEmpty) {
             return 'Email is required';
@@ -142,28 +157,22 @@ class _LoginState extends State<Login> {
         controller: controller,
         obscureText: _isHidden,
         decoration: InputDecoration(
-          
-          fillColor: Colors.white,
+            fillColor: Colors.white,
             labelText: label,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
             suffixIcon: IconButton(
                 onPressed: _toggleVisibility,
-                icon: _isHidden
-                    ? Icon(Icons.visibility_off, size: 20)
-                    : Icon(Icons.visibility, size: 20))),
+                icon: _isHidden ? Icon(Icons.visibility_off, size: 20) : Icon(Icons.visibility, size: 20))),
       ),
     );
   }
 
-  showAlertDialog(
-      BuildContext context, FirebaseAuthException problem, String message) {
+  showAlertDialog(BuildContext context, FirebaseAuthException problem, String message) {
     print(problem.message);
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-            title: Text("Something went wrong"),
-            content: Text("${Errors.show(problem.code)}"));
+        return AlertDialog(title: Text("Something went wrong"), content: Text("${Errors.show(problem.code)}"));
       },
     );
   }

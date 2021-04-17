@@ -1,3 +1,4 @@
+import 'package:SOSMAK/models/criminalModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Wanted {
@@ -10,6 +11,12 @@ class Wanted {
   String contactHotline;
   int crimeLevel;
   String imageUrl;
+  List<CriminalInfoModel> spotCriminalInfo = [];
+  String spottedUserRef;
+  String spottedCitizenName;
+  String spottedDescription;
+  String spottedDate;
+  bool izSpotted = false;
   bool isHidden = false;
   Wanted.getData({DocumentSnapshot doc}) {
     this.name = doc.data()['name'];
@@ -22,6 +29,12 @@ class Wanted {
     this.crimeLevel = doc.data()['crimeLevel'];
     this.imageUrl = doc.data()['imageUrl'];
     this.isHidden = doc.data()['isHidden'] ?? isHidden;
+    this.izSpotted = doc.data()['izSpotted'] ?? izSpotted;
+    this.spotCriminalInfo = doc.data()['spotCriminalInfo'];
+    this.spottedUserRef = doc.data()['spottedUserRef'];
+    this.spottedCitizenName = doc.data()['spottedCitizenName'];
+    this.spottedDescription = doc.data()['spottedDescription'];
+    this.spottedDate = doc.data()['spottedDate'];
   }
   Wanted();
   toMap() {
@@ -35,7 +48,13 @@ class Wanted {
       'contactHotline': this.contactHotline,
       'crimeLevel': this.crimeLevel,
       'imageUrl': this.imageUrl,
-      'isHidden': this.isHidden
+      'isHidden': this.isHidden,
+      'izSpotted': this.izSpotted,
+      'spotCriminalInfo': this.spotCriminalInfo,
+      'spottedUserRef': this.spottedUserRef,
+      'spottedCitizenName': this.spottedCitizenName,
+      'spottedDescription': this.spottedDescription,
+      'spottedDate': this.spottedDate
     };
   }
 }

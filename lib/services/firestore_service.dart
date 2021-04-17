@@ -4,6 +4,7 @@ import 'package:SOSMAK/models/wantedModel.dart';
 import 'package:SOSMAK/services/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'dart:io';
 import '../models/userModel.dart';
@@ -212,5 +213,29 @@ class UserService {
         })
         .then((value) => print("Incident Updated"))
         .catchError((error) => print("Failed to update incident: $error"));
+  }
+
+  Future addSpotWantedCriminal(
+      {@required DocumentSnapshot doc, @required String userId, @required String name, @required String description}) {
+    DateTime currentDate = DateTime.now();
+    String currentTime = DateFormat('hh:mm a').format(DateTime.now());
+    String spottedDate = currentDate.month.toString() +
+        "/" +
+        currentDate.day.toString() +
+        "/" +
+        currentDate.year.toString() +
+        " - " +
+        currentTime;
+    return wantedList
+        .doc(doc.id)
+        .update({
+          'izSpotted': true,
+          "spottedUserRef": userId,
+          "spottedCitizenName": name,
+          "spottedDate": spottedDate,
+          "spottedDescription": description,
+        })
+        .then((value) => print("Wanted Updated"))
+        .catchError((error) => print("Failed to update wanted: $error"));
   }
 }

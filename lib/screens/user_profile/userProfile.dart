@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 class UserProfile extends StatefulWidget {
   @override
@@ -26,6 +28,28 @@ class _UserProfileState extends State<UserProfile> {
 
   UserDetailsProvider userDetailsProvider;
   UserModel user;
+
+  TwilioFlutter twilioFlutter;
+
+  String accountSid = DotEnv.env['ACCOUNT_SID'];
+  String authToken = DotEnv.env['AUTH_TOKEN'];
+  String twilioNumber = DotEnv.env['TWILIO_NUMBER'];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    twilioFlutter = TwilioFlutter(
+      accountSid: '$accountSid',
+      authToken: '$authToken',
+      twilioNumber: '$twilioNumber',
+    );
+  }
+
+  void sendSms() async {
+    twilioFlutter.sendSMS(toNumber: '+639562354758', messageBody: "HELP ME! I'M IN TROUBLE, SEND SOME AUTHORITIES");
+  }
+
   @override
   Widget build(BuildContext context) {
     userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
@@ -35,7 +59,7 @@ class _UserProfileState extends State<UserProfile> {
       drawerScrimColor: Color(0xFF93E9BE),
       backgroundColor: Color(0xFF93E9BE),
       appBar: AppBar(
-        title: Text('My Profile'),
+        title: Text('User Profile'),
         leading: IconButton(
           icon: Icon(Icons.home),
           onPressed: () {
@@ -103,9 +127,11 @@ class _UserProfileState extends State<UserProfile> {
               title: 'Name: ',
               data: '${user.firstName} ${user.lastName}',
             ),
-            _buildNormalText(
-              title: 'Gender: ',
-              data: user.gender,
+            _buildRowText(
+              title: 'Contact No.: ',
+              data: user.contactNo,
+              title2: 'Gender: ',
+              data2: user.gender,
             ),
             _buildRowText(
               title: 'Birthday: ',
@@ -114,12 +140,20 @@ class _UserProfileState extends State<UserProfile> {
               data2: user.age,
             ),
             _buildNormalText(
-              title: 'Contact No.: ',
-              data: user.contactNo,
-            ),
-            _buildNormalText(
               title: 'Address: ',
               data: user.address,
+            ),
+            _buildRowText(
+              title: 'BirthPlace: ',
+              data: user.birthPlace,
+              title2: 'Civil Status: ',
+              data2: user.civilStatus,
+            ),
+            _buildRowText(
+              title: 'Language: ',
+              data: user.language,
+              title2: 'Religion: ',
+              data2: user.religion,
             ),
             _buildRowText(
               title: 'Height: ',
@@ -128,19 +162,19 @@ class _UserProfileState extends State<UserProfile> {
               data2: user.weight,
             ),
             _buildRowText(
-              title: 'BloodType: ',
-              data: user.bloodType,
-              title2: 'Allergies: ',
-              data2: user.allergies,
+              title: 'Allergies: ',
+              data: user.allergies,
+              title2: 'BloodType: ',
+              data2: user.bloodType,
             ),
             SizedBox(height: 10),
-            _buildNormalText(
-              title: 'Emergency Contact: ',
-              data: '',
+            Text(
+              'Emergency Contact',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             _buildNormalText(
               title: 'Name: ',
-              data: user.contactPerson,
+              data: user.emergencycontactPerson,
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -150,23 +184,23 @@ class _UserProfileState extends State<UserProfile> {
                     'Contact No.: ',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  (user.emergencyContact != "")
+                  (user.emergencyContactNo != "")
                       ? RichText(
                           text: TextSpan(
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               color: Colors.black,
                               height: 1.5,
                             ),
                             children: [
                               TextSpan(
-                                text: '${user.emergencyContact}   ',
+                                text: '${user.emergencyContactNo}   ',
                               ),
                               WidgetSpan(
                                 child: InkWell(
-                                  onTap: () => _launchURL(number: user.emergencyContact),
+                                  onTap: sendSms,
                                   child: Icon(
-                                    Icons.call,
+                                    Icons.sms,
                                     color: Colors.blue,
                                   ),
                                 ),
@@ -175,7 +209,7 @@ class _UserProfileState extends State<UserProfile> {
                           ),
                         )
                       : Text(
-                          user.emergencyContact,
+                          "+${user.emergencyContactNo}",
                           style: TextStyle(fontSize: 18),
                         ),
                 ],
@@ -229,7 +263,7 @@ class _UserProfileState extends State<UserProfile> {
             SizedBox(height: size.height * 0.05),
             RaisedButton(
                 color: Colors.blue[400],
-                child: Text('Update', style: TextStyle(color: Colors.white)),
+                child: Text('Edit', style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -253,17 +287,22 @@ class _UserProfileState extends State<UserProfile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
-            ],
-          ),
           Container(
             width: size.width * 0.5,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Flexible(child: Text(data, style: TextStyle(fontSize: 18) ?? 'data')),
+              ],
+            ),
+          ),
+          Container(
+            width: size.width * 0.4,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -290,12 +329,14 @@ class _UserProfileState extends State<UserProfile> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             title,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-          Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
+          Flexible(child: Text(data, style: TextStyle(fontSize: 18) ?? 'data')),
         ],
       ),
     );

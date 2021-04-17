@@ -8,6 +8,7 @@ class UserModel {
   String ref;
   String address;
   String role;
+  String civilStatus;
   String currentIncidentRef;
   String birthDate;
   String birthPlace;
@@ -27,14 +28,15 @@ class UserModel {
   String language = '';
   String religion = '';
   String contactNo = '';
-  String emergencyContact = '';
-  String contactPerson = '';
+  String emergencyContactNo = '';
+  String emergencycontactPerson = '';
   String otherMedicalCondition1 = '';
   String otherMedicalCondition2 = '';
   String otherMedicalCondition3 = '';
   String otherMedicalCondition4 = '';
   String otherMedicalCondition5 = '';
   bool isArchived = false;
+  bool isTerminate = false;
 
   String tempPassword;
   final DateTime now = DateTime.now();
@@ -44,6 +46,7 @@ class UserModel {
       this.lastName = doc.data()['lastName'];
       this.email = doc.data()['email'];
       this.address = doc.data()['address'] ?? '';
+      this.civilStatus = doc.data()['civilStatus'] ?? '';
       this.birthDate = doc.data()['birthDate'];
       this.birthPlace = doc.data()['birthPlace'] ?? '';
       this.gender = doc.data()['gender'] ?? '';
@@ -67,14 +70,15 @@ class UserModel {
       this.language = doc.data()['language'] ?? this.language;
       this.religion = doc.data()['religion'] ?? this.religion;
       this.contactNo = doc.data()['contactNo'] ?? this.contactNo;
-      this.emergencyContact = doc.data()['emergencyContact'] ?? this.emergencyContact;
-      this.contactPerson = doc.data()['contactPerson'] ?? this.contactPerson;
+      this.emergencyContactNo = doc.data()['emergencyContactNo'] ?? this.emergencyContactNo;
+      this.emergencycontactPerson = doc.data()['emergencycontactPerson'] ?? this.emergencycontactPerson;
       this.otherMedicalCondition1 = doc.data()['otherMedicalCondition1'] ?? this.otherMedicalCondition1;
       this.otherMedicalCondition2 = doc.data()['otherMedicalCondition2'] ?? this.otherMedicalCondition2;
       this.otherMedicalCondition3 = doc.data()['otherMedicalCondition3'] ?? this.otherMedicalCondition3;
       this.otherMedicalCondition4 = doc.data()['otherMedicalCondition4'] ?? this.otherMedicalCondition4;
       this.otherMedicalCondition5 = doc.data()['otherMedicalCondition5'] ?? this.otherMedicalCondition5;
       this.isArchived = doc.data()['isArchived'] ?? this.isArchived;
+      this.isTerminate = doc.data()['isTerminate'] ?? this.isTerminate;
     } catch (e) {}
   }
   UserModel();
@@ -85,6 +89,7 @@ class UserModel {
       'lastName': this.lastName,
       'ref': this.ref,
       'email': this.email,
+      'civilStatus': this.civilStatus,
       'birthDate': formatted,
       'birthPlace': this.birthPlace,
       'gender': this.gender,
@@ -108,9 +113,10 @@ class UserModel {
       'language': this.language,
       'religion': this.religion,
       'contactNo': this.contactNo,
-      'emergencyContact': this.emergencyContact,
-      'contactPerson': this.contactPerson,
-      'isArchived': this.isArchived
+      'emergencyContactNo': this.emergencyContactNo,
+      'emergencycontactPerson': this.emergencycontactPerson,
+      'isArchived': this.isArchived,
+      'isTerminate': this.isArchived
     };
   }
 }
