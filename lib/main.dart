@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:SOSMAK/models/globals.dart';
+import 'package:SOSMAK/provider/dashboardProvider.dart';
 import 'package:SOSMAK/provider/userDetailsProvider.dart';
 import 'package:SOSMAK/screens/auth_screens/login.dart';
 import 'package:SOSMAK/screens/home.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ),
         StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
         ChangeNotifierProvider<UserDetailsProvider>(create: (_) => UserDetailsProvider()),
+        ChangeNotifierProvider<DashboardProvider>(create: (_) => DashboardProvider()),
       ],
       child: MaterialApp(
         theme: new ThemeData(

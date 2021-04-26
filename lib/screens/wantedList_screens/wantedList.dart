@@ -451,7 +451,7 @@ class _WantedPosterState extends State<WantedPoster> {
   Widget build(BuildContext context) {
     if (widget.isMini) {
       return Container(
-        height: 150,
+        height: 140,
         padding: const EdgeInsets.all(10),
         child: Image.network(
           widget.wanted.imageUrl,

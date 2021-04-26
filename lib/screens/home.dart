@@ -13,6 +13,9 @@ import 'package:SOSMAK/screens/user_info/usersInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/model.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './emergencyMap_screens/test2.dart';
@@ -45,7 +48,7 @@ class _HomeState extends State<Home> {
   UserDetailsProvider userDetailsProvider;
   final FirebaseMessaging _fcm = FirebaseMessaging();
   final users = FirebaseFirestore.instance.collection('users');
-
+  TextEditingController locationController = TextEditingController();
   loc.Location location = loc.Location();
   bool _serviceEnabled;
   loc.LocationData _locationData;
@@ -80,9 +83,36 @@ class _HomeState extends State<Home> {
     }
   }
 
+  final Geolocator _geolocator = Geolocator();
+  Position _currentPosition;
+  String _location;
+  String _addressLine;
+  bool done = false;
+
+  Future<void> _getLocation(Position position) async {
+    debugPrint('location: ${position.latitude}');
+    final coordinates = new Coordinates(position.latitude, position.longitude);
+    List<Address> addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    Address first = addresses.first;
+    _location = "${first.featureName}";
+    _addressLine = " ${first.addressLine}";
+    setState(() {
+      done = true;
+    });
+  }
+
+  void _getCurrentLocation() {
+    _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
+      _getLocation(position);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    _getCurrentLocation();
 
     checkerGPS();
     twilioFlutter = TwilioFlutter(
@@ -130,7 +160,8 @@ class _HomeState extends State<Home> {
     size = MediaQuery.of(context).size;
     final firebaseUser = context.watch<User>();
     userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
-
+    locationController =
+        TextEditingController(text: done == false ? "Click the icon to get My Current Location" : "$_addressLine");
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -338,7 +369,7 @@ class _HomeState extends State<Home> {
           ),
           Visibility(
             visible: isCitizen,
-            child: _buildSOSButton(emergencyContact: number),
+            child: _buildSOSButton(emergencyContact: number, context: context),
           ),
           Visibility(
             visible: isAdmin,
@@ -461,10 +492,19 @@ class _HomeState extends State<Home> {
   }
 
   void sendSms() async {
-    twilioFlutter.sendSMS(toNumber: '+639562354758', messageBody: "HELP ME! I'M IN TROUBLE, SEND SOME AUTHORITIES");
+    if (locationController.text == "Click the icon to get My Current Location") {
+      showNoLocation();
+    } else {
+      twilioFlutter.sendSMS(
+        toNumber: '+639562354758',
+        messageBody: "MY LOCATION: \n${locationController.text}\n\nHELP ME! I'M IN TROUBLE, SEND SOME AUTHORITIES",
+      );
+      locationController.text = '';
+      Navigator.pop(context);
+    }
   }
 
-  _buildSOSButton({@required String emergencyContact}) {
+  _buildSOSButton({@required String emergencyContact, BuildContext context}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -475,7 +515,52 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             InkWell(
-              onTap: sendSms,
+              onTap: () {
+                //sendSms
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Send your Location!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Container(
+                            child: TextFormField(
+                              controller: locationController,
+                              decoration: InputDecoration(
+                                labelText: 'Location',
+                                suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      _serviceEnabled = await location.serviceEnabled();
+                                      if (!_serviceEnabled) {
+                                        _serviceEnabled = await location.requestService();
+                                      }
+
+                                      Navigator.pop(context);
+                                      _getCurrentLocation();
+                                    },
+                                    icon: Icon(Icons.location_on_outlined)),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      actions: [
+                        FlatButton(
+                          child: Text("Send"),
+                          onPressed: sendSms,
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
               child: ClipOval(
                 child: Container(
                   width: 150,
@@ -526,15 +611,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _launchURL({String number}) async {
-    String url = 'tel:$number';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   void _serialiseAndNavigate(Map<String, dynamic> message) {
     var notificationData = message['data'];
     var view = notificationData['view'];
@@ -547,6 +623,60 @@ class _HomeState extends State<Home> {
         );
       }
     }
+  }
+
+  showNoLocation() {
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Error",
+        style: TextStyle(
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      content: RichText(
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w300,
+            color: Colors.black,
+            height: 1.5,
+          ),
+          children: [
+            TextSpan(
+              text: 'No location found. \n',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            TextSpan(
+              text: 'Click the',
+            ),
+            WidgetSpan(
+              child: Icon(Icons.location_on_outlined),
+            ),
+            TextSpan(
+              text: 'to get My Current Location',
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        FlatButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   // Future<void> _saveDeviceToken() async {

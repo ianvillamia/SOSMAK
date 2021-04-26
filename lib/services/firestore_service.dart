@@ -1,3 +1,4 @@
+import 'package:SOSMAK/models/dashboardModel.dart';
 import 'package:SOSMAK/models/incidentmodel.dart';
 import 'package:SOSMAK/models/police.dart';
 import 'package:SOSMAK/models/wantedModel.dart';
@@ -16,7 +17,7 @@ class UserService {
   CollectionReference courses = FirebaseFirestore.instance.collection('courses');
   CollectionReference wantedList = FirebaseFirestore.instance.collection('wantedList');
   CollectionReference incidentReports = FirebaseFirestore.instance.collection('incidentReports');
-
+  CollectionReference graph = FirebaseFirestore.instance.collection('graphData');
   addUserToCollection({UserModel user, String uid}) {
     user.ref = uid;
     this.users.doc(uid).set(user.toMap()).then((value) {});
@@ -237,5 +238,11 @@ class UserService {
         })
         .then((value) => print("Wanted Updated"))
         .catchError((error) => print("Failed to update wanted: $error"));
+  }
+
+  Future addGraphData({@required String id, @required int value}) async {
+    await graph.doc(id).update({
+      'value': value,
+    });
   }
 }

@@ -1,4 +1,6 @@
+import 'package:SOSMAK/models/dashboardModel.dart';
 import 'package:SOSMAK/models/incidentmodel.dart';
+import 'package:SOSMAK/provider/dashboardProvider.dart';
 import 'package:SOSMAK/screens/incident_report/currentIncident.dart';
 import 'package:SOSMAK/screens/incident_report/incidentReportHistory.dart';
 import 'package:SOSMAK/services/firestore_service.dart';
@@ -9,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:location/location.dart' as loc;
+import 'package:provider/provider.dart';
 
 class IncidentReportV2 extends StatefulWidget {
   final String userRef;
@@ -81,6 +84,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
   String _location;
   String _addressLine;
   bool done = false;
+  DashboardProvider dashboardProvider;
 
   Future<void> _getLocation(Position position) async {
     debugPrint('location: ${position.latitude}');
@@ -104,6 +108,7 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
 
   @override
   Widget build(BuildContext context) {
+    dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
     locationController =
         new TextEditingController(text: done == false ? "Click the icon to get My Current Location" : "$_addressLine");
     size = MediaQuery.of(context).size;
@@ -177,6 +182,15 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance.collection('graphData').doc(dropdownValue).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      dashboardProvider.getDashboard(snapshot.data);
+                    }
+                    return Container();
+                  },
+                ),
                 Align(
                   alignment: Alignment.topCenter,
                   child: Text('Incident Report',
@@ -271,7 +285,6 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
         items: <String>[
           'Brawl',
           'Burglary',
-          'Car/Motor Accident',
           'Child Abuse',
           'Cyber Crime',
           'Domestic Abuse',
@@ -282,8 +295,9 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
           'Robbery',
           'Sexual Harassment',
           'Snatching',
+          'Terrorism',
+          'Vehicle Accident',
           'Violent Crime',
-          'Terrorism'
         ].map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
@@ -403,12 +417,15 @@ class _IncidentReportV2State extends State<IncidentReportV2> {
             incident.location = locationController.text;
             incident.status = 0;
             incident.reporterRef = widget.userRef;
-            //
+
+            int value = dashboardProvider.dashboard.value + 1;
+
             setState(() {
               isLoading = true;
             });
             if (images.length != 0) {
               await UserService().postIncident(incident: incident, images: images).then((doc) async {
+                await UserService().addGraphData(id: dropdownValue, value: value);
                 Future.delayed(Duration(seconds: 3), () {
                   setState(() {
                     isLoading = false;

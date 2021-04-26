@@ -217,7 +217,7 @@ class _CreateWantedState extends State<CreateWanted> {
       width: width,
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: TextFormField(
-        textCapitalization: TextCapitalization.words,
+        textCapitalization: TextCapitalization.sentences,
         enabled: enable,
         maxLines: maxLines ?? 1,
         controller: controller,
@@ -291,16 +291,17 @@ class _CreateWantedState extends State<CreateWanted> {
                     width: 120,
                     height: 120,
                   )))
-          : ClipOval(
-              child: Container(
-                width: 150,
-                height: 150,
-                child: Image.file(
-                  _image,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+          : CircleAvatar(
+              backgroundColor: Colors.red[400],
+              radius: 70,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70),
+                  child: Image.file(
+                    _image,
+                    fit: BoxFit.cover,
+                    width: 120,
+                    height: 120,
+                  ))),
       Positioned(
         left: 100,
         top: 100,

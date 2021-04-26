@@ -1,6 +1,8 @@
 import 'package:SOSMAK/models/wantedModel.dart';
+import 'package:SOSMAK/screens/wantedList_screens/wantedList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SpotAlert extends StatefulWidget {
   SpotAlert({Key key}) : super(key: key);
@@ -31,8 +33,12 @@ class _SpotAlertState extends State<SpotAlert> {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
-                        child: Wrap(
-                          children: snapshot.data.docs.map<Widget>((doc) => _buildWantedCard(doc)).toList(),
+                        child: Column(
+                          children: [
+                            Wrap(
+                              children: snapshot.data.docs.map<Widget>((doc) => _buildWantedCard(doc)).toList(),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -52,54 +58,82 @@ class _SpotAlertState extends State<SpotAlert> {
 
   _buildWantedCard(DocumentSnapshot doc) {
     Wanted wanted = Wanted.getData(doc: doc);
+
     return InkWell(
       onTap: () {
-        showNotifyDialog(context, wanted: wanted);
+        showNotifyDialog(context, doc, wanted: wanted);
       },
       child: Card(
-        elevation: 5,
-        child: Container(
-          width: 150,
-          height: 150,
-          padding: const EdgeInsets.all(10),
-          child: Image.network(
-            wanted.imageUrl,
-            fit: BoxFit.cover,
+        child: ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(wanted.name),
+              Text(wanted.spottedDate),
+            ],
           ),
         ),
       ),
     );
   }
 
-  showNotifyDialog(BuildContext context, {@required Wanted wanted}) {
+  showNotifyDialog(BuildContext context, DocumentSnapshot doc, {@required Wanted wanted}) {
     AlertDialog alert = AlertDialog(
         contentPadding: EdgeInsets.all(12),
         content: Container(
           width: size.width * .7,
-          height: size.height * .3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Date Reported: ${wanted.spottedDate}'),
-              SizedBox(height: 10),
-              Text('Description:'),
-              Text(wanted.spottedDescription),
-              SizedBox(height: 20),
-              Text('Spotted By:'),
-              Text('Citizen Name: ${wanted.spottedCitizenName}'),
-              SizedBox(height: 40),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: MaterialButton(
-                  color: Colors.redAccent,
-                  child: Text(
-                    'Close',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () => Navigator.pop(context),
+          height: size.height * .8,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                WantedPoster(
+                  isMini: false,
+                  wanted: wanted,
                 ),
-              )
-            ],
+                SizedBox(height: 10),
+                Text(
+                  'Description:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(wanted.spottedDescription),
+                SizedBox(height: 10),
+                Text(
+                  'Spotted By:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text('Citizen Name: ${wanted.spottedCitizenName}'),
+                SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MaterialButton(
+                        color: Colors.redAccent,
+                        child: Text(
+                          'Call a Officer',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      MaterialButton(
+                        color: Colors.redAccent,
+                        child: Text(
+                          'Remove from List',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          CollectionReference wanted = FirebaseFirestore.instance.collection('wantedList');
+
+                          wanted.doc(doc.id).update({'izSpotted': false}).then((value) => Navigator.pop(context));
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ));
 

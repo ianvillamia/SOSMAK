@@ -44,9 +44,25 @@ class _LoginState extends State<Login> {
                 ),
                 Column(
                   children: [
-                    Text(
-                      'SOSMAK',
-                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'SOSMAK',
+                          style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 5),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              'v1.3',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 10,
@@ -107,14 +123,6 @@ class _LoginState extends State<Login> {
                       width: 15,
                     ),
                   ],
-                ),
-                SizedBox(height: 70),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    'v2.0',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
-                  ),
                 ),
               ],
             ),

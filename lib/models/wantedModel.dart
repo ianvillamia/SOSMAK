@@ -11,7 +11,7 @@ class Wanted {
   String contactHotline;
   int crimeLevel;
   String imageUrl;
-  List<CriminalInfoModel> spotCriminalInfo = [];
+  //List<CriminalInfoModel> spotCriminalInfo = [];
   String spottedUserRef;
   String spottedCitizenName;
   String spottedDescription;
@@ -30,7 +30,7 @@ class Wanted {
     this.imageUrl = doc.data()['imageUrl'];
     this.isHidden = doc.data()['isHidden'] ?? isHidden;
     this.izSpotted = doc.data()['izSpotted'] ?? izSpotted;
-    this.spotCriminalInfo = doc.data()['spotCriminalInfo'];
+    //this.spotCriminalInfo = doc.data()['spotCriminalInfo'];
     this.spottedUserRef = doc.data()['spottedUserRef'];
     this.spottedCitizenName = doc.data()['spottedCitizenName'];
     this.spottedDescription = doc.data()['spottedDescription'];
@@ -50,11 +50,6 @@ class Wanted {
       'imageUrl': this.imageUrl,
       'isHidden': this.isHidden,
       'izSpotted': this.izSpotted,
-      'spotCriminalInfo': this.spotCriminalInfo,
-      'spottedUserRef': this.spottedUserRef,
-      'spottedCitizenName': this.spottedCitizenName,
-      'spottedDescription': this.spottedDescription,
-      'spottedDate': this.spottedDate
     };
   }
 }
