@@ -1,5 +1,7 @@
 import 'package:SOSMAK/screens/auth_screens/login.dart';
-import 'package:SOSMAK/screens/auth_screens/signup3.dart';
+import 'package:SOSMAK/screens/auth_screens/signup2.dart';
+import 'package:SOSMAK/screens/auth_screens/signupTermsAndCondition.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +22,7 @@ class AlwaysDisabledFocusNode extends FocusNode {
 class _SignupState extends State<Signup> {
   TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController(),
+      confirmPasswordController = TextEditingController(),
       firstNameController = TextEditingController(),
       addressController = TextEditingController(),
       lastNameController = TextEditingController(),
@@ -27,8 +30,12 @@ class _SignupState extends State<Signup> {
       birthdayController = TextEditingController(),
       ageController = TextEditingController(),
       codeNoController = TextEditingController(),
-      emergencyNameController = TextEditingController(),
-      emergencyContactController = TextEditingController();
+      emergencyNameController1 = TextEditingController(),
+      emergencyContactController1 = TextEditingController(),
+      emergencyNameController2 = TextEditingController(),
+      emergencyContactController2 = TextEditingController(),
+      emergencyNameController3 = TextEditingController(),
+      emergencyContactController3 = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
   Size size;
@@ -36,8 +43,15 @@ class _SignupState extends State<Signup> {
   File _imageProfile;
   final picker = ImagePicker();
   bool _isHidden = true;
-  List<String> gender = ['Male', 'Female', 'Bisexual', 'Lesbian', 'Others'];
+  bool isChecked = false;
+  List<String> genderList = ['Male', 'Female', 'Better not say'];
   String selectedGender;
+  List<String> relationList1 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation1;
+  List<String> relationList2 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation2;
+  List<String> relationList3 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation3;
   String age;
   var selectedYear;
 
@@ -184,15 +198,28 @@ class _SignupState extends State<Signup> {
                     Container(
                       width: size.width * 0.5,
                       child: _buildTextFormField(
-                        isDisabled: true,
+                        isDisabled: false,
                         controller: ageController,
                         label: 'Age',
                       ),
                     ),
                   ],
                 ),
-                _genderDropDownButton(),
-                _buildPasswordField(controller: passwordController, label: 'Password'),
+                _buildDropDownButton(
+                  hintText: 'Gender',
+                  items: genderList,
+                  value: selectedGender,
+                  onChanged: (String gValue) {
+                    setState(() {
+                      selectedGender = gValue;
+                    });
+                  },
+                ),
+                _buildPasswordField(
+                    controller1: passwordController,
+                    controller2: confirmPasswordController,
+                    label1: 'Password',
+                    label2: 'Confirm Password'),
                 SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
@@ -202,7 +229,15 @@ class _SignupState extends State<Signup> {
                   ),
                 ),
                 SizedBox(height: 20),
-                _buildTextFormField(controller: emergencyNameController, isDisabled: true, label: 'Full Name'),
+                //First Emergency Contact
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'First Contact Person',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                _buildTextFormField(controller: emergencyNameController1, isDisabled: true, label: 'Full Name'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -215,11 +250,95 @@ class _SignupState extends State<Signup> {
                       width: size.width * 0.77,
                       child: _buildTextFormField(
                           isNumber: true,
-                          controller: emergencyContactController,
+                          controller: emergencyContactController1,
                           isDisabled: true,
                           label: 'Contact Number'),
                     )
                   ],
+                ),
+                _buildDropDownButton(
+                  hintText: 'Relationship',
+                  items: relationList1,
+                  value: selectedRelation1,
+                  onChanged: (String rValue1) {
+                    setState(() {
+                      selectedRelation1 = rValue1;
+                    });
+                  },
+                ),
+                //Second Emergency Contact
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'Second Contact Person',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                _buildTextFormField(controller: emergencyNameController2, isDisabled: true, label: 'Full Name'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.23,
+                      child: _buildTextFormField(
+                          controller: codeNoController, isNumber: true, isDisabled: false, label: ''),
+                    ),
+                    Container(
+                      width: size.width * 0.77,
+                      child: _buildTextFormField(
+                          isNumber: true,
+                          controller: emergencyContactController2,
+                          isDisabled: true,
+                          label: 'Contact Number'),
+                    )
+                  ],
+                ),
+                _buildDropDownButton(
+                  hintText: 'Relationship',
+                  items: relationList2,
+                  value: selectedRelation2,
+                  onChanged: (String rValue2) {
+                    setState(() {
+                      selectedRelation2 = rValue2;
+                    });
+                  },
+                ),
+                //Third Emergency Contact
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    'Third Contact Person',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                _buildTextFormField(controller: emergencyNameController3, isDisabled: true, label: 'Full Name'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.23,
+                      child: _buildTextFormField(
+                          controller: codeNoController, isNumber: true, isDisabled: false, label: ''),
+                    ),
+                    Container(
+                      width: size.width * 0.77,
+                      child: _buildTextFormField(
+                          isNumber: true,
+                          controller: emergencyContactController3,
+                          isDisabled: true,
+                          label: 'Contact Number'),
+                    )
+                  ],
+                ),
+                _buildDropDownButton(
+                  hintText: 'Relationship',
+                  items: relationList3,
+                  value: selectedRelation3,
+                  onChanged: (String rValue3) {
+                    setState(() {
+                      selectedRelation3 = rValue3;
+                    });
+                  },
                 ),
                 SizedBox(height: 10),
                 Align(
@@ -234,7 +353,54 @@ class _SignupState extends State<Signup> {
                           },
                           child: Text('Already Got an Account? Click here to login'))),
                 ),
-                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Checkbox(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          value: isChecked,
+                          checkColor: Colors.green,
+                          activeColor: Colors.grey[300],
+                          onChanged: (bool value) {
+                            setState(() {
+                              isChecked = value;
+                            });
+                          },
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                              height: 1.5,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'I agree to the ',
+                              ),
+                              TextSpan(
+                                  text: 'Terms and conditions and Privacy Provisions',
+                                  style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SignUpTermsAndCondition(),
+                                          ));
+                                    }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -244,43 +410,73 @@ class _SignupState extends State<Signup> {
                     MaterialButton(
                       elevation: 5,
                       color: Colors.blueAccent,
+                      disabledColor: Colors.grey,
                       textColor: Colors.white,
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          if (_imageProfile != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SignUpSecondPage(
-                                  fNameController: firstNameController,
-                                  lNameController: lastNameController,
-                                  emailContoller: emailController,
-                                  addressController: addressController,
-                                  bdayController: birthdayController,
-                                  ageController: ageController,
-                                  gender: selectedGender ?? '',
-                                  passwordController: passwordController,
-                                  imageProfile: _imageProfile,
-                                  emergencyNameController: emergencyNameController,
-                                  emergencyContactController: emergencyContactController,
-                                ),
-                              ),
-                            );
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Something went wrong"),
-                                  content: Text("Please take a profile picture."),
-                                );
-                              },
-                            );
-                          }
-                        }
+                      onPressed: isChecked
+                          ? () {
+                              if (_formKey.currentState.validate()) {
+                                if (_imageProfile != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SignUpSecondPage(
+                                        fNameController: firstNameController,
+                                        lNameController: lastNameController,
+                                        emailContoller: emailController,
+                                        addressController: addressController,
+                                        bdayController: birthdayController,
+                                        ageController: ageController,
+                                        gender: selectedGender ?? '',
+                                        passwordController: passwordController,
+                                        imageProfile: _imageProfile,
+                                        emergencyNameController1: emergencyNameController1,
+                                        emergencyContactController1: emergencyContactController1,
+                                        emergencyRelation1: selectedRelation1,
+                                        emergencyNameController2: emergencyNameController2,
+                                        emergencyContactController2: emergencyContactController2,
+                                        emergencyRelation2: selectedRelation2,
+                                        emergencyNameController3: emergencyNameController3,
+                                        emergencyContactController3: emergencyContactController3,
+                                        emergencyRelation3: selectedRelation3,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Something went wrong"),
+                                        content: Text("Please take a profile picture."),
+                                      );
+                                    },
+                                  );
+                                }
+                              }
 
-                        //.signIn(email: email.text.trim(), password: password.text.trim());
-                      },
+                              //.signIn(email: email.text.trim(), password: password.text.trim());
+                            }
+                          : null,
+                      // () {
+                      //   print("1" + firstNameController.text);
+                      //   print("2" + lastNameController.text);
+                      //   print("3" + emailController.text);
+                      //   print("4" + addressController.text);
+                      //   print("5" + birthdayController.text);
+                      //   print("6" + ageController.text);
+                      //   print(selectedGender);
+                      //   print("8" + passwordController.text);
+                      //   print("9" + emergencyNameController1.text);
+                      //   print("10" + emergencyContactController1.text);
+                      //   print(selectedRelation1);
+                      //   print("12" + emergencyNameController2.text);
+                      //   print("13" + emergencyContactController2.text);
+                      //   print(selectedRelation2);
+                      //   print("15" + emergencyNameController3.text);
+                      //   print("16" + emergencyContactController3.text);
+                      //   print(selectedRelation3);
+                      // },
+
                       child: Text('Next'),
                     )
                   ],
@@ -327,30 +523,56 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  _buildPasswordField({TextEditingController controller, String label}) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-      child: TextFormField(
-        validator: (value) {
-          if (value.isEmpty) {
-            return 'Password is required';
-          }
-          return null;
-        },
-        controller: controller,
-        obscureText: _isHidden,
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(10),
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-            suffixIcon: IconButton(
-                onPressed: _toggleVisibility,
-                icon: _isHidden ? Icon(Icons.visibility_off, size: 20) : Icon(Icons.visibility, size: 20))),
-      ),
+  _buildPasswordField(
+      {TextEditingController controller1, TextEditingController controller2, String label1, String label2}) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+          child: TextFormField(
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Password is required';
+              }
+              return null;
+            },
+            controller: controller1,
+            obscureText: _isHidden,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10),
+                labelText: label1,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+                suffixIcon: IconButton(
+                    onPressed: _toggleVisibility,
+                    icon: _isHidden ? Icon(Icons.visibility_off, size: 20) : Icon(Icons.visibility, size: 20))),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+          child: TextFormField(
+            validator: (val) {
+              if (val != passwordController.text || val == null) {
+                return "Password don't match!";
+              }
+              return null;
+            },
+            controller: controller2,
+            obscureText: _isHidden,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10),
+                labelText: label2,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+                suffixIcon: IconButton(
+                    onPressed: _toggleVisibility,
+                    icon: _isHidden ? Icon(Icons.visibility_off, size: 20) : Icon(Icons.visibility, size: 20))),
+          ),
+        ),
+      ],
     );
   }
 
-  _genderDropDownButton() {
+  _buildDropDownButton(
+      {@required String hintText, @required String value, @required List<String> items, @required onChanged}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
@@ -363,19 +585,15 @@ class _SignupState extends State<Signup> {
                 const Radius.circular(30.0),
               ),
             ),
-            hintText: "Gender",
+            hintText: hintText,
           ),
-          value: selectedGender,
-          onChanged: (String gValue) {
-            setState(() {
-              selectedGender = gValue;
-            });
-          },
-          items: gender
+          value: value,
+          onChanged: onChanged,
+          items: items
               .map(
-                (value) => DropdownMenuItem(
-                  value: value,
-                  child: Text("$value"),
+                (val) => DropdownMenuItem(
+                  value: val,
+                  child: Text("$val"),
                 ),
               )
               .toList(),
@@ -398,13 +616,17 @@ class _SignupState extends State<Signup> {
                     width: 130,
                     height: 130,
                   )))
-          : ClipOval(
-              child: Container(
-                width: 150,
-                height: 150,
-                child: Image.file(
-                  _imageProfile,
-                  fit: BoxFit.cover,
+          : CircleAvatar(
+              backgroundColor: Colors.black,
+              radius: 70,
+              child: ClipOval(
+                child: Container(
+                  width: 130,
+                  height: 130,
+                  child: Image.file(
+                    _imageProfile,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

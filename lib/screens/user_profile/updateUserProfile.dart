@@ -32,10 +32,18 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
   int counter = 0;
   File _imageProfile;
   final picker = ImagePicker();
-  List<String> genderList = ['Male', 'Female', 'Bisexual', 'Lesbian', 'Others'];
+  List<String> genderList = ['Male', 'Female', 'Better not say'];
   String selectedGender;
   List<String> civilStatusList = ['Single', 'Married', 'Widowed', 'Divorced'];
   String selectedcivilStatus;
+  List<String> relationList1 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation1;
+  List<String> relationList2 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation2;
+  List<String> relationList3 = ['Family', 'Loveone', 'Friend'];
+  String selectedRelation3;
+  List<String> bloodTypeList = ['A', 'B', 'AB', 'O'];
+  String selectedBloodType;
 
   DateTime selectedDate = DateTime.now();
   TextEditingController firstNameController = TextEditingController(),
@@ -51,13 +59,12 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
       languageController = TextEditingController(),
       religionController = TextEditingController(),
       contactNoController = TextEditingController(),
-      contactPersonController = TextEditingController(),
-      emergencyContactController = TextEditingController(),
-      medicalController1 = TextEditingController(),
-      medicalController2 = TextEditingController(),
-      medicalController3 = TextEditingController(),
-      medicalController4 = TextEditingController(),
-      medicalController5 = TextEditingController(),
+      emergencyPersonController1 = TextEditingController(),
+      emergencyContactController1 = TextEditingController(),
+      emergencyPersonController2 = TextEditingController(),
+      emergencyContactController2 = TextEditingController(),
+      emergencyPersonController3 = TextEditingController(),
+      emergencyContactController3 = TextEditingController(),
       profileImageController = TextEditingController();
 
   void _selectDate(BuildContext context) async {
@@ -126,13 +133,15 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
       language,
       religion,
       contactNo,
-      contactPerson,
-      emergencyContact,
-      medCondition1,
-      medCondition2,
-      medCondition3,
-      medCondition4,
-      medCondition5,
+      contactPerson1,
+      emergencyContact1,
+      emerygencyRelation1,
+      contactPerson2,
+      emergencyContact2,
+      emerygencyRelation2,
+      contactPerson3,
+      emergencyContact3,
+      emerygencyRelation3,
       profileImage;
   // getFirstName(fname) {
   //   this.firstName = fname;
@@ -182,32 +191,40 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     this.contactNo = myContact;
   }
 
-  getContactPerson(contact) {
-    this.contactPerson = contact;
+  getContactPerson1(contact) {
+    this.contactPerson1 = contact;
   }
 
-  getEmergencyContact(emergency) {
-    this.emergencyContact = emergency;
+  getEmergencyContact1(emergency) {
+    this.emergencyContact1 = emergency;
   }
 
-  getMedical1(med1) {
-    this.medCondition1 = med1;
+  getEmerygencyRelation1(rel) {
+    this.emerygencyRelation1 = rel;
   }
 
-  getMedical2(med2) {
-    this.medCondition2 = med2;
+  getContactPerson2(contact) {
+    this.contactPerson2 = contact;
   }
 
-  getMedical3(med3) {
-    this.medCondition3 = med3;
+  getEmergencyContact2(emergency) {
+    this.emergencyContact2 = emergency;
   }
 
-  getMedical4(med4) {
-    this.medCondition4 = med4;
+  getEmerygencyRelation2(rel) {
+    this.emerygencyRelation2 = rel;
   }
 
-  getMedical5(med5) {
-    this.medCondition5 = med5;
+  getContactPerson3(contact) {
+    this.contactPerson3 = contact;
+  }
+
+  getEmergencyContact3(emergency) {
+    this.emergencyContact3 = emergency;
+  }
+
+  getEmerygencyRelation3(rel) {
+    this.emerygencyRelation3 = rel;
   }
 
   getProfileImage(pic) {
@@ -241,8 +258,11 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     // firstNameController.text = widget.user.firstName;
     // lastNameController.text = widget.user.lastName;
 
-    selectedcivilStatus = widget.user.civilStatus;
+    selectedcivilStatus = widget.user.civilStatus.isEmpty ? 'Single' : widget.user.civilStatus;
     selectedGender = widget.user.gender;
+    selectedRelation1 = widget.user.emergencyRelation1.isEmpty ? 'Family' : widget.user.emergencyRelation1;
+    selectedRelation2 = widget.user.emergencyRelation2.isEmpty ? 'Family' : widget.user.emergencyRelation2;
+    selectedRelation3 = widget.user.emergencyRelation3.isEmpty ? 'Family' : widget.user.emergencyRelation3;
     addressController.text = widget.user.address;
     birthdayController.text = widget.user.birthDate;
     birthPlaceController.text = widget.user.birthPlace;
@@ -253,14 +273,21 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     allergiesController.text = widget.user.allergies;
     languageController.text = widget.user.language;
     religionController.text = widget.user.religion;
-    contactPersonController.text = widget.user.emergencycontactPerson;
-    emergencyContactController.text = widget.user.emergencyContactNo;
-
-    medicalController1.text = widget.user.otherMedicalCondition1;
-    medicalController2.text = widget.user.otherMedicalCondition2;
-    medicalController3.text = widget.user.otherMedicalCondition3;
-    medicalController4.text = widget.user.otherMedicalCondition4;
-    medicalController5.text = widget.user.otherMedicalCondition5;
+    //1
+    emergencyPersonController1.text = widget.user.emergencycontactPerson1;
+    emergencyContactController1.text = widget.user.emergencyContactNo1.isEmpty
+        ? widget.user.emergencyContactNo1
+        : widget.user.emergencyContactNo1.substring(3);
+    //2
+    emergencyPersonController2.text = widget.user.emergencycontactPerson2;
+    emergencyContactController2.text = widget.user.emergencyContactNo2.isEmpty
+        ? widget.user.emergencyContactNo2
+        : widget.user.emergencyContactNo2.substring(3);
+    //3
+    emergencyPersonController3.text = widget.user.emergencycontactPerson3;
+    emergencyContactController3.text = widget.user.emergencyContactNo3.isEmpty
+        ? widget.user.emergencyContactNo3
+        : widget.user.emergencyContactNo3.substring(3);
 
     print(counter);
   }
@@ -306,6 +333,7 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                           Container(
                             width: size.width * 0.42,
                             child: _showDropDownButton(
+                              labelText: 'Gender',
                               value: selectedGender,
                               onChanged: (String gValue) {
                                 getGender(gValue);
@@ -338,6 +366,7 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                               width: size.width * 0.42,
                               controller: ageController,
                               label: 'Age',
+                              isDisabled: true,
                               isNumber: true,
                               onChanged: (String age) => getAge(age)),
                         ]),
@@ -357,6 +386,7 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                           Container(
                             width: size.width * 0.42,
                             child: _showDropDownButton(
+                              labelText: 'Civil Status',
                               value: selectedcivilStatus,
                               onChanged: (String csValue) {
                                 getCivilStatus(csValue);
@@ -399,12 +429,20 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            textFormFeld(
-                                width: size.width * 0.2,
-                                controller: bloodTypeController,
-                                label: 'Blood Type',
-                                isNumber: false,
-                                onChanged: (String bloodType) => getBloodType(bloodType)),
+                            Container(
+                              width: size.width * 0.2,
+                              child: _showDropDownButton(
+                                labelText: 'BloodType',
+                                value: selectedBloodType,
+                                onChanged: (String btValue) {
+                                  getBloodType(bloodType);
+                                  setState(() {
+                                    selectedBloodType = btValue;
+                                  });
+                                },
+                                listData: bloodTypeList,
+                              ),
+                            ),
                             textFormFeld(
                                 width: size.width * 0.68,
                                 controller: allergiesController,
@@ -413,62 +451,51 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                                 onChanged: (String allergies) => getAllergies(allergies)),
                           ],
                         ),
-                        textFormFeld(
-                            width: size.width,
-                            controller: contactPersonController,
-                            label: 'Emergency Contact Person',
-                            isNumber: false,
-                            onChanged: (String contact) => getContactPerson(contact)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            textFormFeld(
-                              width: size.width * 0.2,
-                              controller: null,
-                              label: '+63',
-                              isDisabled: true,
-                              onChanged: () {},
-                              isNumber: false,
-                            ),
-                            textFormFeld(
-                                width: size.width * 0.68,
-                                controller: emergencyContactController,
-                                label: 'Emergency Contact No.',
-                                maxLength: 10,
-                                isNumber: true,
-                                onChanged: (String emergency) => getEmergencyContact(emergency)),
-                          ],
+                        //1
+                        _buildEmergencyContactUpdate(
+                          personController: emergencyPersonController1,
+                          personOnChanged: (String contact) => getContactPerson1(contact),
+                          dropdownOnChanged: (String relValue1) {
+                            getEmerygencyRelation1(relValue1);
+                            setState(() {
+                              selectedRelation1 = relValue1;
+                            });
+                          },
+                          selectedValue: selectedRelation1,
+                          listData: relationList1,
+                          contactNoController: emergencyContactController1,
+                          contactNoOnChanged: (String emergency) => getEmergencyContact1(emergency),
                         ),
-                        textFormFeld(
-                            width: size.width,
-                            controller: medicalController1,
-                            label: 'Medical Condition 1',
-                            isNumber: false,
-                            onChanged: (String med1) => getMedical1(med1)),
-                        textFormFeld(
-                            width: size.width,
-                            controller: medicalController2,
-                            label: 'Medical Condition 2',
-                            isNumber: false,
-                            onChanged: (String med2) => getMedical2(med2)),
-                        textFormFeld(
-                            width: size.width,
-                            controller: medicalController3,
-                            label: 'Medical Condition 3',
-                            isNumber: false,
-                            onChanged: (String med3) => getMedical3(med3)),
-                        textFormFeld(
-                            width: size.width,
-                            controller: medicalController4,
-                            label: 'Medical Condition 4',
-                            isNumber: false,
-                            onChanged: (String med4) => getMedical4(med4)),
-                        textFormFeld(
-                            width: size.width,
-                            controller: medicalController5,
-                            label: 'Medical Condition 5',
-                            isNumber: false,
-                            onChanged: (String med5) => getMedical5(med5)),
+                        //2
+                        _buildEmergencyContactUpdate(
+                          personController: emergencyPersonController2,
+                          personOnChanged: (String contact) => getContactPerson2(contact),
+                          dropdownOnChanged: (String relValue2) {
+                            getEmerygencyRelation2(relValue2);
+                            setState(() {
+                              selectedRelation2 = relValue2;
+                            });
+                          },
+                          selectedValue: selectedRelation2,
+                          listData: relationList2,
+                          contactNoController: emergencyContactController2,
+                          contactNoOnChanged: (String emergency) => getEmergencyContact2(emergency),
+                        ),
+                        //3
+                        _buildEmergencyContactUpdate(
+                          personController: emergencyPersonController3,
+                          personOnChanged: (String contact) => getContactPerson3(contact),
+                          dropdownOnChanged: (String relValue3) {
+                            getEmerygencyRelation3(relValue3);
+                            setState(() {
+                              selectedRelation3 = relValue3;
+                            });
+                          },
+                          selectedValue: selectedRelation3,
+                          listData: relationList3,
+                          contactNoController: emergencyContactController3,
+                          contactNoOnChanged: (String emergency) => getEmergencyContact3(emergency),
+                        ),
                         SizedBox(height: size.height * 0.03),
                         RaisedButton(
                           color: Colors.blue[400],
@@ -484,19 +511,22 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                             widget.user.civilStatus = selectedcivilStatus ?? '';
                             widget.user.height = heightController.text;
                             widget.user.weight = weightController.text;
-                            widget.user.bloodType = bloodTypeController.text;
+                            widget.user.bloodType = selectedBloodType ?? '';
                             widget.user.allergies = allergiesController.text;
                             widget.user.language = languageController.text;
                             widget.user.religion = religionController.text;
                             widget.user.contactNo = contactNoController.text;
-                            widget.user.emergencycontactPerson = contactPersonController.text;
-                            widget.user.emergencyContactNo = emergencyContactController.text;
+                            widget.user.emergencycontactPerson1 = emergencyPersonController1.text;
+                            widget.user.emergencyContactNo1 = emergencyContactController1.text;
+                            widget.user.emergencyRelation1 = selectedRelation1;
 
-                            widget.user.otherMedicalCondition1 = medicalController1.text;
-                            widget.user.otherMedicalCondition2 = medicalController2.text;
-                            widget.user.otherMedicalCondition3 = medicalController3.text;
-                            widget.user.otherMedicalCondition4 = medicalController4.text;
-                            widget.user.otherMedicalCondition5 = medicalController5.text;
+                            widget.user.emergencycontactPerson2 = emergencyPersonController2.text;
+                            widget.user.emergencyContactNo2 = emergencyContactController2.text;
+                            widget.user.emergencyRelation2 = selectedRelation2;
+
+                            widget.user.emergencycontactPerson3 = emergencyPersonController3.text;
+                            widget.user.emergencyContactNo3 = emergencyContactController3.text;
+                            widget.user.emergencyRelation3 = selectedRelation3;
 
                             //update here
                             // print(_user.currentUser.ref);
@@ -517,14 +547,18 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                               'language': widget.user.language,
                               'religion': widget.user.religion,
                               'contactNo': widget.user.contactNo,
-                              'emergencycontactPerson': widget.user.emergencycontactPerson,
-                              'emergencyContactNo': "+63${widget.user.emergencyContactNo}",
+                              'emergencycontactPerson1': widget.user.emergencycontactPerson1,
+                              'emergencyContactNo1': "+63${widget.user.emergencyContactNo1}",
+                              'emergencyRelation1': widget.user.emergencyRelation1,
+
+                              'emergencycontactPerson2': widget.user.emergencycontactPerson2,
+                              'emergencyContactNo2': "+63${widget.user.emergencyContactNo2}",
+                              'emergencyRelation2': widget.user.emergencyRelation2,
+
+                              'emergencycontactPerson3': widget.user.emergencycontactPerson3,
+                              'emergencyContactNo3': "+63${widget.user.emergencyContactNo3}",
+                              'emergencyRelation3': widget.user.emergencyRelation3,
                               'profileUrl': widget.user.profileUrl,
-                              'otherMedicalCondition1': widget.user.otherMedicalCondition1,
-                              'otherMedicalCondition2': widget.user.otherMedicalCondition2,
-                              'otherMedicalCondition3': widget.user.otherMedicalCondition3,
-                              'otherMedicalCondition4': widget.user.otherMedicalCondition4,
-                              'otherMedicalCondition5': widget.user.otherMedicalCondition5,
                             }).then((value) {
                               Navigator.pop(context);
                             });
@@ -686,6 +720,7 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
     @required String value,
     @required onChanged,
     @required List<String> listData,
+    @required String labelText,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
@@ -696,7 +731,10 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
             filled: true,
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.all(8),
+            hintText: labelText,
+            labelText: labelText,
           ),
+
           value: value, //selectedGender,
           onChanged: onChanged,
           // (String gValue) {
@@ -715,6 +753,59 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
               .toList(),
         ),
       ),
+    );
+  }
+
+  _buildEmergencyContactUpdate({
+    @required TextEditingController personController,
+    @required personOnChanged,
+    @required dropdownOnChanged,
+    @required String selectedValue,
+    @required List<String> listData,
+    @required TextEditingController contactNoController,
+    @required contactNoOnChanged,
+  }) {
+    return Column(
+      children: [
+        textFormFeld(
+            width: size.width,
+            controller: personController,
+            label: 'Emergency Person',
+            isNumber: false,
+            onChanged: personOnChanged), // (String contact) => getContactPerson(contact)),
+        _showDropDownButton(
+          labelText: 'Relation',
+          value: selectedValue, //selectedRelation,
+          onChanged: dropdownOnChanged,
+          // (String relValue) {
+          //   getEmerygencyRelation(relValue);
+          //   setState(() {
+          //     selectedRelation = relValue;
+          //   });
+          // },
+          listData: listData, // relationList,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            textFormFeld(
+              width: size.width * 0.2,
+              controller: null,
+              label: '+63',
+              isDisabled: true,
+              onChanged: () {},
+              isNumber: false,
+            ),
+            textFormFeld(
+                width: size.width * 0.68,
+                controller: contactNoController,
+                label: 'Emergency Contact No.',
+                maxLength: 10,
+                isNumber: true,
+                onChanged: contactNoOnChanged),
+          ],
+        )
+      ],
     );
   }
 }

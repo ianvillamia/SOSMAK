@@ -109,53 +109,9 @@ class _SuspendedCitizenState extends State<SuspendedCitizen> {
                 buildInfo('Blood Type: ', user.bloodType, false),
                 SizedBox(height: 10),
                 buildInfo('Emergency Info: ', '', false),
-                buildInfo('Name: ', user.emergencycontactPerson, false),
-                buildInfo('Contact No.: ', user.emergencyContactNo, false),
+                buildInfo('Name: ', user.emergencycontactPerson1, false),
+                buildInfo('Contact No.: ', user.emergencyContactNo1, false),
                 SizedBox(height: 10),
-                (user.otherMedicalCondition1.isEmpty &&
-                        user.otherMedicalCondition2.isEmpty &&
-                        user.otherMedicalCondition3.isEmpty &&
-                        user.otherMedicalCondition4.isEmpty &&
-                        user.otherMedicalCondition5.isEmpty)
-                    ? Text(
-                        'No Medical Conditions',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      )
-                    : Text(
-                        'Medical Conditions',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                (user.otherMedicalCondition1.isEmpty)
-                    ? Container()
-                    : _buildMedicalText(
-                        icon: Icons.keyboard_arrow_right,
-                        data: user.otherMedicalCondition1,
-                      ),
-                (user.otherMedicalCondition2.isEmpty)
-                    ? Container()
-                    : _buildMedicalText(
-                        icon: Icons.keyboard_arrow_right,
-                        data: user.otherMedicalCondition2,
-                      ),
-                (user.otherMedicalCondition3.isEmpty)
-                    ? Container()
-                    : _buildMedicalText(
-                        icon: Icons.keyboard_arrow_right,
-                        data: user.otherMedicalCondition3,
-                      ),
-                (user.otherMedicalCondition4.isEmpty)
-                    ? Container()
-                    : _buildMedicalText(
-                        icon: Icons.keyboard_arrow_right,
-                        data: user.otherMedicalCondition4,
-                      ),
-                (user.otherMedicalCondition5.isEmpty)
-                    ? Container()
-                    : _buildMedicalText(
-                        icon: Icons.keyboard_arrow_right,
-                        data: user.otherMedicalCondition5,
-                      ),
-                SizedBox(height: size.height * 0.03),
               ],
             ),
           ),

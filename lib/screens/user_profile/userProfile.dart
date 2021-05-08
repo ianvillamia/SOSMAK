@@ -168,98 +168,17 @@ class _UserProfileState extends State<UserProfile> {
               data2: user.bloodType,
             ),
             SizedBox(height: 10),
-            Text(
-              'Emergency Contact',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            _buildEmergencyContact(
+              ePerson1: user.emergencycontactPerson1,
+              eRelation1: user.emergencyRelation1,
+              eNumber1: user.emergencyContactNo1,
+              ePerson2: user.emergencycontactPerson2,
+              eRelation2: user.emergencyRelation2,
+              eNumber2: user.emergencyContactNo2,
+              ePerson3: user.emergencycontactPerson3,
+              eRelation3: user.emergencyRelation3,
+              eNumber3: user.emergencyContactNo3,
             ),
-            _buildNormalText(
-              title: 'Name: ',
-              data: user.emergencycontactPerson,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  Text(
-                    'Contact No.: ',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  (user.emergencyContactNo != "")
-                      ? RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              height: 1.5,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '${user.emergencyContactNo}   ',
-                              ),
-                              WidgetSpan(
-                                child: InkWell(
-                                  onTap: sendSms,
-                                  child: Icon(
-                                    Icons.sms,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Text(
-                          "+${user.emergencyContactNo}",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            (user.otherMedicalCondition1.isEmpty &&
-                    user.otherMedicalCondition2.isEmpty &&
-                    user.otherMedicalCondition3.isEmpty &&
-                    user.otherMedicalCondition4.isEmpty &&
-                    user.otherMedicalCondition5.isEmpty)
-                ? Text(
-                    'No Medical Conditions',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )
-                : Text(
-                    'Medical Conditions',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-            SizedBox(height: 5),
-            (user.otherMedicalCondition1.isEmpty)
-                ? Container()
-                : _buildMedicalText(
-                    icon: Icons.keyboard_arrow_right,
-                    data: user.otherMedicalCondition1,
-                  ),
-            (user.otherMedicalCondition2.isEmpty)
-                ? Container()
-                : _buildMedicalText(
-                    icon: Icons.keyboard_arrow_right,
-                    data: user.otherMedicalCondition2,
-                  ),
-            (user.otherMedicalCondition3.isEmpty)
-                ? Container()
-                : _buildMedicalText(
-                    icon: Icons.keyboard_arrow_right,
-                    data: user.otherMedicalCondition3,
-                  ),
-            (user.otherMedicalCondition4.isEmpty)
-                ? Container()
-                : _buildMedicalText(
-                    icon: Icons.keyboard_arrow_right,
-                    data: user.otherMedicalCondition4,
-                  ),
-            (user.otherMedicalCondition5.isEmpty)
-                ? Container()
-                : _buildMedicalText(
-                    icon: Icons.keyboard_arrow_right,
-                    data: user.otherMedicalCondition5,
-                  ),
             SizedBox(height: size.height * 0.05),
             RaisedButton(
                 color: Colors.blue[400],
@@ -285,7 +204,6 @@ class _UserProfileState extends State<UserProfile> {
       padding: const EdgeInsets.all(10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: size.width * 0.5,
@@ -295,9 +213,9 @@ class _UserProfileState extends State<UserProfile> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                Flexible(child: Text(data, style: TextStyle(fontSize: 18) ?? 'data')),
+                Flexible(child: Text(data, style: TextStyle(fontSize: 16) ?? 'data')),
               ],
             ),
           ),
@@ -309,12 +227,12 @@ class _UserProfileState extends State<UserProfile> {
               children: [
                 Text(
                   title2,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Flexible(
                   child: Text(
                     data2,
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ],
@@ -334,23 +252,116 @@ class _UserProfileState extends State<UserProfile> {
         children: [
           Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Flexible(child: Text(data, style: TextStyle(fontSize: 18) ?? 'data')),
+          Flexible(child: Text(data, style: TextStyle(fontSize: 16) ?? 'data')),
         ],
       ),
     );
   }
 
-  _buildMedicalText({@required IconData icon, String data}) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        children: [
-          Icon(icon),
-          Text(data, style: TextStyle(fontSize: 18) ?? 'data'),
-        ],
-      ),
+  _buildEmergencyContact({
+    @required String ePerson1,
+    @required String eRelation1,
+    @required String eNumber1,
+    @required String ePerson2,
+    @required String eRelation2,
+    @required String eNumber2,
+    @required String ePerson3,
+    @required String eRelation3,
+    @required String eNumber3,
+  }) {
+    return Column(
+      children: [
+        (user.emergencyContactNo3.isNotEmpty || user.emergencyContactNo1 != '')
+            ? Text(
+                'Emergency Contacts',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              )
+            : Text(
+                'Please update your Emergency Contacts',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+        //
+        //Emergency Contact 1
+        //
+        (user.emergencyContactNo3.isNotEmpty || user.emergencyContactNo1 != '')
+            ? _buildRowText(
+                title: 'Name: ',
+                data: ePerson1,
+                title2: 'Relation: ',
+                data2: eRelation1,
+              )
+            : Container(),
+        (user.emergencyContactNo3.isNotEmpty || user.emergencyContactNo1 != '')
+            ? Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _buildContactNumber(eNumber1),
+              )
+            : Container(),
+        //
+        //Emergency Contact 2
+        //
+        (user.emergencyContactNo2.isNotEmpty || user.emergencyContactNo2 != '')
+            ? _buildRowText(
+                title: 'Name: ',
+                data: ePerson2,
+                title2: 'Relation: ',
+                data2: eRelation2,
+              )
+            : Container(),
+        (user.emergencyContactNo2.isNotEmpty || user.emergencyContactNo2 != '')
+            ? Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _buildContactNumber(eNumber2),
+              )
+            : Container(),
+        //
+        //Emergency Contact 3
+        //
+        (user.emergencyContactNo3.isNotEmpty || user.emergencyContactNo3 != '')
+            ? _buildRowText(
+                title: 'Name: ',
+                data: ePerson3,
+                title2: 'Relation: ',
+                data2: eRelation3,
+              )
+            : Container(),
+        (user.emergencyContactNo3.isNotEmpty || user.emergencyContactNo3 != '')
+            ? Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _buildContactNumber(eNumber3),
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  _buildContactNumber(String number) {
+    return Row(
+      children: [
+        Text(
+          'Contact No.: ',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        Row(
+          children: [
+            Text(
+              number,
+              style: TextStyle(fontSize: 16),
+            ),
+            InkWell(
+              onTap: () async {
+                await _launchURL(number: number);
+              },
+              child: Icon(
+                Icons.call,
+                color: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

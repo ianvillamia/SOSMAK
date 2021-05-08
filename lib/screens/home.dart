@@ -41,6 +41,7 @@ class _HomeState extends State<Home> {
   bool isPolice = false;
   bool isAdmin = false;
   bool isCitizen = false;
+  bool isBothPoliceCitizen = false;
   bool enableAdditionalCard = false;
   Size size;
   String currentIncident;
@@ -63,11 +64,14 @@ class _HomeState extends State<Home> {
     if (userDetailsProvider.currentUser.role == 'police' ?? '') {
       isPolice = true;
       enableAdditionalCard = true;
+      isBothPoliceCitizen = true;
     } else if (userDetailsProvider.currentUser.role == 'admin' ?? '') {
       isAdmin = true;
+      isBothPoliceCitizen = false;
     } else if (userDetailsProvider.currentUser.role == 'citizen' ?? '') {
       isCitizen = true;
-      number = userDetailsProvider.currentUser.emergencyContactNo;
+      isBothPoliceCitizen = true;
+      number = userDetailsProvider.currentUser.emergencyContactNo1;
     }
     if (userDetailsProvider.currentUser.policeRank == 'Director General' ||
         userDetailsProvider.currentUser.policeRank == 'Deputy Director General' ||
@@ -368,10 +372,6 @@ class _HomeState extends State<Home> {
                 )),
           ),
           Visibility(
-            visible: isCitizen,
-            child: _buildSOSButton(emergencyContact: number, context: context),
-          ),
-          Visibility(
             visible: isAdmin,
             child: _buildTile(
               color: Colors.white,
@@ -432,6 +432,10 @@ class _HomeState extends State<Home> {
               image: 'assets/sosmakLogo.png',
             ),
           ),
+          Visibility(
+            visible: isBothPoliceCitizen,
+            child: _buildSOSButton(emergencyContact: number, context: context),
+          ),
         ],
       ),
     );
@@ -491,19 +495,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void sendSms() async {
-    if (locationController.text == "Click the icon to get My Current Location") {
-      showNoLocation();
-    } else {
-      twilioFlutter.sendSMS(
-        toNumber: '+639562354758',
-        messageBody: "MY LOCATION: \n${locationController.text}\n\nHELP ME! I'M IN TROUBLE, SEND SOME AUTHORITIES",
-      );
-      locationController.text = '';
-      Navigator.pop(context);
-    }
-  }
-
   _buildSOSButton({@required String emergencyContact, BuildContext context}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -516,50 +507,97 @@ class _HomeState extends State<Home> {
           children: [
             InkWell(
               onTap: () {
-                //sendSms
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        'Send your Location!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      content: StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                          return Container(
-                            child: TextFormField(
-                              controller: locationController,
-                              decoration: InputDecoration(
-                                labelText: 'Location',
-                                suffixIcon: IconButton(
-                                    onPressed: () async {
-                                      _serviceEnabled = await location.serviceEnabled();
-                                      if (!_serviceEnabled) {
-                                        _serviceEnabled = await location.requestService();
-                                      }
-
-                                      Navigator.pop(context);
-                                      _getCurrentLocation();
-                                    },
-                                    icon: Icon(Icons.location_on_outlined)),
-                              ),
+                if (userDetailsProvider.currentUser.emergencyRelation1.isNotEmpty &&
+                    userDetailsProvider.currentUser.emergencyRelation2.isNotEmpty &&
+                    userDetailsProvider.currentUser.emergencyRelation3.isNotEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          title: Text(
+                            'Choose a contact to call',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        },
-                      ),
-                      actions: [
-                        FlatButton(
-                          child: Text("Send"),
-                          onPressed: sendSms,
-                        ),
-                      ],
-                    );
-                  },
-                );
+                          ),
+                          content: Container(
+                            height: size.height * .3,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: Text(userDetailsProvider.currentUser.emergencycontactPerson1),
+                                  subtitle: Text(userDetailsProvider.currentUser.emergencyRelation1),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.call, color: Colors.green),
+                                    onPressed: () {
+                                      _launchURL(number: userDetailsProvider.currentUser.emergencyContactNo1);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: Text(userDetailsProvider.currentUser.emergencycontactPerson2),
+                                  subtitle: Text(userDetailsProvider.currentUser.emergencyRelation2),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.call, color: Colors.green),
+                                    onPressed: () {
+                                      _launchURL(number: userDetailsProvider.currentUser.emergencyContactNo2);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: Text(userDetailsProvider.currentUser.emergencycontactPerson3),
+                                  subtitle: Text(userDetailsProvider.currentUser.emergencyRelation3),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.call, color: Colors.green),
+                                    onPressed: () {
+                                      _launchURL(number: userDetailsProvider.currentUser.emergencyContactNo3);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                    },
+                  );
+                } else {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            'No Emergency Contact Found',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            'Please update your profile',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          actions: [
+                            MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfile(),
+                                  ),
+                                ).then((value) => Navigator.pop(context));
+                              },
+                              color: Colors.green,
+                              child: Text('Proceed to Update'),
+                            ),
+                          ],
+                        );
+                      });
+                }
               },
               child: ClipOval(
                 child: Container(
@@ -611,6 +649,15 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _launchURL({String number}) async {
+    String url = 'tel:$number';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   void _serialiseAndNavigate(Map<String, dynamic> message) {
     var notificationData = message['data'];
     var view = notificationData['view'];
@@ -623,60 +670,6 @@ class _HomeState extends State<Home> {
         );
       }
     }
-  }
-
-  showNoLocation() {
-    AlertDialog alert = AlertDialog(
-      title: Text(
-        "Error",
-        style: TextStyle(
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      content: RichText(
-        text: TextSpan(
-          style: TextStyle(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w300,
-            color: Colors.black,
-            height: 1.5,
-          ),
-          children: [
-            TextSpan(
-              text: 'No location found. \n',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            TextSpan(
-              text: 'Click the',
-            ),
-            WidgetSpan(
-              child: Icon(Icons.location_on_outlined),
-            ),
-            TextSpan(
-              text: 'to get My Current Location',
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        FlatButton(
-          child: Text('OK'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        )
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   // Future<void> _saveDeviceToken() async {
